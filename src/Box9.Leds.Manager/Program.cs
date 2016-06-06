@@ -16,7 +16,7 @@ namespace Box9.Leds.Manager
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LedManager());
+            Application.Run(new LedManager(300, 1000));
         }
     }
 }

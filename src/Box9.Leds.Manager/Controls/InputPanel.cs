@@ -10,7 +10,6 @@ namespace Box9.Leds.Manager.Controls
         private readonly Button addServerButton;
 
         public delegate void AddServer(LedLayout ledLayout);
-
         public event AddServer AddedServer;
 
         public InputPanel(int width, int height)
@@ -23,17 +22,28 @@ namespace Box9.Leds.Manager.Controls
 
             addServerButton = new Button
             {
-                Text = "Test",
+                Text = "Add new FadeCandy server...",
+                Width = 200,
             };
 
-            addServerButton.Click += OnAddServer;
+            addServerButton.Top = this.Height / 3;
+            addServerButton.Left = this.Width / 2 - addServerButton.Width / 2;
+
+            addServerButton.Click += OnAddServerClick;
+
+            AddedServer += OnServerAdded;
 
             this.Controls.Add(addServerButton);
         }
 
-        public void OnAddServer(object sender, EventArgs e)
+        public void OnAddServerClick(object sender, EventArgs e)
         {
             AddedServer(new SnareDrumLedLayout()); // This should be a choice
+        }
+
+        private void OnServerAdded(LedLayout ledLayout)
+        {
+            // Placeholder to subscribe to the AddedServer event
         }
     }
 }

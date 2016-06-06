@@ -9,16 +9,19 @@ namespace Box9.Leds.Manager
         private ServerPanel serverPanel;
         private InputPanel inputPanel;
 
-        public LedManager()
+        public LedManager(int height, int width)
         {
             InitializeComponent();
 
-            this.serverPanel = new ServerPanel((2 * Width) / 3, Height);
-            this.inputPanel = new InputPanel(Width / 3, Height);
+            this.Height = height;
+            this.Width = width;
         }
 
         private void LedManager_Load(object sender, EventArgs e)
         {
+            this.serverPanel = new ServerPanel((2 * Width) / 3, Height);
+            this.inputPanel = new InputPanel(Width / 3, Height);
+
             this.Controls.Add(serverPanel);
             this.Controls.Add(inputPanel);
         }

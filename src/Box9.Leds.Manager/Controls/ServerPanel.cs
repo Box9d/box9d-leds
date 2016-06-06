@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
-using Box9.Leds.Core.LedLayouts;
 
 namespace Box9.Leds.Manager.Controls
 {
