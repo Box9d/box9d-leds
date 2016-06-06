@@ -1,0 +1,17 @@
+﻿using System;
+using System.Threading.Tasks;
+using Box9.Leds.Core.Messages;
+using Box9.Leds.Core.Messages.UpdatePixels;
+
+namespace Box9.Leds.FcClient
+{
+    public interface IClientWrapper : IDisposable
+    {
+        Task ConnectAsync();
+
+        Task<TResponse> SendMessage<TResponse>(IJsonRequest<TResponse> request)
+            where TResponse : new();
+
+        Task SendPixelUpdates(UpdatePixelsRequest request);
+    }
+}
