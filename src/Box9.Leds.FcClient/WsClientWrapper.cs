@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
@@ -7,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Box9.Leds.Core.Messages;
 using Box9.Leds.Core.Messages.UpdatePixels;
+using Box9.Leds.Core.UpdatePixels;
 using Newtonsoft.Json;
 
 namespace Box9.Leds.FcClient
@@ -64,10 +66,44 @@ namespace Box9.Leds.FcClient
             socket.Dispose();
         }
 
-        public Task SendPixelUpdates(UpdatePixelsRequest request)
+        public async Task SendPixelUpdates(UpdatePixelsRequest request)
         {
-            // TODO:
-            throw new NotImplementedException();
+            var data = new List<byte>
+            {
+                0,0,0,0
+            };
+
+            var pixels = request.PixelUpdates
+                .OrderBy(p => p.X)
+                .OrderBy(p => p.Y);
+
+            bool lateralReverse = false;
+
+            for (int j = 0; j < pixels.Max(p => p.Y); j++)
+            {
+                for (int i = 0; i <= pixels.Max(p => p.X); i++)
+                {
+                    var pixel = request.PixelUpdates
+                        .SingleOrDefault(p => p.X == i && p.Y == j);
+
+                    if (pixel != null)
+                    {
+                        data.Add(pixel.Color.R);
+                        data.Add(pixel.Color.G);
+                        data.Add(pixel.Color.B);
+                    }
+                    else
+                    {
+                        data.Add(0);
+                        data.Add(0);
+                        data.Add(0);
+                    }
+                }
+
+                lateralReverse = !lateralReverse;
+            }
+
+            await socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, CancellationToken.None);
         }
     }
 }
