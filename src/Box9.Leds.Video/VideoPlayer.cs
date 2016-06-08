@@ -11,30 +11,37 @@ namespace Box9.Leds.Video
 {
     public class VideoPlayer : IVideoPlayer
     {
-        private readonly IClientWrapper fcClient;
         private readonly IVideoReader videoReader;
 
+        private IClientWrapper fcClient;
         private VideoData videoData;
         private Timer timer;
         private LedLayout ledLayout;
         private int frameTime;
         private int currentFrame;
         private int lastFrame;
+        private bool videoIsLoaded;
 
-        public VideoPlayer(IClientWrapper fcClient, IVideoReader videoReader)
+        public VideoPlayer(IVideoReader videoReader)
         {
-            this.fcClient = fcClient;
             this.videoReader = videoReader;
+            this.videoIsLoaded = false;
         }
 
-        public void Load(string videoFilePath, LedLayout ledLayout)
+        public void Load(IClientWrapper fcClient, string videoFilePath, LedLayout ledLayout)
         {
             videoData = videoReader.Transform(videoFilePath, ledLayout);
-            this.ledLayout = ledLayout;
-            this.lastFrame = videoData.Frames.Max(f => f.Key);
-            this.frameTime = 1000 / videoData.Framerate;
 
-            fcClient.ConnectAsync().Wait();
+            if (videoData.Frames.Any())
+            {
+                this.lastFrame = videoData.Frames.Max(f => f.Key);
+            }
+
+            this.ledLayout = ledLayout;
+            this.frameTime = 1000 / videoData.Framerate;
+            this.fcClient = fcClient;
+
+            videoIsLoaded = true;
         }
 
         public void Pause()
@@ -44,6 +51,13 @@ namespace Box9.Leds.Video
 
         public void Play(int startFrame = 0)
         {
+            if (!videoIsLoaded)
+            {
+                throw new InvalidOperationException("Use Load() to load a video before trying to play");
+            }
+
+            fcClient.ConnectAsync().Wait();
+
             timer = new Timer(PlayFrameCallback, videoData, 0, frameTime);
         }
 
@@ -59,7 +73,7 @@ namespace Box9.Leds.Video
                 PixelUpdates = ((VideoData)videoData).Frames[currentFrame]
             });
 
-            Console.WriteLine("Pixel updates sent...");
+            Console.WriteLine("Pixel updates sent..."); // Temp
 
             if (currentFrame == lastFrame)
             {

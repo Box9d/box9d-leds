@@ -52,7 +52,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FcClientAutofacModule.cs" />
     <Compile Include="HttpClientWrapper.cs" />
     <Compile Include="IClientWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

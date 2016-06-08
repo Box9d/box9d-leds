@@ -61,6 +61,10 @@
       <Project>{329e36f9-1120-4dc0-9dee-104b03783a48}</Project>
       <Name>Box9.Leds.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Box9.Leds.FcClient\Box9.Leds.FcClient.csproj">
+      <Project>{7CE537D5-6007-4E49-A2C9-A1EF48BEAF12}</Project>
+      <Name>Box9.Leds.FcClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Box9.Leds.Video\Box9.Leds.Video.csproj">
       <Project>{F7F691B5-4ECE-4B68-9DF1-1DB144819387}</Project>
       <Name>Box9.Leds.Video</Name>

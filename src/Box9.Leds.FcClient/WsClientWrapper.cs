@@ -22,12 +22,12 @@ namespace Box9.Leds.FcClient
         private readonly int sendMaxBufferLength;
         private readonly int receiveMaxBufferLength;
 
-        public WsClientWrapper(Uri serverAddress, int sendMaxBufferLength, int receiveMaxBufferLength)
+        public WsClientWrapper(Uri serverAddress)
         {
             socket = new ClientWebSocket();
             this.serverAddress = serverAddress;
-            this.sendMaxBufferLength = sendMaxBufferLength;
-            this.receiveMaxBufferLength = receiveMaxBufferLength;
+            this.sendMaxBufferLength = 4096;
+            this.receiveMaxBufferLength = 4096;
 
             State = WebSocketState.None;
         }
