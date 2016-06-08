@@ -22,14 +22,14 @@ namespace Box9.Leds.TestHarness
                 IClientWrapper fcClient = new WsClientWrapper(new Uri("ws://localhost:7890"));
 
                 var videoPlayer = scope.Resolve<IVideoPlayer>();
+                
                 videoPlayer.Load(
-                    fcClient, 
-                    "C:\\Users\\rzp\\Desktop\\Test Videos\\TEST VIDEO.avi",
+                    fcClient,
+                    "C:\\Users\\rzp\\Desktop\\Test Videos\\TEST VIDEO.mp4",
                     new SnareDrumLedLayout());
-                videoPlayer.Play();
-            }
 
-            await Task.Yield();
+                await videoPlayer.Play();
+            }
         }
     }
 }

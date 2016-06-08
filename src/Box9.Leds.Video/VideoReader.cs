@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AForge.Video.FFMPEG;
 using Box9.Leds.Core.LedLayouts;
 using Box9.Leds.Core.UpdatePixels;
@@ -10,22 +9,28 @@ namespace Box9.Leds.Video
     {
         public VideoData Transform(string videoFilePath, LedLayout ledLayout)
         {
+            int frameRate = 25; // Default
+            long frameCount = 0;
+            var xPixelMultiplier = 0;
+            var yPixelMultiplier = 0;
+
             var frameTransforms = new Dictionary<int, IEnumerable<PixelInfo>>();
-            int frameRate = 30; // Default
 
             using (var reader = new VideoFileReader())
             {
                 reader.Open(videoFilePath);
 
                 frameRate = reader.FrameRate;
+                frameCount = reader.FrameCount;
 
-                var xPixelMultiplier = reader.Width / ledLayout.XNumberOfPixels;
-                var yPixelMultipler = reader.Height / ledLayout.YNumberOfPixels;
+                xPixelMultiplier = reader.Width / ledLayout.XNumberOfPixels;
+                yPixelMultiplier = reader.Height / ledLayout.YNumberOfPixels;
 
-                for (int f = 0; f < reader.FrameCount; f++)
+                for (int f = 0; f < frameCount; f++)
                 {
-                    var framePixels = new List<PixelInfo>();
                     var frame = reader.ReadVideoFrame();
+                    var framePixels = new List<PixelInfo>();
+
                     for (int i = 0; i < ledLayout.XNumberOfPixels; i++)
                     {
                         for (int j = 0; j < ledLayout.YNumberOfPixels; j++)
@@ -34,13 +39,14 @@ namespace Box9.Leds.Video
                             {
                                 X = i,
                                 Y = j,
-                                Color = frame.GetPixel(i * xPixelMultiplier, j * yPixelMultipler)
+                                Color = frame.GetPixel(i * xPixelMultiplier, j * yPixelMultiplier)
                             });
                         }
                     }
 
                     frameTransforms.Add(f, framePixels);
                 }
+
             }
 
             return new VideoData
