@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -44,20 +48,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutofacBootstrapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Box9.Leds.Core\Box9.Leds.Core.csproj">
       <Project>{329e36f9-1120-4dc0-9dee-104b03783a48}</Project>
       <Name>Box9.Leds.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Box9.Leds.FcClient\Box9.Leds.FcClient.csproj">
-      <Project>{7ce537d5-6007-4e49-a2c9-a1ef48beaf12}</Project>
-      <Name>Box9.Leds.FcClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\Box9.Leds.Video\Box9.Leds.Video.csproj">
       <Project>{F7F691B5-4ECE-4B68-9DF1-1DB144819387}</Project>

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AForge.Video.FFMPEG;
-using Box9.Leds.Core;
 using Box9.Leds.Core.LedLayouts;
 using Box9.Leds.Core.UpdatePixels;
 
@@ -24,9 +24,8 @@ namespace Box9.Leds.Video
 
                 for (int f = 0; f < reader.FrameCount; f++)
                 {
-                    var frame = reader.ReadVideoFrame();
                     var framePixels = new List<PixelInfo>();
-
+                    var frame = reader.ReadVideoFrame();
                     for (int i = 0; i < ledLayout.XNumberOfPixels; i++)
                     {
                         for (int j = 0; j < ledLayout.YNumberOfPixels; j++)

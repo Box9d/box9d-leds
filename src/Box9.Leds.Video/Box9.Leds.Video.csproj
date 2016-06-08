@@ -48,6 +48,10 @@
       <HintPath>..\packages\Accord.Video.FFMPEG.3.0.2\lib\net45\Accord.Video.FFMPEG.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -59,7 +63,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="VideoAutofacModule.cs" />
+    <Compile Include="VideoPlayer.cs" />
     <Compile Include="IVideoReader.cs" />
+    <Compile Include="IVideoPlayer.cs" />
     <Compile Include="VideoData.cs" />
     <Compile Include="VideoReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -71,6 +78,10 @@
     <ProjectReference Include="..\Box9.Leds.Core\Box9.Leds.Core.csproj">
       <Project>{329e36f9-1120-4dc0-9dee-104b03783a48}</Project>
       <Name>Box9.Leds.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Box9.Leds.FcClient\Box9.Leds.FcClient.csproj">
+      <Project>{7CE537D5-6007-4E49-A2C9-A1EF48BEAF12}</Project>
+      <Name>Box9.Leds.FcClient</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
