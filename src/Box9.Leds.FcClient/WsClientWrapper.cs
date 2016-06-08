@@ -78,13 +78,24 @@ namespace Box9.Leds.FcClient
                 .OrderBy(p => p.Y);
 
             bool lateralReverse = false;
+            int iMax = pixels.Max(p => p.X);
+            int jMax = pixels.Max(p => p.Y);
 
-            for (int j = 0; j < pixels.Max(p => p.Y); j++)
+            for (int j = 0; j <= jMax; j++)
             {
-                for (int i = 0; i <= pixels.Max(p => p.X); i++)
+                for (int i = 0; i <= iMax; i++)
                 {
-                    var pixel = request.PixelUpdates
-                        .SingleOrDefault(p => p.X == i && p.Y == j);
+                    PixelInfo pixel = null;
+                    if (lateralReverse)
+                    {
+                        pixel = request.PixelUpdates
+                            .SingleOrDefault(p => p.X == iMax - i && p.Y == j);
+                    }
+                    else
+                    {
+                        pixel = request.PixelUpdates
+                            .SingleOrDefault(p => p.X == i && p.Y == j);
+                    }
 
                     if (pixel != null)
                     {
