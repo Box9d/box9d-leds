@@ -28,7 +28,7 @@ namespace Box9.Leds.Core.Patterns
                     }
                     else
                     {
-                        pixelInfo.Color = PixelBackground.DefaultColor;
+                        pixelInfo.Color = Color.Black;
                     }
 
                     yield return pixelInfo;

@@ -9,6 +9,8 @@ namespace Box9.Leds.FcClient
     {
         Task ConnectAsync();
 
+        Task CloseAsync();
+
         Task<TResponse> SendMessage<TResponse>(IJsonRequest<TResponse> request)
             where TResponse : new();
 

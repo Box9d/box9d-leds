@@ -6,5 +6,10 @@
             : base(30, 16)
         {
         }
+
+        public override string ToString()
+        {
+            return "Snare drum LED layout";
+        }
     }
 }

@@ -66,5 +66,10 @@ namespace Box9.Leds.FcClient
 
             return;
         }
+
+        public async Task CloseAsync()
+        {
+            await Task.Yield();
+        }
     }
 }

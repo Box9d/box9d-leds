@@ -46,14 +46,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\InputPanel.cs">
-      <SubType>Component</SubType>
+    <Compile Include="DisplayClientWrapper.cs" />
+    <Compile Include="Forms\AddServerForm.cs">
+      <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LedPanel.cs">
-      <SubType>Component</SubType>
+    <Compile Include="Forms\AddServerForm.Designer.cs">
+      <DependentUpon>AddServerForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ServerPanel.cs">
-      <SubType>Component</SubType>
+    <Compile Include="Forms\DisplayOnlyServerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DisplayOnlyServerForm.Designer.cs">
+      <DependentUpon>DisplayOnlyServerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FadecandyServerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FadecandyServerForm.Designer.cs">
+      <DependentUpon>FadecandyServerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="LED Manager.cs">
       <SubType>Form</SubType>
@@ -63,6 +73,15 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\AddServerForm.resx">
+      <DependentUpon>AddServerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DisplayOnlyServerForm.resx">
+      <DependentUpon>DisplayOnlyServerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FadecandyServerForm.resx">
+      <DependentUpon>FadecandyServerForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LED Manager.resx">
       <DependentUpon>LED Manager.cs</DependentUpon>
     </EmbeddedResource>
@@ -93,6 +112,14 @@
     <ProjectReference Include="..\Box9.Leds.Core\Box9.Leds.Core.csproj">
       <Project>{329E36F9-1120-4DC0-9DEE-104B03783A48}</Project>
       <Name>Box9.Leds.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Box9.Leds.FcClient\Box9.Leds.FcClient.csproj">
+      <Project>{7CE537D5-6007-4E49-A2C9-A1EF48BEAF12}</Project>
+      <Name>Box9.Leds.FcClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Box9.Leds.Video\Box9.Leds.Video.csproj">
+      <Project>{F7F691B5-4ECE-4B68-9DF1-1DB144819387}</Project>
+      <Name>Box9.Leds.Video</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

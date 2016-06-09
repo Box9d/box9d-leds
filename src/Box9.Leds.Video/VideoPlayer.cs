@@ -16,20 +16,27 @@ namespace Box9.Leds.Video
     {
         private readonly IVideoReader videoReader;
 
-        private IClientWrapper fcClient;
+        private IClientWrapper client;
         private VideoData videoData;
         private LedLayout ledLayout;
         private int lastFrame;
         private bool videoIsLoaded;
         private int totalPlayTime;
 
+        public delegate void ChangeVideoStatus(VideoStatus status);
+        public event ChangeVideoStatus VideoStatusChanged;
+
         public VideoPlayer(IVideoReader videoReader)
         {
             this.videoReader = videoReader;
             this.videoIsLoaded = false;
+
+            VideoStatusChanged += VideoStatusChangedHandle;
+
+            VideoStatusChanged(VideoStatus.None);
         }
 
-        public void Load(IClientWrapper fcClient, string videoFilePath, LedLayout ledLayout)
+        public void Load(IClientWrapper client, string videoFilePath, LedLayout ledLayout)
         {
             videoData = videoReader.Transform(videoFilePath, ledLayout);
 
@@ -39,29 +46,27 @@ namespace Box9.Leds.Video
             }
 
             this.ledLayout = ledLayout;
-            this.fcClient = fcClient;
+            this.client = client;
             this.totalPlayTime = (int)Math.Round((double)((double)videoData.Frames.Count / (double)videoData.Framerate) * 1000, 0);
 
             videoIsLoaded = true;
+            VideoStatusChanged(VideoStatus.ReadyToPlay);
         }
 
-        public void Pause()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task Play(int startFrame = 0)
+        public async Task Play(CancellationToken token, int startFrame = 0)
         {
             if (!videoIsLoaded)
             {
                 throw new InvalidOperationException("Load a video before trying to play");
             }
 
-            await fcClient.ConnectAsync();
+            await client.ConnectAsync();
+
+            VideoStatusChanged(VideoStatus.Playing);
 
             var playStopwatch = new Stopwatch();
             playStopwatch.Start();
-            while (playStopwatch.ElapsedMilliseconds < totalPlayTime)
+            while (playStopwatch.ElapsedMilliseconds < totalPlayTime && !token.IsCancellationRequested)
             {
                 double secondsPassed = (double)playStopwatch.ElapsedMilliseconds / 1000;
 
@@ -71,26 +76,27 @@ namespace Box9.Leds.Video
                     break;
                 }
 
-                await fcClient.SendPixelUpdates(new UpdatePixelsRequest
+                await client.SendPixelUpdates(new UpdatePixelsRequest
                 {
                     PixelUpdates = videoData.Frames[currentFrame]
                 });
-
-                Console.WriteLine("Sent frame {0} at {1}", currentFrame, playStopwatch.ElapsedMilliseconds);
             }
 
             var allPixelsBlack = Block.GeneratePattern(
                 Color.Black, ledLayout, ledLayout.XNumberOfPixels, ledLayout.YNumberOfPixels, 0, 0);
 
-            await fcClient.SendPixelUpdates(new UpdatePixelsRequest
+            await client.SendPixelUpdates(new UpdatePixelsRequest
             {
                 PixelUpdates = allPixelsBlack
             });
+
+            await client.CloseAsync();
+
+            VideoStatusChanged(VideoStatus.ReadyToPlay);
         }
 
-        public void Stop()
+        private void VideoStatusChangedHandle(VideoStatus status)
         {
-            throw new NotImplementedException();
         }
     }
 }

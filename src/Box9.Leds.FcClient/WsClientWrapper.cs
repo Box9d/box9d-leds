@@ -17,7 +17,7 @@ namespace Box9.Leds.FcClient
     {
         public WebSocketState State { get; private set; }
 
-        private readonly ClientWebSocket socket;
+        private ClientWebSocket socket;
         private readonly Uri serverAddress;
         private readonly int sendMaxBufferLength;
         private readonly int receiveMaxBufferLength;
@@ -34,7 +34,12 @@ namespace Box9.Leds.FcClient
 
         public async Task ConnectAsync()
         {
-            await socket.ConnectAsync(serverAddress, new CancellationToken(false));
+            if (socket.State != WebSocketState.Open)
+            {
+                socket.Dispose();
+                socket = new ClientWebSocket();
+                await socket.ConnectAsync(serverAddress, CancellationToken.None);
+            }
 
             State = socket.State;
         }
@@ -59,6 +64,11 @@ namespace Box9.Leds.FcClient
             var message = Encoding.UTF8.GetString(resultArray.Array.Take(result.Count).ToArray());
 
             return JsonConvert.DeserializeObject<TResponse>(message);
+        }
+
+        public async Task CloseAsync()
+        {
+            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
         }
 
         public void Dispose()
