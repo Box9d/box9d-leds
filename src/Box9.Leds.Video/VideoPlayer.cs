@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,15 +10,17 @@ using Box9.Leds.Core.LedLayouts;
 using Box9.Leds.Core.Messages.UpdatePixels;
 using Box9.Leds.Core.Patterns;
 using Box9.Leds.FcClient;
+using NAudio.Wave;
 
 namespace Box9.Leds.Video
 {
-    public class VideoPlayer : IVideoPlayer
+    public class VideoPlayer : IDisposable
     {
         private readonly IVideoReader videoReader;
 
         private IClientWrapper client;
         private VideoData videoData;
+        private string audioFilePath;
         private LedLayout ledLayout;
         private int lastFrame;
         private bool videoIsLoaded;
@@ -38,7 +41,7 @@ namespace Box9.Leds.Video
 
         public void Load(IClientWrapper client, string videoFilePath, LedLayout ledLayout)
         {
-            videoData = videoReader.Transform(videoFilePath, ledLayout);
+            videoData = videoReader.TransformVideo(videoFilePath, ledLayout);
 
             if (videoData.Frames.Any())
             {
@@ -47,13 +50,14 @@ namespace Box9.Leds.Video
 
             this.ledLayout = ledLayout;
             this.client = client;
+            this.audioFilePath = videoReader.ExtractAudioToFile(videoFilePath);
             this.totalPlayTime = (int)Math.Round((double)((double)videoData.Frames.Count / (double)videoData.Framerate) * 1000, 0);
 
             videoIsLoaded = true;
             VideoStatusChanged(VideoStatus.ReadyToPlay);
         }
 
-        public async Task Play(CancellationToken token, int startFrame = 0)
+        public async Task Play(CancellationToken cancellationToken)
         {
             if (!videoIsLoaded)
             {
@@ -64,39 +68,59 @@ namespace Box9.Leds.Video
 
             VideoStatusChanged(VideoStatus.Playing);
 
-            var playStopwatch = new Stopwatch();
-            playStopwatch.Start();
-            while (playStopwatch.ElapsedMilliseconds < totalPlayTime && !token.IsCancellationRequested)
+            using (var ms = File.OpenRead(audioFilePath))
+            using (var rdr = new Mp3FileReader(ms))
+            using (var wavStream = WaveFormatConversionStream.CreatePcmStream(rdr))
+            using (var baStream = new BlockAlignReductionStream(wavStream))
+            using (var waveOut = new WaveOut(WaveCallbackInfo.FunctionCallback()))
             {
-                double secondsPassed = (double)playStopwatch.ElapsedMilliseconds / 1000;
+                waveOut.Init(baStream);
 
-                var currentFrame = (int)Math.Round(secondsPassed * videoData.Framerate, 0);
-                if (currentFrame > lastFrame)
+                var playStopwatch = new Stopwatch();
+                waveOut.Play();
+                playStopwatch.Start();
+                while (playStopwatch.ElapsedMilliseconds < totalPlayTime && !cancellationToken.IsCancellationRequested)
                 {
-                    break;
+                    double secondsPassed = (double)playStopwatch.ElapsedMilliseconds / 1000;
+
+                    var currentFrame = (int)Math.Round(secondsPassed * videoData.Framerate, 0);
+                    if (currentFrame > lastFrame)
+                    {
+                        break;
+                    }
+
+                    await client.SendPixelUpdates(new UpdatePixelsRequest
+                    {
+                        PixelUpdates = videoData.Frames[currentFrame]
+                    });
                 }
+
+                var allPixelsBlack = Block.GeneratePattern(
+                    Color.Black, ledLayout, ledLayout.XNumberOfPixels, ledLayout.YNumberOfPixels, 0, 0);
 
                 await client.SendPixelUpdates(new UpdatePixelsRequest
                 {
-                    PixelUpdates = videoData.Frames[currentFrame]
+                    PixelUpdates = allPixelsBlack
                 });
-            }
 
-            var allPixelsBlack = Block.GeneratePattern(
-                Color.Black, ledLayout, ledLayout.XNumberOfPixels, ledLayout.YNumberOfPixels, 0, 0);
+                if (waveOut.PlaybackState == PlaybackState.Playing)
+                {
+                    waveOut.Stop();
+                }
 
-            await client.SendPixelUpdates(new UpdatePixelsRequest
-            {
-                PixelUpdates = allPixelsBlack
-            });
+                await client.CloseAsync();
 
-            await client.CloseAsync();
-
-            VideoStatusChanged(VideoStatus.ReadyToPlay);
+                VideoStatusChanged(VideoStatus.ReadyToPlay);
+            }           
         }
 
         private void VideoStatusChangedHandle(VideoStatus status)
         {
+        }
+
+        public void Dispose()
+        {
+            this.videoReader.Dispose();
         }
     }
 }

@@ -52,6 +52,14 @@
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NReco.VideoConverter, Version=1.1.0.0, Culture=neutral, PublicKeyToken=395ccb334978a0cd, processorArchitecture=MSIL">
+      <HintPath>..\packages\NReco.VideoConverter.1.1.0.0\lib\net20\NReco.VideoConverter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -66,7 +74,6 @@
     <Compile Include="VideoAutofacModule.cs" />
     <Compile Include="VideoPlayer.cs" />
     <Compile Include="IVideoReader.cs" />
-    <Compile Include="IVideoPlayer.cs" />
     <Compile Include="VideoData.cs" />
     <Compile Include="VideoReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

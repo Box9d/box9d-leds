@@ -23,7 +23,6 @@ namespace Box9.Leds.Manager.Forms
         private Task displayVideoPlayerTask;
         private CancellationTokenSource cts;
 
-
         public DisplayOnlyServerForm(DisplayOnlyServer server, LedLayout ledLayout, string identifier)
         {
             InitializeComponent();
@@ -89,9 +88,7 @@ namespace Box9.Leds.Manager.Forms
 
         private void OnClose(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = true;
-
-            this.Visible = false;
+            this.displayVideoPlayer.Dispose();
         }
 
         private void importVideoButton_Click(object sender, System.EventArgs e)

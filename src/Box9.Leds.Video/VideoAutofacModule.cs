@@ -8,7 +8,6 @@ namespace Box9.Leds.Video
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<VideoReader>().As<IVideoReader>();
-            builder.RegisterType<VideoPlayer>().As<IVideoPlayer>();
         }
     }
 }

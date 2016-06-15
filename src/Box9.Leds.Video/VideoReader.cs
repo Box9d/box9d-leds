@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using AForge.Video.FFMPEG;
 using Box9.Leds.Core.LedLayouts;
 using Box9.Leds.Core.UpdatePixels;
@@ -7,7 +10,31 @@ namespace Box9.Leds.Video
 {
     public class VideoReader : IVideoReader
     {
-        public VideoData Transform(string videoFilePath, LedLayout ledLayout)
+        private string temporaryFolder;
+
+        public VideoReader()
+        {
+            temporaryFolder = Path.Combine(Path.GetTempPath(), "ledaudioextractions");
+
+            if (!Directory.Exists(temporaryFolder))
+            {
+                Directory.CreateDirectory(temporaryFolder);
+            }
+        }
+
+        public string ExtractAudioToFile(string videoFilePath)
+        {
+            var converter = new NReco.VideoConverter.FFMpegConverter();
+
+            using (var audioStream = new MemoryStream())
+            {
+                var outputPath = Path.Combine(temporaryFolder, string.Format("{0}.{1}", Guid.NewGuid(), "mp3"));
+                converter.ConvertMedia(videoFilePath, outputPath, "mp3");
+                return outputPath;
+            } 
+        }
+
+        public VideoData TransformVideo(string videoFilePath, LedLayout ledLayout)
         {
             int frameRate = 25; // Default
             long frameCount = 0;
@@ -54,6 +81,11 @@ namespace Box9.Leds.Video
                 Framerate = frameRate,
                 Frames = frameTransforms
             };    
+        }
+
+        public void Dispose()
+        {
+            Directory.Delete(temporaryFolder, true);
         }
     }
 }

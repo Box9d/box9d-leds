@@ -1,9 +1,12 @@
-﻿using Box9.Leds.Core.LedLayouts;
+﻿using System;
+using Box9.Leds.Core.LedLayouts;
 
 namespace Box9.Leds.Video
 {
-    public interface IVideoReader
+    public interface IVideoReader : IDisposable
     {
-        VideoData Transform(string videoFilePath, LedLayout ledLayout);
+        VideoData TransformVideo(string videoFilePath, LedLayout ledLayout);
+
+        string ExtractAudioToFile(string videoFilePath);
     }
 }

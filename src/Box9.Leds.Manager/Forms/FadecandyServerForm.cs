@@ -38,8 +38,6 @@ namespace Box9.Leds.Manager.Forms
             this.ledLayout = ledLayout;
             this.port = server.Port;
 
-            this.fcVideoPlayer = new VideoPlayer(new VideoReader());
-            this.displayVideoPlayer = new VideoPlayer(new VideoReader());
             this.cts = new CancellationTokenSource();
 
             this.videoBrowserDialog.FileOk += VideoSelected;
@@ -92,15 +90,16 @@ namespace Box9.Leds.Manager.Forms
 
             this.FormClosing += OnClose;
 
+            this.fcVideoPlayer = new VideoPlayer(new VideoReader());
+            this.displayVideoPlayer = new VideoPlayer(new VideoReader());
+
             this.displayVideoPlayer.VideoStatusChanged += VideoStatusChanged;
         }
 
         private void OnClose(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = true;
-
+            this.displayVideoPlayer.Dispose();
             this.wsClientWrapper.Dispose();
-            this.Visible = false;
         }
 
         private void importVideoButton_Click(object sender, System.EventArgs e)

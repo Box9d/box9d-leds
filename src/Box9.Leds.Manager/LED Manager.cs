@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Windows.Forms;
 using Box9.Leds.Core.LedLayouts;
 using Box9.Leds.Core.Servers;
@@ -11,15 +9,11 @@ namespace Box9.Leds.Manager
     public partial class LedManager : Form
     {
         private AddServerForm addServerForm;
-        private Dictionary<string, FadecandyServerForm> fadecandyServers;
-        private List<DisplayOnlyServerForm> displayOnlyServers;
+        private int numberOfDisplayServers;
 
         public LedManager(int height, int width)
         {
             InitializeComponent();
-
-            fadecandyServers = new Dictionary<string, FadecandyServerForm>();
-            displayOnlyServers = new List<DisplayOnlyServerForm>();
         }
 
         private void addNewServerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -37,21 +31,9 @@ namespace Box9.Leds.Manager
         {
             if (server is FadecandyServer)
             {
-                var fadecandyServer = (FadecandyServer)server;
-
-                FadecandyServerForm serverForm = null;
-                if (!fadecandyServers.ContainsKey(fadecandyServer.IPAddress.ToString()))
-                {
-                    serverForm = new FadecandyServerForm(fadecandyServer, ledLayout);
-                    serverForm.StartPosition = FormStartPosition.Manual;
-                    serverForm.Location = new System.Drawing.Point(this.Location.X + 20, this.Location.X + 20);
-
-                    fadecandyServers.Add(fadecandyServer.IPAddress.ToString(), serverForm);
-                }
-                else
-                {
-                    serverForm = fadecandyServers[fadecandyServer.IPAddress.ToString()];
-                }
+                var serverForm = new FadecandyServerForm((FadecandyServer)server, ledLayout);
+                serverForm.StartPosition = FormStartPosition.Manual;
+                serverForm.Location = new System.Drawing.Point(this.Location.X + 20, this.Location.X + 20);
 
                 serverForm.Visible = true;
                 serverForm.BringToFront();
@@ -62,11 +44,11 @@ namespace Box9.Leds.Manager
             {
                 var displayOnlyServer = (DisplayOnlyServer)server;
 
-                var serverForm = new DisplayOnlyServerForm(displayOnlyServer, ledLayout, "Display only server " + (displayOnlyServers.Count + 1));
+                numberOfDisplayServers++;
+
+                var serverForm = new DisplayOnlyServerForm(displayOnlyServer, ledLayout, "Display only server " + numberOfDisplayServers);
                 serverForm.StartPosition = FormStartPosition.Manual;
                 serverForm.Location = new System.Drawing.Point(this.Location.X + 20, this.Location.X + 20);
-
-                displayOnlyServers.Add(serverForm);
 
                 serverForm.Visible = true;
                 serverForm.BringToFront();
