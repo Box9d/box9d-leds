@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using DBreeze;
+using Newtonsoft.Json;
 
 namespace Box9.Leds.DataStorage
 {
-    public class TemporaryChunkedStorageClient<TKey, TValue> : IDisposable where TValue : new()
+    public class ChunkedStorageClient<TKey, TValue> : IChunkedStorageClient<TKey, TValue> where TValue : new()
     {
         private readonly DBreezeEngine engine;
         private readonly string table;
 
-        public TemporaryChunkedStorageClient(DBreezeEngine engine, string table)
+        public ChunkedStorageClient(DBreezeEngine engine, string table)
         {
             this.engine = engine;
             this.table = table;
@@ -19,7 +20,7 @@ namespace Box9.Leds.DataStorage
         {
             using (var transaction = engine.GetTransaction())
             {
-                transaction.Insert(table, key, item);
+                transaction.Insert(table, key, JsonConvert.SerializeObject(item));
                 transaction.Commit();
             }
         }
@@ -28,10 +29,10 @@ namespace Box9.Leds.DataStorage
         {
             using (var transaction = engine.GetTransaction())
             {
-                var row = transaction.Select<TKey, IEnumerable<TValue>>(table, key);
+                var row = transaction.Select<TKey, string>(table, key);
                 if (row.Exists)
                 {
-                    value = row.Value;
+                    value = JsonConvert.DeserializeObject<IEnumerable<TValue>>(row.Value);
                     return true;
                 }
             }
@@ -42,12 +43,6 @@ namespace Box9.Leds.DataStorage
 
         public void Dispose()
         {
-            using (var transaction = engine.GetTransaction())
-            {
-                transaction.RemoveAllKeys(table, false);
-                transaction.Commit();
-            }
-
             engine.Dispose();
         }
     }

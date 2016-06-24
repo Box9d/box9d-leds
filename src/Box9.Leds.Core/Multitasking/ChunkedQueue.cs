@@ -1,14 +1,23 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Box9.Leds.Core.Multitasking
 {
-    internal class ChunkedQueue<T>
+    public class ChunkedQueue<T>
     {
         private readonly ConcurrentQueue<IEnumerable<T>> queue;
         private const int MaxDequeueAttempts = 3;
 
-        internal ChunkedQueue()
+        public int NumberOfItemsInAllChunks
+        {
+            get
+            {
+                return queue.Sum(q => q.Count());
+            }
+        }
+
+        public ChunkedQueue()
         {
             queue = new ConcurrentQueue<IEnumerable<T>>();
         }
@@ -22,7 +31,7 @@ namespace Box9.Leds.Core.Multitasking
         {
             IEnumerable<T> item;
             int dequeueAttempts = 0;
-            while (!queue.TryDequeue(out item) || dequeueAttempts < MaxDequeueAttempts)
+            while (!queue.TryDequeue(out item) && dequeueAttempts < MaxDequeueAttempts)
             {
                 dequeueAttempts++;
             }

@@ -16,10 +16,8 @@ namespace Box9.Leds.TestHarness
 
         static async Task MainAsync(string[] args)
         {
-            using (IVideoReader reader = new VideoReader())
-            {
-                var output = reader.ExtractAudioToFile("C:\\Users\\rzp\\Desktop\\Test Videos\\Test Video.mp4");
-            }
+            //IVideoTransformer reader = new VideoTransformer("C:\\Users\\rzp\\Desktop\\Test Videos\\Test Video.mp4");
+            //var output = reader.ExtractAndSaveAudio();
         }
     }
 }

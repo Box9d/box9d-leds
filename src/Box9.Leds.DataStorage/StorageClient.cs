@@ -1,9 +1,8 @@
-﻿using System;
-using DBreeze;
+﻿using DBreeze;
 
 namespace Box9.Leds.DataStorage
 {
-    public class StorageClient<TKey, TValue> : IDisposable where TValue : new()
+    public class StorageClient<TKey, TValue> : IStorageClient<TKey, TValue> where TValue : new()
     {
         private readonly DBreezeEngine engine;
         private readonly string table;

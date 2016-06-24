@@ -3,7 +3,7 @@
     public class SnareDrumLedLayout : LedLayout
     {
         public SnareDrumLedLayout()
-            : base(30, 16)
+            : base(60, 32)
         {
         }
 

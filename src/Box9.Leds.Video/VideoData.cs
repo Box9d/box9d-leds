@@ -5,13 +5,17 @@ namespace Box9.Leds.Video
 {
     public class VideoData
     {
-        public Dictionary<int, IEnumerable<PixelInfo>> Frames { get; set; }
+        public IEnumerable<int> FrameStorageKeys { get; set; }
+
+        public long TotalNumberOfFrames { get; set; }
+
+        public int FramesPerStorageKey { get; set; }
 
         public int Framerate { get; set; }
 
         public VideoData()
         {
-            Frames = new Dictionary<int, IEnumerable<PixelInfo>>();
+            FrameStorageKeys = new List<int>();
         }
     }
 }

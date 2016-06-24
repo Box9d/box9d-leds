@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Box9.Leds.Core;
 using Box9.Leds.Core.LedLayouts;
 using Box9.Leds.Core.Servers;
+using Box9.Leds.DataStorage;
 using Box9.Leds.FcClient;
 using Box9.Leds.Video;
 
@@ -19,6 +20,7 @@ namespace Box9.Leds.Manager.Forms
         private readonly string identifier;
 
         private IClientWrapper displayClientWrapper;
+        private ChunkedStorageClient<int, FrameVideoData> videoStorageClient;
         private VideoPlayer displayVideoPlayer;
         private Task displayVideoPlayerTask;
         private CancellationTokenSource cts;
@@ -30,7 +32,6 @@ namespace Box9.Leds.Manager.Forms
             this.ledLayout = ledLayout;
             this.identifier = identifier;
 
-            this.displayVideoPlayer = new VideoPlayer(new VideoReader());
             this.cts = new CancellationTokenSource();
 
             this.videoBrowserDialog.FileOk += VideoSelected;
@@ -82,8 +83,6 @@ namespace Box9.Leds.Manager.Forms
             this.toolStripStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
 
             this.FormClosing += OnClose;
-
-            this.displayVideoPlayer.VideoStatusChanged += VideoStatusChanged;
         }
 
         private void OnClose(object sender, FormClosingEventArgs e)
@@ -100,9 +99,19 @@ namespace Box9.Leds.Manager.Forms
         {
             this.displayClientWrapper = new DisplayClientWrapper(this.displayPanel, this.ledLayout);
 
+            var dbEngine = StorageFactory.GetDBreezeEngine();
+
+            videoStorageClient = new ChunkedStorageClient<int, FrameVideoData>(dbEngine, "video" + Guid.NewGuid().ToString());
+
+            var videoTransformer = new VideoTransformer(videoStorageClient, this.videoBrowserDialog.FileName);
+
+            displayVideoPlayer = new VideoPlayer(videoStorageClient, videoTransformer, this.displayClientWrapper, VideoSettings.FramesPerStorageKey, VideoSettings.FramesPerStorageKey);
+
+            this.displayVideoPlayer.VideoStatusChanged += VideoStatusChanged;
+
             Task.Run(() =>
             {
-                displayVideoPlayer.Load(displayClientWrapper, this.videoBrowserDialog.FileName, this.ledLayout);
+                displayVideoPlayer.Load(this.ledLayout);
             });
 
             this.Enabled = false;

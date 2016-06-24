@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -8,7 +10,10 @@ using System.Threading.Tasks;
 using System.Timers;
 using Box9.Leds.Core.LedLayouts;
 using Box9.Leds.Core.Messages.UpdatePixels;
+using Box9.Leds.Core.Multitasking;
 using Box9.Leds.Core.Patterns;
+using Box9.Leds.Core.UpdatePixels;
+using Box9.Leds.DataStorage;
 using Box9.Leds.FcClient;
 using NAudio.Wave;
 
@@ -16,111 +21,169 @@ namespace Box9.Leds.Video
 {
     public class VideoPlayer : IDisposable
     {
-        private readonly IVideoReader videoReader;
+        private readonly IVideoTransformer videoReader;
+        private readonly IChunkedStorageClient<int, FrameVideoData> videoStorageClient;
+        private readonly IClientWrapper fcClient;
+        private readonly int framesPerStorageKey;
 
-        private IClientWrapper client;
+        private ChunkedQueue<FrameVideoData> videoFrameQueue;
+        private IMp3AudioPlayer mp3AudioPlayer;
+        private VideoStatus currentStatus;
         private VideoData videoData;
-        private string audioFilePath;
+        private VideoAudioData videoAudioData;
+
         private LedLayout ledLayout;
-        private int lastFrame;
-        private bool videoIsLoaded;
         private int totalPlayTime;
+        private int loadedStorageKeys;
 
         public delegate void ChangeVideoStatus(VideoStatus status);
         public event ChangeVideoStatus VideoStatusChanged;
 
-        public VideoPlayer(IVideoReader videoReader)
+        public VideoPlayer(IChunkedStorageClient<int, FrameVideoData> videoStorageClient,
+            IVideoTransformer videoReader,
+            IClientWrapper fcClient,
+            int framesPerStorageKey,
+            int bufferInSeconds)
         {
             this.videoReader = videoReader;
-            this.videoIsLoaded = false;
+            this.videoStorageClient = videoStorageClient;
+            this.fcClient = fcClient;
+
+            this.framesPerStorageKey = framesPerStorageKey;
 
             VideoStatusChanged += VideoStatusChangedHandle;
-
             VideoStatusChanged(VideoStatus.None);
         }
 
-        public void Load(IClientWrapper client, string videoFilePath, LedLayout ledLayout)
+        public void Load(LedLayout ledLayout)
         {
-            videoData = videoReader.TransformVideo(videoFilePath, ledLayout);
+            fcClient.ConnectAsync();
 
-            if (videoData.Frames.Any())
+            this.videoFrameQueue = new ChunkedQueue<FrameVideoData>();
+
+            if (currentStatus == VideoStatus.None)
             {
-                this.lastFrame = videoData.Frames.Max(f => f.Key);
+                videoAudioData = videoReader.ExtractAndSaveAudio();
+                videoData = videoReader.ExtractAndSaveTransformedVideoInChunks(framesPerStorageKey, ledLayout);
+
+                mp3AudioPlayer = new Mp3AudioPlayer(videoAudioData);
             }
 
             this.ledLayout = ledLayout;
-            this.client = client;
-            this.audioFilePath = videoReader.ExtractAudioToFile(videoFilePath);
-            this.totalPlayTime = (int)Math.Round((double)((double)videoData.Frames.Count / (double)videoData.Framerate) * 1000, 0);
+            this.totalPlayTime = (int)Math.Round((double)((double)videoData.TotalNumberOfFrames / (double)videoData.Framerate) * 1000, 0);
 
-            videoIsLoaded = true;
+            LoadBuffer(BufferReadyForStorageKeys());
+
             VideoStatusChanged(VideoStatus.ReadyToPlay);
         }
 
         public async Task Play(CancellationToken cancellationToken)
         {
-            if (!videoIsLoaded)
+            if (currentStatus != VideoStatus.ReadyToPlay)
             {
                 throw new InvalidOperationException("Load a video before trying to play");
             }
 
-            await client.ConnectAsync();
+            await fcClient.ConnectAsync();
 
             VideoStatusChanged(VideoStatus.Playing);
 
-            using (var ms = File.OpenRead(audioFilePath))
-            using (var rdr = new Mp3FileReader(ms))
-            using (var wavStream = WaveFormatConversionStream.CreatePcmStream(rdr))
-            using (var baStream = new BlockAlignReductionStream(wavStream))
-            using (var waveOut = new WaveOut(WaveCallbackInfo.FunctionCallback()))
+            var playStopwatch = new Stopwatch();
+            mp3AudioPlayer.Play();
+            playStopwatch.Start();
+
+            int loadedChunkStorageKey = 1;
+            int currentFrame = 1;
+            FrameVideoData[] loadedChunk = null;
+            while (playStopwatch.ElapsedMilliseconds < totalPlayTime && !cancellationToken.IsCancellationRequested)
             {
-                waveOut.Init(baStream);
+                double secondsPassed = (double)playStopwatch.ElapsedMilliseconds / 1000;
 
-                var playStopwatch = new Stopwatch();
-                waveOut.Play();
-                playStopwatch.Start();
-                while (playStopwatch.ElapsedMilliseconds < totalPlayTime && !cancellationToken.IsCancellationRequested)
+                currentFrame = (int)Math.Round(secondsPassed * videoData.Framerate, 0) + 1;
+                if (currentFrame > videoData.TotalNumberOfFrames)
                 {
-                    double secondsPassed = (double)playStopwatch.ElapsedMilliseconds / 1000;
+                    break;
+                }
 
-                    var currentFrame = (int)Math.Round(secondsPassed * videoData.Framerate, 0);
-                    if (currentFrame > lastFrame)
-                    {
-                        break;
-                    }
+                // Load the current chunk into memory to save IO reads from storage
+                int storageKeyForCurrentFrame = 1;
+                while (currentFrame > storageKeyForCurrentFrame * videoData.FramesPerStorageKey)
+                {
+                    storageKeyForCurrentFrame++;
+                }
 
-                    await client.SendPixelUpdates(new UpdatePixelsRequest
+                if (loadedChunk == null || storageKeyForCurrentFrame != loadedChunkStorageKey)
+                {
+                    loadedChunk = videoFrameQueue.DequeueChunk().ToArray();
+                    loadedChunkStorageKey = storageKeyForCurrentFrame;
+                }
+
+                var currentFrameInChunk = currentFrame - ((loadedChunkStorageKey - 1) * videoData.FramesPerStorageKey);
+                var frameData = loadedChunk.Skip(currentFrameInChunk - 1).Take(1).SingleOrDefault();
+
+                if (frameData != null)
+                {
+                    await fcClient.SendPixelUpdates(new UpdatePixelsRequest
                     {
-                        PixelUpdates = videoData.Frames[currentFrame]
+                        PixelUpdates = frameData.PixelInfo
                     });
                 }
 
-                var allPixelsBlack = Block.GeneratePattern(
-                    Color.Black, ledLayout, ledLayout.XNumberOfPixels, ledLayout.YNumberOfPixels, 0, 0);
+                var readyForStorageKeys = BufferReadyForStorageKeys();
+                Task.Run(() => LoadBuffer(readyForStorageKeys));
+            }
 
-                await client.SendPixelUpdates(new UpdatePixelsRequest
-                {
-                    PixelUpdates = allPixelsBlack
-                });
+            var allPixelsBlack = Block.GeneratePattern(
+                Color.Black, ledLayout, ledLayout.XNumberOfPixels, ledLayout.YNumberOfPixels, 0, 0);
 
-                if (waveOut.PlaybackState == PlaybackState.Playing)
+            await fcClient.SendPixelUpdates(new UpdatePixelsRequest
+            {
+                PixelUpdates = allPixelsBlack
+            });
+
+            mp3AudioPlayer.Stop();
+            await fcClient.CloseAsync();
+            mp3AudioPlayer.Dispose();
+
+            mp3AudioPlayer = new Mp3AudioPlayer(videoAudioData);
+            loadedStorageKeys = 0;
+
+            LoadBuffer(BufferReadyForStorageKeys());
+            VideoStatusChanged(VideoStatus.ReadyToPlay);     
+        }
+
+        private IEnumerable<int> BufferReadyForStorageKeys()
+        {
+            while (VideoSettings.BufferInSeconds * videoData.Framerate > videoFrameQueue.NumberOfItemsInAllChunks
+               && loadedStorageKeys < videoData.FrameStorageKeys.Count())
+            {
+                loadedStorageKeys++;
+                yield return loadedStorageKeys;
+            }
+        }
+
+        private void LoadBuffer(IEnumerable<int> storageKeys)
+        {
+            storageKeys = storageKeys.OrderBy(k => k).ToArray();
+
+            foreach (var storageKey in storageKeys)
+            {
+                IEnumerable<FrameVideoData> chunk = null;
+                if (videoStorageClient.LoadIfExists(storageKey, out chunk))
                 {
-                    waveOut.Stop();
+                    videoFrameQueue.EnqueueChunk(chunk);
                 }
-
-                await client.CloseAsync();
-
-                VideoStatusChanged(VideoStatus.ReadyToPlay);
-            }           
+            }
         }
 
         private void VideoStatusChangedHandle(VideoStatus status)
         {
+            currentStatus = status;
         }
 
         public void Dispose()
         {
-            this.videoReader.Dispose();
+            this.mp3AudioPlayer.Dispose();
         }
     }
 }

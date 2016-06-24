@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Box9.Leds.Core;
 using Box9.Leds.Core.LedLayouts;
 using Box9.Leds.Core.Servers;
+using Box9.Leds.DataStorage;
 using Box9.Leds.FcClient;
 using Box9.Leds.Video;
 
@@ -22,6 +23,8 @@ namespace Box9.Leds.Manager.Forms
         private IClientWrapper wsClientWrapper;
         private IClientWrapper displayClientWrapper;
 
+        private ChunkedStorageClient<int, FrameVideoData> videoStorageClient;
+        private ChunkedStorageClient<string, EncodedAudio> audioStorageClient;
         private VideoPlayer fcVideoPlayer;
         private VideoPlayer displayVideoPlayer;
         private Task fcVideoPlayerTask;
@@ -42,6 +45,10 @@ namespace Box9.Leds.Manager.Forms
 
             this.videoBrowserDialog.FileOk += VideoSelected;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
+        }
+
+        public FadecandyServerForm() : base()
+        {
         }
 
         private void ServerForm_Load(object sender, System.EventArgs e)
@@ -89,11 +96,6 @@ namespace Box9.Leds.Manager.Forms
             this.toolStripStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
 
             this.FormClosing += OnClose;
-
-            this.fcVideoPlayer = new VideoPlayer(new VideoReader());
-            this.displayVideoPlayer = new VideoPlayer(new VideoReader());
-
-            this.displayVideoPlayer.VideoStatusChanged += VideoStatusChanged;
         }
 
         private void OnClose(object sender, FormClosingEventArgs e)
@@ -112,10 +114,22 @@ namespace Box9.Leds.Manager.Forms
             this.wsClientWrapper = new WsClientWrapper(new System.Uri(string.Format("ws://{0}:{1}", ip.ToString(), port)));
             this.displayClientWrapper = new DisplayClientWrapper(this.displayPanel, this.ledLayout);
 
+            var dbEngine = StorageFactory.GetDBreezeEngine();
+
+            videoStorageClient = new ChunkedStorageClient<int, FrameVideoData>(dbEngine, "video" + Guid.NewGuid().ToString());
+            audioStorageClient = new ChunkedStorageClient<string, EncodedAudio>(dbEngine, "audio");
+
+            var videoTransformer = new VideoTransformer(videoStorageClient, this.videoBrowserDialog.FileName);
+
+            fcVideoPlayer = new VideoPlayer(videoStorageClient, videoTransformer, this.wsClientWrapper, VideoSettings.FramesPerStorageKey, VideoSettings.FramesPerStorageKey);
+            displayVideoPlayer = new VideoPlayer(videoStorageClient, videoTransformer, this.wsClientWrapper, VideoSettings.FramesPerStorageKey, VideoSettings.FramesPerStorageKey);
+
+            this.displayVideoPlayer.VideoStatusChanged += VideoStatusChanged;
+
             Task.Run(() =>
             {
-                fcVideoPlayer.Load(wsClientWrapper, this.videoBrowserDialog.FileName, this.ledLayout);
-                displayVideoPlayer.Load(displayClientWrapper, this.videoBrowserDialog.FileName, this.ledLayout);
+                fcVideoPlayer.Load(this.ledLayout);
+                displayVideoPlayer.Load(this.ledLayout);
             });
 
             this.Enabled = false;
