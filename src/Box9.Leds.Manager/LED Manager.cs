@@ -16,17 +16,6 @@ namespace Box9.Leds.Manager
             InitializeComponent();
         }
 
-        private void addNewServerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            addServerForm = new AddServerForm();
-            addServerForm.StartPosition = FormStartPosition.Manual;
-            addServerForm.Location = new System.Drawing.Point(this.Location.X + 20, this.Location.X + 20);
-
-            addServerForm.ServerAdded += ServerAddedHandle;
-
-            addServerForm.Show();
-        }
-
         private void ServerAddedHandle(ServerBase server, LedLayout ledLayout)
         {
             if (server is FadecandyServer)
@@ -54,6 +43,17 @@ namespace Box9.Leds.Manager
                 serverForm.BringToFront();
                 serverForm.Show();
             }
+        }
+
+        private void addToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            addServerForm = new AddServerForm();
+            addServerForm.StartPosition = FormStartPosition.Manual;
+            addServerForm.Location = new System.Drawing.Point(this.Location.X + 20, this.Location.X + 20);
+
+            addServerForm.ServerAdded += ServerAddedHandle;
+
+            addServerForm.Show();
         }
     }
 }

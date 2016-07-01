@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Box9.Leds.Core.Multitasking
 {
-    public class ChunkedQueue<T>
+    public class ChunkedConcurrentQueue<T>
     {
         private readonly ConcurrentQueue<IEnumerable<T>> queue;
         private const int MaxDequeueAttempts = 3;
@@ -17,7 +17,7 @@ namespace Box9.Leds.Core.Multitasking
             }
         }
 
-        public ChunkedQueue()
+        public ChunkedConcurrentQueue()
         {
             queue = new ConcurrentQueue<IEnumerable<T>>();
         }

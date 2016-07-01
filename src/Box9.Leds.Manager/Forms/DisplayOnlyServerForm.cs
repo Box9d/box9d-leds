@@ -24,6 +24,7 @@ namespace Box9.Leds.Manager.Forms
         private VideoPlayer displayVideoPlayer;
         private Task displayVideoPlayerTask;
         private CancellationTokenSource cts;
+        private DBreezeEngineWrapper dbreezeEngine;
 
         public DisplayOnlyServerForm(DisplayOnlyServer server, LedLayout ledLayout, string identifier)
         {
@@ -87,7 +88,11 @@ namespace Box9.Leds.Manager.Forms
 
         private void OnClose(object sender, FormClosingEventArgs e)
         {
-            this.displayVideoPlayer.Dispose();
+            if (this.displayVideoPlayer != null)
+            {
+                this.displayVideoPlayer.Dispose();
+                this.dbreezeEngine.Dispose();
+            }
         }
 
         private void importVideoButton_Click(object sender, System.EventArgs e)
@@ -99,9 +104,9 @@ namespace Box9.Leds.Manager.Forms
         {
             this.displayClientWrapper = new DisplayClientWrapper(this.displayPanel, this.ledLayout);
 
-            var dbEngine = StorageFactory.GetDBreezeEngine();
+            this.dbreezeEngine = new DBreezeEngineWrapper();
 
-            videoStorageClient = new ChunkedStorageClient<int, FrameVideoData>(dbEngine, "video" + Guid.NewGuid().ToString());
+            videoStorageClient = new ChunkedStorageClient<int, FrameVideoData>(dbreezeEngine.GetDBreezeEngine(), "video" + Guid.NewGuid().ToString());
 
             var videoTransformer = new VideoTransformer(videoStorageClient, this.videoBrowserDialog.FileName);
 

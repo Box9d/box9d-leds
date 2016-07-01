@@ -25,6 +25,7 @@ namespace Box9.Leds.Manager.Forms
 
         private ChunkedStorageClient<int, FrameVideoData> videoStorageClient;
         private ChunkedStorageClient<string, EncodedAudio> audioStorageClient;
+        private DBreezeEngineWrapper dbreezeEngine;
         private VideoPlayer fcVideoPlayer;
         private VideoPlayer displayVideoPlayer;
         private Task fcVideoPlayerTask;
@@ -100,8 +101,15 @@ namespace Box9.Leds.Manager.Forms
 
         private void OnClose(object sender, FormClosingEventArgs e)
         {
-            this.displayVideoPlayer.Dispose();
-            this.wsClientWrapper.Dispose();
+            if (this.displayVideoPlayer != null)
+            {
+                this.displayVideoPlayer.Dispose();
+            }
+
+            if (this.wsClientWrapper != null)
+            {
+                this.wsClientWrapper.Dispose();
+            }
         }
 
         private void importVideoButton_Click(object sender, System.EventArgs e)
@@ -114,10 +122,10 @@ namespace Box9.Leds.Manager.Forms
             this.wsClientWrapper = new WsClientWrapper(new System.Uri(string.Format("ws://{0}:{1}", ip.ToString(), port)));
             this.displayClientWrapper = new DisplayClientWrapper(this.displayPanel, this.ledLayout);
 
-            var dbEngine = StorageFactory.GetDBreezeEngine();
+            this.dbreezeEngine = new DBreezeEngineWrapper();
 
-            videoStorageClient = new ChunkedStorageClient<int, FrameVideoData>(dbEngine, "video" + Guid.NewGuid().ToString());
-            audioStorageClient = new ChunkedStorageClient<string, EncodedAudio>(dbEngine, "audio");
+            videoStorageClient = new ChunkedStorageClient<int, FrameVideoData>(dbreezeEngine.GetDBreezeEngine(), "video" + Guid.NewGuid().ToString());
+            audioStorageClient = new ChunkedStorageClient<string, EncodedAudio>(dbreezeEngine.GetDBreezeEngine(), "audio");
 
             var videoTransformer = new VideoTransformer(videoStorageClient, this.videoBrowserDialog.FileName);
 

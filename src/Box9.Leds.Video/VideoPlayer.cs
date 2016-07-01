@@ -26,7 +26,7 @@ namespace Box9.Leds.Video
         private readonly IClientWrapper fcClient;
         private readonly int framesPerStorageKey;
 
-        private ChunkedQueue<FrameVideoData> videoFrameQueue;
+        private ChunkedConcurrentQueue<FrameVideoData> videoFrameQueue;
         private IMp3AudioPlayer mp3AudioPlayer;
         private VideoStatus currentStatus;
         private VideoData videoData;
@@ -59,7 +59,7 @@ namespace Box9.Leds.Video
         {
             fcClient.ConnectAsync();
 
-            this.videoFrameQueue = new ChunkedQueue<FrameVideoData>();
+            this.videoFrameQueue = new ChunkedConcurrentQueue<FrameVideoData>();
 
             if (currentStatus == VideoStatus.None)
             {
