@@ -51,6 +51,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DisplayClientWrapper.cs" />
+    <Compile Include="Extensions\ComboBoxExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TextBoxExtensions.cs" />
     <Compile Include="Forms\AddServerForm.cs">
       <SubType>Form</SubType>
     </Compile>

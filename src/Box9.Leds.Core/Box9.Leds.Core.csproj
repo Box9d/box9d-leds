@@ -48,6 +48,8 @@
     <Compile Include="BitmapExtensions.cs" />
     <Compile Include="Configuration\LedConfiguration.cs" />
     <Compile Include="Configuration\ServerConfiguration.cs" />
+    <Compile Include="Configuration\ServerVideoConfiguration.cs" />
+    <Compile Include="Configuration\VideoConfiguration.cs" />
     <Compile Include="LedLayouts\CustomLedLayout.cs" />
     <Compile Include="LedLayouts\LedLayout.cs" />
     <Compile Include="LedLayouts\SnareDrumLedLayout.cs" />
