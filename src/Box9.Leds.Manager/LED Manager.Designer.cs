@@ -43,6 +43,12 @@
             this.importVideoButton = new System.Windows.Forms.Button();
             this.labelVideoFilePath = new System.Windows.Forms.Label();
             this.labelVideo = new System.Windows.Forms.Label();
+            this.buttonInitializePlayback = new System.Windows.Forms.Button();
+            this.labelPlayback = new System.Windows.Forms.Label();
+            this.listIssues = new System.Windows.Forms.ListBox();
+            this.buttonPlay = new System.Windows.Forms.Button();
+            this.buttonStop = new System.Windows.Forms.Button();
+            this.newConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,6 +65,7 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newConfigurationToolStripMenuItem,
             this.loadConfigurationToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem});
@@ -149,12 +156,11 @@
             // 
             // labelVideoFilePath
             // 
-            this.labelVideoFilePath.AutoSize = true;
-            this.labelVideoFilePath.Location = new System.Drawing.Point(367, 70);
+            this.labelVideoFilePath.Location = new System.Drawing.Point(246, 104);
             this.labelVideoFilePath.Name = "labelVideoFilePath";
-            this.labelVideoFilePath.Size = new System.Drawing.Size(30, 13);
+            this.labelVideoFilePath.Size = new System.Drawing.Size(201, 59);
             this.labelVideoFilePath.TabIndex = 7;
-            this.labelVideoFilePath.Text = "temp";
+            this.labelVideoFilePath.Text = "No video selected";
             // 
             // labelVideo
             // 
@@ -166,11 +172,73 @@
             this.labelVideo.TabIndex = 8;
             this.labelVideo.Text = "Video";
             // 
+            // buttonInitializePlayback
+            // 
+            this.buttonInitializePlayback.Location = new System.Drawing.Point(487, 65);
+            this.buttonInitializePlayback.Name = "buttonInitializePlayback";
+            this.buttonInitializePlayback.Size = new System.Drawing.Size(138, 23);
+            this.buttonInitializePlayback.TabIndex = 9;
+            this.buttonInitializePlayback.Text = "Initialize playback...";
+            this.buttonInitializePlayback.UseVisualStyleBackColor = true;
+            this.buttonInitializePlayback.Click += new System.EventHandler(this.buttonInitializePlayback_Click);
+            // 
+            // labelPlayback
+            // 
+            this.labelPlayback.AutoSize = true;
+            this.labelPlayback.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelPlayback.Location = new System.Drawing.Point(484, 39);
+            this.labelPlayback.Name = "labelPlayback";
+            this.labelPlayback.Size = new System.Drawing.Size(51, 13);
+            this.labelPlayback.TabIndex = 10;
+            this.labelPlayback.Text = "Playback";
+            // 
+            // listIssues
+            // 
+            this.listIssues.FormattingEnabled = true;
+            this.listIssues.Location = new System.Drawing.Point(487, 104);
+            this.listIssues.Name = "listIssues";
+            this.listIssues.Size = new System.Drawing.Size(184, 186);
+            this.listIssues.TabIndex = 11;
+            // 
+            // buttonPlay
+            // 
+            this.buttonPlay.Enabled = false;
+            this.buttonPlay.Location = new System.Drawing.Point(487, 301);
+            this.buttonPlay.Name = "buttonPlay";
+            this.buttonPlay.Size = new System.Drawing.Size(75, 23);
+            this.buttonPlay.TabIndex = 12;
+            this.buttonPlay.Text = "Play";
+            this.buttonPlay.UseVisualStyleBackColor = true;
+            this.buttonPlay.Click += new System.EventHandler(this.buttonPlay_Click);
+            // 
+            // buttonStop
+            // 
+            this.buttonStop.Enabled = false;
+            this.buttonStop.Location = new System.Drawing.Point(596, 301);
+            this.buttonStop.Name = "buttonStop";
+            this.buttonStop.Size = new System.Drawing.Size(75, 23);
+            this.buttonStop.TabIndex = 13;
+            this.buttonStop.Text = "Stop";
+            this.buttonStop.UseVisualStyleBackColor = true;
+            this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
+            // 
+            // newConfigurationToolStripMenuItem
+            // 
+            this.newConfigurationToolStripMenuItem.Name = "newConfigurationToolStripMenuItem";
+            this.newConfigurationToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.newConfigurationToolStripMenuItem.Text = "New configuration";
+            this.newConfigurationToolStripMenuItem.Click += new System.EventHandler(this.newConfigurationToolStripMenuItem_Click);
+            // 
             // LedManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(716, 346);
+            this.Controls.Add(this.buttonStop);
+            this.Controls.Add(this.buttonPlay);
+            this.Controls.Add(this.listIssues);
+            this.Controls.Add(this.labelPlayback);
+            this.Controls.Add(this.buttonInitializePlayback);
             this.Controls.Add(this.labelVideo);
             this.Controls.Add(this.labelVideoFilePath);
             this.Controls.Add(this.importVideoButton);
@@ -205,6 +273,12 @@
         private System.Windows.Forms.Button importVideoButton;
         private System.Windows.Forms.Label labelVideoFilePath;
         private System.Windows.Forms.Label labelVideo;
+        private System.Windows.Forms.Button buttonInitializePlayback;
+        private System.Windows.Forms.Label labelPlayback;
+        private System.Windows.Forms.ListBox listIssues;
+        private System.Windows.Forms.Button buttonPlay;
+        private System.Windows.Forms.Button buttonStop;
+        private System.Windows.Forms.ToolStripMenuItem newConfigurationToolStripMenuItem;
     }
 }
 

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Box9.Leds.Core.Configuration;
 using Box9.Leds.DataStorage;
+using Box9.Leds.Manager.Extensions;
 using Box9.Leds.Manager.Forms;
+using Box9.Leds.Manager.Validation;
 
 namespace Box9.Leds.Manager
 {
@@ -12,6 +15,7 @@ namespace Box9.Leds.Manager
         private AddServerForm addServerForm;
         private int numberOfDisplayServers;
         private string loadedConfigFilePath;
+        private string videoSourceFilePath;
         private readonly IConfigurationStorageClient configurationStorage;
 
         public LedManager()
@@ -105,19 +109,21 @@ namespace Box9.Leds.Manager
 
         private void LoadConfig(LedConfiguration config)
         {
-            for (int i = 0; i < this.listBoxServers.Items.Count; i++)
-            {
-                this.listBoxServers.Items.RemoveAt(i);
-            }
+            this.listBoxServers.RemoveAllItems();
 
             foreach (var server in config.Servers)
             {
                 this.listBoxServers.Items.Add(server);
             }
 
-            this.labelVideoFilePath.Text = config.VideoConfig != null
+            videoSourceFilePath = config.VideoConfig != null
                 ? config.VideoConfig.SourceFilePath
                 : string.Empty;
+
+            if (!string.IsNullOrEmpty(videoSourceFilePath))
+            {
+                labelVideoFilePath.Text = videoSourceFilePath;
+            }
         }
 
         private void SaveConfig()
@@ -133,21 +139,21 @@ namespace Box9.Leds.Manager
                 Servers = servers,
                 VideoConfig = new VideoConfiguration
                 {
-                    SourceFilePath = this.labelVideoFilePath.Text
+                    SourceFilePath = this.videoSourceFilePath
                 }
             }, this.loadedConfigFilePath);
         }
 
-        private void SaveConfigAs()
+        private DialogResult SaveConfigAs()
         {
             var result = this.saveConfigurationDialog.ShowDialog();
-            if (result != DialogResult.OK)
+            if (result == DialogResult.OK)
             {
-                return;
+                loadedConfigFilePath = saveConfigurationDialog.FileName;
+                SaveConfig();
             }
 
-            loadedConfigFilePath = saveConfigurationDialog.FileName;
-            SaveConfig();
+            return result;
         }
 
         private void importVideoButton_Click(object sender, EventArgs e)
@@ -157,7 +163,63 @@ namespace Box9.Leds.Manager
             if (result == DialogResult.OK)
             {
                 labelVideoFilePath.Text = videoBrowserDialog.FileName;
+                videoSourceFilePath = videoBrowserDialog.FileName;
             }
+        }
+
+        private void buttonInitializePlayback_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(loadedConfigFilePath))
+            {
+                var dialogResult = SaveConfigAs();
+                if (dialogResult != DialogResult.OK)
+                {
+                    return; // Don't validate if the file isn't saved
+                }
+            }
+            else
+            {
+                SaveConfig();
+            }
+
+            listIssues.RemoveAllItems();
+
+            IConfigurationValidator validator = new ConfigurationValidator();
+            var result = validator.Validate(configurationStorage.Get(this.loadedConfigFilePath));
+
+            if (result.OK)
+            {
+                buttonPlay.Enabled = true;
+            }
+            else
+            {
+                buttonPlay.Enabled = false;
+                foreach (var issue in result.Errors)
+                {
+                    listIssues.Items.Add(issue);
+                }
+            }
+        }
+
+        private void buttonPlay_Click(object sender, EventArgs e)
+        {
+            this.ToggleButtonAvailabilities(false, buttonStop);
+
+            // TODO: logic
+        }
+
+        private void buttonStop_Click(object sender, EventArgs e)
+        {
+            this.ToggleButtonAvailabilities(true, buttonPlay, buttonStop);
+        }
+
+        private void newConfigurationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.listBoxServers.RemoveAllItems();
+            this.videoSourceFilePath = null;
+            this.labelVideoFilePath.Text = "No video selected";
+
+            this.loadedConfigFilePath = null;
         }
     }
 }
