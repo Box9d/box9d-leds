@@ -2,17 +2,17 @@
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using Box9.Leds.Core.LedLayouts;
+using Box9.Leds.Core.Configuration;
 using Box9.Leds.Core.UpdatePixels;
 
 namespace Box9.Leds.Core
 {
     public static class BitmapExtensions
     {
-        public static Bitmap CreateFromPixelInfo(IEnumerable<PixelInfo> pixelInfo, LedLayout layout)
+        public static Bitmap CreateFromPixelInfo(IEnumerable<PixelInfo> pixelInfo, ServerConfiguration serverConfiguration)
         {
-            var width = (PixelDimensions.Width + PixelDimensions.Gap) * layout.XNumberOfPixels;
-            var height = (PixelDimensions.Height + PixelDimensions.Gap) * layout.YNumberOfPixels;
+            var width = (PixelDimensions.Width + PixelDimensions.Gap) * serverConfiguration.XPixels;
+            var height = (PixelDimensions.Height + PixelDimensions.Gap) * serverConfiguration.YPixels;
 
             var bitmap = new Bitmap(width, height);
 
@@ -21,10 +21,10 @@ namespace Box9.Leds.Core
                 var brush = new SolidBrush(Color.Black);
 
                 int currentX = 0;
-                for (int i = 0; i < layout.XNumberOfPixels; i++)
+                for (int i = 0; i < serverConfiguration.XPixels; i++)
                 {
                     int currentY = 0;
-                    for (int j = 0; j < layout.YNumberOfPixels; j++)
+                    for (int j = 0; j < serverConfiguration.YPixels; j++)
                     {
                         var pixel = pixelInfo.SingleOrDefault(p => p.X == i && p.Y == j);
 

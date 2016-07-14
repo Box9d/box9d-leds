@@ -1,4 +1,6 @@
-﻿using DBreeze;
+﻿using System;
+using DBreeze;
+using Newtonsoft.Json;
 
 namespace Box9.Leds.DataStorage
 {
@@ -17,7 +19,7 @@ namespace Box9.Leds.DataStorage
         {
             using (var transaction = engine.GetTransaction())
             {
-                transaction.Insert(table, key, item);
+                transaction.Insert(table, key, JsonConvert.SerializeObject(item));
                 transaction.Commit();
             }
         }
@@ -26,10 +28,10 @@ namespace Box9.Leds.DataStorage
         {
             using (var transaction = engine.GetTransaction())
             {
-                var row = transaction.Select<TKey, TValue>(table, key);
+                var row = transaction.Select<TKey, string>(table, key);
                 if (row.Exists)
                 {
-                    value = row.Value;
+                    value = JsonConvert.DeserializeObject<TValue>(row.Value);
                     return true;
                 }
             }

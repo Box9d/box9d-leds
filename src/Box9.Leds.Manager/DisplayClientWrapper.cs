@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Box9.Leds.Core;
-using Box9.Leds.Core.LedLayouts;
+using Box9.Leds.Core.Configuration;
 using Box9.Leds.Core.Messages;
 using Box9.Leds.Core.Messages.UpdatePixels;
 using Box9.Leds.FcClient;
@@ -13,12 +13,12 @@ namespace Box9.Leds.Manager
     public class DisplayClientWrapper : IClientWrapper
     {
         private readonly Panel panel;
-        private readonly LedLayout ledLayout;
+        private readonly ServerConfiguration serverConfiguration;
 
-        public DisplayClientWrapper(Panel panel, LedLayout ledLayout)
+        public DisplayClientWrapper(Panel panel, ServerConfiguration serverConfiguration)
         {
             this.panel = panel;
-            this.ledLayout = ledLayout;
+            this.serverConfiguration = serverConfiguration;
         }
 
         public async Task ConnectAsync()
@@ -40,7 +40,7 @@ namespace Box9.Leds.Manager
 
         public async Task SendPixelUpdates(UpdatePixelsRequest request)
         {
-            var bitmap = BitmapExtensions.CreateFromPixelInfo(request.PixelUpdates, ledLayout);
+            var bitmap = BitmapExtensions.CreateFromPixelInfo(request.PixelUpdates, serverConfiguration);
 
             panel.Invoke(new Action(() =>
             {

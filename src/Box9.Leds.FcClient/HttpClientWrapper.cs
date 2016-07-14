@@ -52,7 +52,7 @@ namespace Box9.Leds.FcClient
             try
             {
                 // Do all the hard work here by sending an image, rather than letting the server draw the output.
-                var bitmap = BitmapExtensions.CreateFromPixelInfo(request.PixelUpdates, new CustomLedLayout(request.PixelUpdates.Max(p => p.X), request.PixelUpdates.Max(p => p.Y)));
+                var bitmap = BitmapExtensions.CreateFromPixelInfo(request.PixelUpdates, new Core.Configuration.ServerConfiguration { XPixels = request.PixelUpdates.Max(p => p.X), YPixels = request.PixelUpdates.Max(p => p.Y) });
                 var encodedBitmap = BitmapExtensions.Encode(bitmap);
 
                 await httpClient.PostAsync(uri.AbsoluteUri, new ByteArrayContent(encodedBitmap));

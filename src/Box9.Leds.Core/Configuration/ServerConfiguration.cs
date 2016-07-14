@@ -20,10 +20,6 @@ namespace Box9.Leds.Core.Configuration
 
         public ServerVideoConfiguration VideoConfiguration { get; set; }
 
-        public string VideoChunkedStorageTable { get; set; }
-
-        public string VideoChunkedStorageKey { get; set; }
-
         public ServerConfiguration(Guid? id = null)
         {
             Id = id.HasValue ? id.Value : Guid.NewGuid();

@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using Box9.Leds.Core.LedLayouts;
+using Box9.Leds.Core.Configuration;
 using Box9.Leds.Core.UpdatePixels;
 
 namespace Box9.Leds.Core.Patterns
 {
     public class Block
     {
-        public static IEnumerable<PixelInfo> GeneratePattern(Color blockColor, LedLayout ledLayout, int width, int height, int startX, int startY)
+        public static IEnumerable<PixelInfo> GeneratePattern(Color blockColor, ServerConfiguration serverConfig, int width, int height, int startX, int startY)
         {
-            for (int i = 0; i < ledLayout.XNumberOfPixels; i++)
+            for (int i = 0; i < serverConfig.XPixels; i++)
             {
-                for (int j = 0; j < ledLayout.YNumberOfPixels; j++)
+                for (int j = 0; j < serverConfig.YPixels; j++)
                 {
                     var pixelInfo = new PixelInfo
                     {

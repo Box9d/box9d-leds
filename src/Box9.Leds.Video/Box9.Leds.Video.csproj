@@ -52,6 +52,10 @@
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="DBreeze, Version=1.74.2016.329, Culture=neutral, PublicKeyToken=174b57f1c155f3c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\DBreeze.1.74.0\lib\net45\DBreeze.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>
@@ -73,10 +77,14 @@
   <ItemGroup>
     <Compile Include="EncodedAudio.cs" />
     <Compile Include="FrameVideoData.cs" />
+    <Compile Include="IVideoAudioTransformer.cs" />
     <Compile Include="Mp3AudioPlayer.cs" />
     <Compile Include="IMp3AudioPlayer.cs" />
+    <Compile Include="Storage\AudioStorageFactory.cs" />
+    <Compile Include="Storage\VideoStorageFactory.cs" />
     <Compile Include="VideoAudioData.cs" />
     <Compile Include="VideoAudioEncodingType.cs" />
+    <Compile Include="VideoAudioTransformer.cs" />
     <Compile Include="VideoAutofacModule.cs" />
     <Compile Include="VideoSettings.cs" />
     <Compile Include="VideoPlayer.cs" />

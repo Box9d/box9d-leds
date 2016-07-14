@@ -7,7 +7,7 @@ namespace Box9.Leds.Video
 {
     public class Mp3AudioPlayer : IMp3AudioPlayer
     {
-        private readonly VideoAudioData videoAudioData;
+        private readonly AudioData videoAudioData;
 
         private readonly FileStream fileStream;
         private readonly Mp3FileReader mp3FileReader;
@@ -15,7 +15,10 @@ namespace Box9.Leds.Video
         private readonly BlockAlignReductionStream baStream;
         private readonly WaveOut wave;
 
-        public Mp3AudioPlayer(VideoAudioData videoAudioData)
+        public delegate void PlaybackFinished();
+        public event PlaybackFinished Stopped;
+
+        public Mp3AudioPlayer(AudioData videoAudioData)
         {
             this.videoAudioData = videoAudioData;
 
@@ -41,6 +44,7 @@ namespace Box9.Leds.Video
         public void Play()
         {
             wave.Play();
+            wave.PlaybackStopped += PlaybackStoppedHandler;
         }
 
         public void Stop()
@@ -49,6 +53,15 @@ namespace Box9.Leds.Video
             {
                 wave.Stop();
             }
+        }
+
+        private void PlaybackStoppedHandler(object sender, StoppedEventArgs args)
+        {
+            Stopped();
+        }
+
+        private void StoppedHandler()
+        {
         }
     }
 }

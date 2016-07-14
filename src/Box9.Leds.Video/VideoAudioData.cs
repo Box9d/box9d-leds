@@ -1,6 +1,6 @@
 ﻿namespace Box9.Leds.Video
 {
-    public class VideoAudioData
+    public class AudioData
     {
         public string FilePath { get; set; }
 

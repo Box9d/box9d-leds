@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitmapExtensions.cs" />
+    <Compile Include="Configuration\AudioConfiguration.cs" />
     <Compile Include="Configuration\LedConfiguration.cs" />
     <Compile Include="Configuration\ServerConfiguration.cs" />
     <Compile Include="Configuration\ServerVideoConfiguration.cs" />

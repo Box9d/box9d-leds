@@ -57,7 +57,7 @@
     <Compile Include="PathManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StorageClient.cs" />
-    <Compile Include="DBreezeEngineWrapper.cs" />
+    <Compile Include="DBreezeEngineFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

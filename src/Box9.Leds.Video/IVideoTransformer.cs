@@ -1,12 +1,10 @@
 ﻿using System;
-using Box9.Leds.Core.LedLayouts;
+using Box9.Leds.Core.Configuration;
 
 namespace Box9.Leds.Video
 {
-    public interface IVideoTransformer
+    public interface IVideoTransformer : IDisposable
     {
-        VideoData ExtractAndSaveTransformedVideoInChunks(int framesPerStorageKey, LedLayout ledLayout);
-
-        VideoAudioData ExtractAndSaveAudio();
+        VideoData ExtractAndSaveTransformedVideoInChunks(ServerConfiguration serverConfiguration);
     }
 }

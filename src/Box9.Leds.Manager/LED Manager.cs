@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Box9.Leds.Core.Configuration;
 using Box9.Leds.DataStorage;
+using Box9.Leds.Manager.Events;
 using Box9.Leds.Manager.Extensions;
 using Box9.Leds.Manager.Forms;
+using Box9.Leds.Manager.Playback;
 using Box9.Leds.Manager.Validation;
 
 namespace Box9.Leds.Manager
@@ -13,45 +17,22 @@ namespace Box9.Leds.Manager
     public partial class LedManager : Form
     {
         private AddServerForm addServerForm;
-        private int numberOfDisplayServers;
         private string loadedConfigFilePath;
         private string videoSourceFilePath;
         private readonly IConfigurationStorageClient configurationStorage;
+        private DisposablePlayback disposablePlayback;
+
+        public List<ServerForm> ServerForms { get; private set; }
 
         public LedManager()
         {
             InitializeComponent();
             configurationStorage = new ConfigurationStorageClient();
+            ServerForms = new List<ServerForm>();
         }
 
         private void ServerAddedHandle(ServerConfiguration server)
         {
-            //if (server is FadecandyServer)
-            //{
-            //    var serverForm = new FadecandyServerForm((FadecandyServer)server, ledLayout);
-            //    serverForm.StartPosition = FormStartPosition.Manual;
-            //    serverForm.Location = new System.Drawing.Point(this.Location.X + 20, this.Location.X + 20);
-
-            //    serverForm.Visible = true;
-            //    serverForm.BringToFront();
-            //    serverForm.Show();
-            //}
-
-            //if (server is DisplayOnlyServer)
-            //{
-            //    var displayOnlyServer = (DisplayOnlyServer)server;
-
-            //    numberOfDisplayServers++;
-
-            //    var serverForm = new DisplayOnlyServerForm(displayOnlyServer, ledLayout, "Display only server " + numberOfDisplayServers);
-            //    serverForm.StartPosition = FormStartPosition.Manual;
-            //    serverForm.Location = new System.Drawing.Point(this.Location.X + 20, this.Location.X + 20);
-
-            //    serverForm.Visible = true;
-            //    serverForm.BringToFront();
-            //    serverForm.Show();
-            //}
-
             this.listBoxServers.Items.Add(server);
         }
 
@@ -140,6 +121,10 @@ namespace Box9.Leds.Manager
                 VideoConfig = new VideoConfiguration
                 {
                     SourceFilePath = this.videoSourceFilePath
+                },
+                AudioConfig = new AudioConfiguration
+                {
+                    SourceFilePath = this.videoSourceFilePath
                 }
             }, this.loadedConfigFilePath);
         }
@@ -185,11 +170,12 @@ namespace Box9.Leds.Manager
             listIssues.RemoveAllItems();
 
             IConfigurationValidator validator = new ConfigurationValidator();
-            var result = validator.Validate(configurationStorage.Get(this.loadedConfigFilePath));
+            var config = configurationStorage.Get(this.loadedConfigFilePath);
+            var result = validator.Validate(config);
 
             if (result.OK)
             {
-                buttonPlay.Enabled = true;
+                Task.Run(() => InitializePlayback(config));
             }
             else
             {
@@ -201,16 +187,77 @@ namespace Box9.Leds.Manager
             }
         }
 
+        private async Task InitializePlayback(LedConfiguration config)
+        {
+            var disposablePlaybackFactory = new DisposablePlaybackFactory();
+            disposablePlaybackFactory.StatusUpdate += DisposablePlaybackInitializeUpdate;
+
+            this.Invoke(new Action(() =>
+            {
+                this.ToggleButtonAvailabilities(false);
+            }));
+
+            try
+            {
+                this.disposablePlayback = disposablePlaybackFactory.InitializeFromConfig(this, config);
+
+                this.Invoke(new Action(() =>
+                {
+                    this.ToggleButtonAvailabilities(false, buttonPlay);
+                }));
+            }
+            catch (Exception ex)
+            {
+                this.Invoke(new Action(() =>
+                {
+                    this.ToggleButtonAvailabilities(true, this.buttonPlay, this.buttonStop);
+                    MessageBox.Show(ex.Message);
+                }));
+            }
+
+            await Task.Yield();
+        }
+
         private void buttonPlay_Click(object sender, EventArgs e)
         {
+            Task.Run(() => this.disposablePlayback.Play());
+
             this.ToggleButtonAvailabilities(false, buttonStop);
 
-            // TODO: logic
+            this.disposablePlayback.Finished += () =>
+            {
+                this.Invoke(new Action(() =>
+                {
+                    this.ToggleButtonAvailabilities(true, buttonPlay, buttonStop);
+                    this.disposablePlayback.Dispose();
+
+                    foreach (var server in ServerForms)
+                    {
+                        server.Close();
+                        server.Dispose();
+                    }
+
+                    ServerForms = new List<ServerForm>();
+                }));
+            };
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
         {
-            this.ToggleButtonAvailabilities(true, buttonPlay, buttonStop);
+            this.Invoke(new Action(() =>
+            {
+                this.ToggleButtonAvailabilities(true, buttonPlay, buttonStop);
+                this.disposablePlayback.Stop();
+                this.disposablePlayback.Dispose();
+
+                foreach (var server in ServerForms)
+                {
+                    server.Close();
+                    server.Dispose();
+                }
+
+                ServerForms = new List<ServerForm>();
+            }));
         }
 
         private void newConfigurationToolStripMenuItem_Click(object sender, EventArgs e)
@@ -220,6 +267,14 @@ namespace Box9.Leds.Manager
             this.labelVideoFilePath.Text = "No video selected";
 
             this.loadedConfigFilePath = null;
+        }
+
+        private void DisposablePlaybackInitializeUpdate(EventMessage message)
+        {
+            this.Invoke(new Action(() =>
+            {
+                this.stripStatusLabel.Text = message.Status + ": " + message.Message;
+            }));
         }
     }
 }

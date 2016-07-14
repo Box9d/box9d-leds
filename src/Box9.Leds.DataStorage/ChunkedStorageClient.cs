@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using DBreeze;
 using Newtonsoft.Json;
 
@@ -14,6 +14,21 @@ namespace Box9.Leds.DataStorage
         {
             this.engine = engine;
             this.table = table;
+        }
+
+        public bool ContainsData()
+        {
+            using (var transaction = engine.GetTransaction())
+            {
+                try
+                {
+                    return transaction.Count(table) > 0;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
         }
 
         public void Save(TKey key, IEnumerable<TValue> item)

@@ -30,6 +30,7 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,8 +49,10 @@
             this.listIssues = new System.Windows.Forms.ListBox();
             this.buttonPlay = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
-            this.newConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.stripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -72,6 +75,13 @@
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
+            // 
+            // newConfigurationToolStripMenuItem
+            // 
+            this.newConfigurationToolStripMenuItem.Name = "newConfigurationToolStripMenuItem";
+            this.newConfigurationToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.newConfigurationToolStripMenuItem.Text = "New configuration";
+            this.newConfigurationToolStripMenuItem.Click += new System.EventHandler(this.newConfigurationToolStripMenuItem_Click);
             // 
             // loadConfigurationToolStripMenuItem
             // 
@@ -222,18 +232,27 @@
             this.buttonStop.UseVisualStyleBackColor = true;
             this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
             // 
-            // newConfigurationToolStripMenuItem
+            // statusStrip
             // 
-            this.newConfigurationToolStripMenuItem.Name = "newConfigurationToolStripMenuItem";
-            this.newConfigurationToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.newConfigurationToolStripMenuItem.Text = "New configuration";
-            this.newConfigurationToolStripMenuItem.Click += new System.EventHandler(this.newConfigurationToolStripMenuItem_Click);
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.stripStatusLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 334);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(716, 22);
+            this.statusStrip.TabIndex = 14;
+            this.statusStrip.Text = "statusStrip";
+            // 
+            // stripStatusLabel
+            // 
+            this.stripStatusLabel.Name = "stripStatusLabel";
+            this.stripStatusLabel.Size = new System.Drawing.Size(0, 17);
             // 
             // LedManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(716, 346);
+            this.ClientSize = new System.Drawing.Size(716, 356);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.buttonPlay);
             this.Controls.Add(this.listIssues);
@@ -251,6 +270,8 @@
             this.Text = "LED Manager";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -279,6 +300,8 @@
         private System.Windows.Forms.Button buttonPlay;
         private System.Windows.Forms.Button buttonStop;
         private System.Windows.Forms.ToolStripMenuItem newConfigurationToolStripMenuItem;
+        private System.Windows.Forms.StatusStrip statusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel stripStatusLabel;
     }
 }
 
