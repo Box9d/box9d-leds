@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using Box9.Leds.Core.Configuration;
 using Box9.Leds.FcClient;
 
@@ -7,12 +9,12 @@ namespace Box9.Leds.Manager.Validation
 {
     public class ConfigurationValidator : IConfigurationValidator
     {
-        public ValidationResult Validate(LedConfiguration configuration)
+        public async Task<ValidationResult> Validate(LedConfiguration configuration)
         {
             var errors = new List<string>();
             errors.AddRange(ValidateAtLeastOneServer(configuration));
             errors.AddRange(ValidateVideoSelected(configuration));
-            errors.AddRange(ValidateServerConnections(configuration));
+            errors.AddRange(await ValidateServerConnections(configuration));
 
             return new ValidationResult(errors); 
         }
@@ -43,17 +45,22 @@ namespace Box9.Leds.Manager.Validation
             return new List<string>();
         }
 
-        private IEnumerable<string> ValidateServerConnections(LedConfiguration configuration)
+        private async Task<IEnumerable<string>> ValidateServerConnections(LedConfiguration configuration)
         {
+            var errors = new List<string>();
+
             var clientValidator = new WsClientValidator();
             foreach (var server in configuration.Servers.Where(s => s.ServerType == Core.Servers.ServerType.FadeCandy))
             {
-                if (!clientValidator.IsServerConnected(server.IPAddress, server.Port))
+                bool isConnected = await clientValidator.IsServerConnected(IPAddress.Parse(server.IPAddress), server.Port);
+
+                if (!isConnected)
                 {
-                    yield return
-                        string.Format("Could not find a Fadecandy server on IP Address {0}, port {1}", server.IPAddress, server.Port);
+                    errors.Add(string.Format("Could not find a Fadecandy server on IP Address {0}, port {1}", server.IPAddress, server.Port));
                 }
             }
+
+            return errors;
         }
     }
 }

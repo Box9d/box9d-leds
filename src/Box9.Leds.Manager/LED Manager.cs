@@ -152,7 +152,7 @@ namespace Box9.Leds.Manager
             }
         }
 
-        private void buttonInitializePlayback_Click(object sender, EventArgs e)
+        private async void buttonInitializePlayback_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(loadedConfigFilePath))
             {
@@ -171,7 +171,7 @@ namespace Box9.Leds.Manager
 
             IConfigurationValidator validator = new ConfigurationValidator();
             var config = configurationStorage.Get(this.loadedConfigFilePath);
-            var result = validator.Validate(config);
+            var result = await validator.Validate(config);
 
             if (result.OK)
             {

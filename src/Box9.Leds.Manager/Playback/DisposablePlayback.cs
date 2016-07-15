@@ -55,7 +55,7 @@ namespace Box9.Leds.Manager.Playback
                 }
                 else
                 {
-                    server = new WsClientWrapper(new Uri(videoPlayback.ServerConfig.IPAddress + videoPlayback.ServerConfig.Port.ToString()));
+                    server = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", videoPlayback.ServerConfig.IPAddress, videoPlayback.ServerConfig.Port)));
                 }
 
                 var videoPlayer = new VideoPlayer(server, VideoStorageFactory.GetVideoStorageClient(engine, 

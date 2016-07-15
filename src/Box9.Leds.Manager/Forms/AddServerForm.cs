@@ -123,7 +123,7 @@ namespace Box9.Leds.Manager.Forms
             if (server.ServerType == ServerType.FadeCandy)
             {
                 var fadeCandyServer = (FadecandyServer)server;
-                configuration.IPAddress = fadeCandyServer.IPAddress;
+                configuration.IPAddress = fadeCandyServer.IPAddress.ToString();
                 configuration.Port = fadeCandyServer.Port;
             }
 

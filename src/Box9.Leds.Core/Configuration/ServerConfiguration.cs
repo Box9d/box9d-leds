@@ -7,7 +7,7 @@ namespace Box9.Leds.Core.Configuration
 {
     public class ServerConfiguration
     {
-        private string ipAddress;
+        public string IPAddress { get; set; }
 
         public ServerType ServerType { get; set; }
 
@@ -16,21 +16,6 @@ namespace Box9.Leds.Core.Configuration
         public int XPixels { get; set; }
 
         public int YPixels { get; set; }
-
-        [JsonIgnore]
-        public IPAddress IPAddress
-        {
-            get
-            {
-                return !string.IsNullOrEmpty(ipAddress)
-                    ? IPAddress.Parse(ipAddress)
-                    : null;
-            }
-            set
-            {
-                ipAddress = value.ToString();
-            }
-        }
 
         public int Port { get; set; }
 
