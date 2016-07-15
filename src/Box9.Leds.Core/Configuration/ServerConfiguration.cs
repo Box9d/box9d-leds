@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Net;
 using Box9.Leds.Core.Servers;
+using Newtonsoft.Json;
 
 namespace Box9.Leds.Core.Configuration
 {
     public class ServerConfiguration
     {
+        private string ipAddress;
+
         public ServerType ServerType { get; set; }
 
         public Guid Id { get; set; }
@@ -14,7 +17,20 @@ namespace Box9.Leds.Core.Configuration
 
         public int YPixels { get; set; }
 
-        public IPAddress IPAddress { get; set; }
+        [JsonIgnore]
+        public IPAddress IPAddress
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(ipAddress)
+                    ? IPAddress.Parse(ipAddress)
+                    : null;
+            }
+            set
+            {
+                ipAddress = value.ToString();
+            }
+        }
 
         public int Port { get; set; }
 
