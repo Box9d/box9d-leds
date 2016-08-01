@@ -10,8 +10,6 @@ namespace Box9.Leds.Manager.Forms
     {
         private readonly ServerConfiguration serverConfiguration;
 
-        private IClientWrapper displayClientWrapper;
-
         public Panel DisplayPanel { get { return displayPanel; } }
 
         public ServerForm(ServerConfiguration serverConfiguration)

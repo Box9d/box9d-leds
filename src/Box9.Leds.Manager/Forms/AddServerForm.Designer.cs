@@ -47,6 +47,8 @@
             this.heightPercentage = new System.Windows.Forms.ComboBox();
             this.textBoxXPixels = new System.Windows.Forms.TextBox();
             this.textBoxYPixels = new System.Windows.Forms.TextBox();
+            this.labelLedMapping = new System.Windows.Forms.Label();
+            this.buttonConfigureLedMapping = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // scanForServersButton
@@ -64,14 +66,14 @@
             this.availableServersList.FormattingEnabled = true;
             this.availableServersList.Location = new System.Drawing.Point(12, 50);
             this.availableServersList.Name = "availableServersList";
-            this.availableServersList.Size = new System.Drawing.Size(251, 199);
+            this.availableServersList.Size = new System.Drawing.Size(251, 290);
             this.availableServersList.TabIndex = 1;
             this.availableServersList.SelectedIndexChanged += new System.EventHandler(this.availableServersList_SelectedIndexChanged);
             // 
             // selectServerButton
             // 
             this.selectServerButton.Enabled = false;
-            this.selectServerButton.Location = new System.Drawing.Point(332, 272);
+            this.selectServerButton.Location = new System.Drawing.Point(332, 327);
             this.selectServerButton.Name = "selectServerButton";
             this.selectServerButton.Size = new System.Drawing.Size(82, 23);
             this.selectServerButton.TabIndex = 2;
@@ -88,7 +90,7 @@
             // 
             // cancel
             // 
-            this.cancel.Location = new System.Drawing.Point(420, 272);
+            this.cancel.Location = new System.Drawing.Point(420, 327);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(75, 23);
             this.cancel.TabIndex = 4;
@@ -99,7 +101,7 @@
             // labelStartXPercent
             // 
             this.labelStartXPercent.AutoSize = true;
-            this.labelStartXPercent.Location = new System.Drawing.Point(285, 157);
+            this.labelStartXPercent.Location = new System.Drawing.Point(285, 150);
             this.labelStartXPercent.Name = "labelStartXPercent";
             this.labelStartXPercent.Size = new System.Drawing.Size(152, 13);
             this.labelStartXPercent.TabIndex = 5;
@@ -108,7 +110,7 @@
             // labelStartYPercentage
             // 
             this.labelStartYPercentage.AutoSize = true;
-            this.labelStartYPercentage.Location = new System.Drawing.Point(285, 179);
+            this.labelStartYPercentage.Location = new System.Drawing.Point(285, 172);
             this.labelStartYPercentage.Name = "labelStartYPercentage";
             this.labelStartYPercentage.Size = new System.Drawing.Size(141, 13);
             this.labelStartYPercentage.TabIndex = 6;
@@ -117,7 +119,7 @@
             // labelPercentX
             // 
             this.labelPercentX.AutoSize = true;
-            this.labelPercentX.Location = new System.Drawing.Point(285, 201);
+            this.labelPercentX.Location = new System.Drawing.Point(285, 194);
             this.labelPercentX.Name = "labelPercentX";
             this.labelPercentX.Size = new System.Drawing.Size(92, 13);
             this.labelPercentX.TabIndex = 7;
@@ -126,7 +128,7 @@
             // labelPercentY
             // 
             this.labelPercentY.AutoSize = true;
-            this.labelPercentY.Location = new System.Drawing.Point(285, 224);
+            this.labelPercentY.Location = new System.Drawing.Point(285, 217);
             this.labelPercentY.Name = "labelPercentY";
             this.labelPercentY.Size = new System.Drawing.Size(95, 13);
             this.labelPercentY.TabIndex = 8;
@@ -164,7 +166,7 @@
             // 
             this.labelVideoSplitting.AutoSize = true;
             this.labelVideoSplitting.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelVideoSplitting.Location = new System.Drawing.Point(285, 132);
+            this.labelVideoSplitting.Location = new System.Drawing.Point(285, 125);
             this.labelVideoSplitting.Name = "labelVideoSplitting";
             this.labelVideoSplitting.Size = new System.Drawing.Size(72, 13);
             this.labelVideoSplitting.TabIndex = 12;
@@ -173,7 +175,7 @@
             // startAtPercentageX
             // 
             this.startAtPercentageX.FormattingEnabled = true;
-            this.startAtPercentageX.Location = new System.Drawing.Point(453, 154);
+            this.startAtPercentageX.Location = new System.Drawing.Point(453, 147);
             this.startAtPercentageX.Name = "startAtPercentageX";
             this.startAtPercentageX.Size = new System.Drawing.Size(51, 21);
             this.startAtPercentageX.TabIndex = 13;
@@ -182,7 +184,7 @@
             // startAtPercentageY
             // 
             this.startAtPercentageY.FormattingEnabled = true;
-            this.startAtPercentageY.Location = new System.Drawing.Point(453, 176);
+            this.startAtPercentageY.Location = new System.Drawing.Point(453, 169);
             this.startAtPercentageY.Name = "startAtPercentageY";
             this.startAtPercentageY.Size = new System.Drawing.Size(51, 21);
             this.startAtPercentageY.TabIndex = 14;
@@ -191,7 +193,7 @@
             // widthPercentage
             // 
             this.widthPercentage.FormattingEnabled = true;
-            this.widthPercentage.Location = new System.Drawing.Point(453, 198);
+            this.widthPercentage.Location = new System.Drawing.Point(453, 191);
             this.widthPercentage.Name = "widthPercentage";
             this.widthPercentage.Size = new System.Drawing.Size(51, 21);
             this.widthPercentage.TabIndex = 15;
@@ -200,7 +202,7 @@
             // heightPercentage
             // 
             this.heightPercentage.FormattingEnabled = true;
-            this.heightPercentage.Location = new System.Drawing.Point(453, 221);
+            this.heightPercentage.Location = new System.Drawing.Point(453, 214);
             this.heightPercentage.Name = "heightPercentage";
             this.heightPercentage.Size = new System.Drawing.Size(51, 21);
             this.heightPercentage.TabIndex = 16;
@@ -222,11 +224,34 @@
             this.textBoxYPixels.TabIndex = 18;
             this.textBoxYPixels.TextChanged += new System.EventHandler(this.textBoxYPixels_TextChanged);
             // 
+            // labelLedMapping
+            // 
+            this.labelLedMapping.AutoSize = true;
+            this.labelLedMapping.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelLedMapping.Location = new System.Drawing.Point(285, 246);
+            this.labelLedMapping.Name = "labelLedMapping";
+            this.labelLedMapping.Size = new System.Drawing.Size(71, 13);
+            this.labelLedMapping.TabIndex = 19;
+            this.labelLedMapping.Text = "LED mapping";
+            // 
+            // buttonConfigureLedMapping
+            // 
+            this.buttonConfigureLedMapping.Enabled = false;
+            this.buttonConfigureLedMapping.Location = new System.Drawing.Point(288, 281);
+            this.buttonConfigureLedMapping.Name = "buttonConfigureLedMapping";
+            this.buttonConfigureLedMapping.Size = new System.Drawing.Size(75, 23);
+            this.buttonConfigureLedMapping.TabIndex = 20;
+            this.buttonConfigureLedMapping.Text = "Configure...";
+            this.buttonConfigureLedMapping.UseVisualStyleBackColor = true;
+            this.buttonConfigureLedMapping.Click += new System.EventHandler(this.buttonConfigureLedMapping_Click);
+            // 
             // AddServerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(516, 307);
+            this.ClientSize = new System.Drawing.Size(516, 362);
+            this.Controls.Add(this.buttonConfigureLedMapping);
+            this.Controls.Add(this.labelLedMapping);
             this.Controls.Add(this.textBoxYPixels);
             this.Controls.Add(this.textBoxXPixels);
             this.Controls.Add(this.heightPercentage);
@@ -275,5 +300,7 @@
         private System.Windows.Forms.ComboBox heightPercentage;
         private System.Windows.Forms.TextBox textBoxXPixels;
         private System.Windows.Forms.TextBox textBoxYPixels;
+        private System.Windows.Forms.Label labelLedMapping;
+        private System.Windows.Forms.Button buttonConfigureLedMapping;
     }
 }

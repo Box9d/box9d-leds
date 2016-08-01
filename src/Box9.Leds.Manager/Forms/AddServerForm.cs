@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Box9.Leds.Core.Configuration;
-using Box9.Leds.Core.LedLayouts;
 using Box9.Leds.Core.Messages.ConnectedDevices;
 using Box9.Leds.Core.Servers;
 using Box9.Leds.FcClient.Search;
@@ -19,6 +18,7 @@ namespace Box9.Leds.Manager.Forms
         private int ipsSearched;
         private Task searchTask;
         private CancellationTokenSource cts;
+        private bool ledMappingsConfigured;
 
         public delegate void ServerAddedHandler(ServerConfiguration server);
         public event ServerAddedHandler ServerAdded;
@@ -43,9 +43,6 @@ namespace Box9.Leds.Manager.Forms
             this.widthPercentage.AsPercentageOptions();
             this.heightPercentage.AsPercentageOptions();
 
-            // TODO: Add available layouts dynamically
-            //availableLedLayouts.Items.Add(new SnareDrumLedLayout());
-
             availableServersList.Items.Add(new DisplayOnlyServer());
 
             ServerAdded += ServerAddedHandle;
@@ -54,6 +51,8 @@ namespace Box9.Leds.Manager.Forms
             this.startAtPercentageY.DropDownStyle = ComboBoxStyle.DropDownList;
             this.widthPercentage.DropDownStyle = ComboBoxStyle.DropDownList;
             this.heightPercentage.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            this.ledMappingsConfigured = false;
         }
 
         private void scanForServersButton_Click(object sender, EventArgs e)
@@ -182,6 +181,7 @@ namespace Box9.Leds.Manager.Forms
             this.textBoxXPixels.ValidateAsInteger();
             this.textBoxXPixels.ValidateTextLength(2);
 
+            ValidateConfigureMappingButtonAvailability();
             ValidateSelectButtonAvailability();
         }
 
@@ -190,6 +190,7 @@ namespace Box9.Leds.Manager.Forms
             this.textBoxYPixels.ValidateAsInteger();
             this.textBoxYPixels.ValidateTextLength(2);
 
+            ValidateConfigureMappingButtonAvailability();
             ValidateSelectButtonAvailability();
         }
 
@@ -206,13 +207,31 @@ namespace Box9.Leds.Manager.Forms
 
         private void ValidateSelectButtonAvailability()
         {
-            this.selectServerButton.Enabled = this.startAtPercentageX.SelectedIndex > -1 &&
-            this.startAtPercentageY.SelectedIndex > -1 &&
-            this.widthPercentage.SelectedIndex > -1 &&
-            this.heightPercentage.SelectedIndex > -1 &&
-            this.availableServersList.SelectedIndex > -1 &&
-            !string.IsNullOrEmpty(this.textBoxXPixels.Text) &&
-            !string.IsNullOrEmpty(this.textBoxYPixels.Text);
+            this.selectServerButton.Enabled = 
+                this.startAtPercentageX.SelectedIndex > -1 &&
+                this.startAtPercentageY.SelectedIndex > -1 &&
+                this.widthPercentage.SelectedIndex > -1 &&
+                this.heightPercentage.SelectedIndex > -1 &&
+                this.availableServersList.SelectedIndex > -1 &&
+                this.ledMappingsConfigured &&
+                !string.IsNullOrEmpty(this.textBoxXPixels.Text) &&
+                !string.IsNullOrEmpty(this.textBoxYPixels.Text);
+        }
+
+        private void ValidateConfigureMappingButtonAvailability()
+        {
+            this.buttonConfigureLedMapping.Enabled = 
+                !string.IsNullOrEmpty(this.textBoxXPixels.Text) &&
+                !string.IsNullOrEmpty(this.textBoxYPixels.Text);
+        }
+
+        private void buttonConfigureLedMapping_Click(object sender, EventArgs e)
+        {
+            var configureForm = new ConfigureLedMappingForm(int.Parse(textBoxXPixels.Text), int.Parse(textBoxYPixels.Text));
+            configureForm.StartPosition = FormStartPosition.Manual;
+            configureForm.Location = new System.Drawing.Point(this.Location.X + 20, this.Location.X + 20);
+
+            configureForm.Show();
         }
     }
 }

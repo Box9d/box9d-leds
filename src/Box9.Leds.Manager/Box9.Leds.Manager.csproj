@@ -50,6 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\PixelPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="DisplayClientWrapper.cs" />
     <Compile Include="Events\EventMessage.cs" />
     <Compile Include="Events\EventStatus.cs" />
@@ -63,6 +66,12 @@
     </Compile>
     <Compile Include="Forms\AddServerForm.Designer.cs">
       <DependentUpon>AddServerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ConfigureLedMappingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ConfigureLedMappingForm.Designer.cs">
+      <DependentUpon>ConfigureLedMappingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ServerForm.cs">
       <SubType>Form</SubType>
@@ -86,6 +95,9 @@
     <Compile Include="Validation\ValidationResult.cs" />
     <EmbeddedResource Include="Forms\AddServerForm.resx">
       <DependentUpon>AddServerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ConfigureLedMappingForm.resx">
+      <DependentUpon>ConfigureLedMappingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ServerForm.resx">
       <DependentUpon>ServerForm.cs</DependentUpon>
