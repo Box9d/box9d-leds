@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Box9.Leds.Core.Configuration;
+using Box9.Leds.Core.Coordination;
 using Box9.Leds.Core.Messages.ConnectedDevices;
 using Box9.Leds.Core.Servers;
 using Box9.Leds.FcClient.Search;
@@ -18,7 +20,7 @@ namespace Box9.Leds.Manager.Forms
         private int ipsSearched;
         private Task searchTask;
         private CancellationTokenSource cts;
-        private bool ledMappingsConfigured;
+        private List<PixelMapping> pixelMappings;
 
         public delegate void ServerAddedHandler(ServerConfiguration server);
         public event ServerAddedHandler ServerAdded;
@@ -30,6 +32,7 @@ namespace Box9.Leds.Manager.Forms
 
         private void AddServerForm_Load(object sender, EventArgs e)
         {
+            pixelMappings = new List<PixelMapping>();
             cts = new CancellationTokenSource();
             this.clientSearch = new ClientSearch();
             clientSearch.ServerFound += AddServerToList;
@@ -51,8 +54,6 @@ namespace Box9.Leds.Manager.Forms
             this.startAtPercentageY.DropDownStyle = ComboBoxStyle.DropDownList;
             this.widthPercentage.DropDownStyle = ComboBoxStyle.DropDownList;
             this.heightPercentage.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            this.ledMappingsConfigured = false;
         }
 
         private void scanForServersButton_Click(object sender, EventArgs e)
@@ -213,7 +214,7 @@ namespace Box9.Leds.Manager.Forms
                 this.widthPercentage.SelectedIndex > -1 &&
                 this.heightPercentage.SelectedIndex > -1 &&
                 this.availableServersList.SelectedIndex > -1 &&
-                this.ledMappingsConfigured &&
+                this.pixelMappings.Any() &&
                 !string.IsNullOrEmpty(this.textBoxXPixels.Text) &&
                 !string.IsNullOrEmpty(this.textBoxYPixels.Text);
         }
@@ -227,9 +228,20 @@ namespace Box9.Leds.Manager.Forms
 
         private void buttonConfigureLedMapping_Click(object sender, EventArgs e)
         {
-            var configureForm = new ConfigureLedMappingForm(int.Parse(textBoxXPixels.Text), int.Parse(textBoxYPixels.Text));
+            var configureForm = new ConfigureLedMappingForm(int.Parse(textBoxXPixels.Text), int.Parse(textBoxYPixels.Text), pixelMappings);
             configureForm.StartPosition = FormStartPosition.Manual;
             configureForm.Location = new System.Drawing.Point(this.Location.X + 20, this.Location.X + 20);
+
+            configureForm.ConfigurationConfirmed += (form, mappings) =>
+            {
+                form.Close();
+
+                pixelMappings = mappings
+                    .Select(m => new PixelMapping { Order = m.Key, X = m.Value.XCoordinate, Y = m.Value.YCoordinate })
+                    .ToList();
+
+                ValidateSelectButtonAvailability();
+            };
 
             configureForm.Show();
         }

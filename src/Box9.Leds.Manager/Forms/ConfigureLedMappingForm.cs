@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Box9.Leds.Core;
-using Box9.Leds.Core.Configuration;
-using Box9.Leds.FcClient;
+using Box9.Leds.Core.Coordination;
 using Box9.Leds.Manager.Controls;
 
 namespace Box9.Leds.Manager.Forms
@@ -13,11 +14,15 @@ namespace Box9.Leds.Manager.Forms
         private readonly int xPixels;
         private readonly int yPixels;
 
+        private List<PixelMapping> initialPixelMappings;
         private Dictionary<int, PixelPanel> mappedPixels;
         private int scale;
         private bool enableDraw;
 
-        public ConfigureLedMappingForm(int xPixels, int yPixels)
+        public delegate void OnConfigurationConfirmed(ConfigureLedMappingForm form, Dictionary<int, PixelPanel> pixelMappings);
+        public event OnConfigurationConfirmed ConfigurationConfirmed;
+
+        public ConfigureLedMappingForm(int xPixels, int yPixels, List<PixelMapping> initialPixelMappings = null)
         {
             InitializeComponent();
 
@@ -28,6 +33,14 @@ namespace Box9.Leds.Manager.Forms
             enableDraw = false;
 
             this.mappedPixels = new Dictionary<int, PixelPanel>();
+            this.initialPixelMappings = new List<PixelMapping>();
+
+            if (initialPixelMappings != null || initialPixelMappings.Any())
+            {
+                this.initialPixelMappings = initialPixelMappings;
+            }
+
+            ConfigurationConfirmed += (form, pixelMappings) => { };
         }
 
         private void ServerForm_Load(object sender, System.EventArgs e)
@@ -36,6 +49,8 @@ namespace Box9.Leds.Manager.Forms
             var clientHeight = yPixels * scale * (PixelDimensions.Height + PixelDimensions.Gap);
 
             this.ClientSize = new Size(clientWidth, clientHeight + this.ClientSize.Height - this.displayPanel.Height);
+
+            this.ToggleDraw(false);
 
             this.Text = "LED mapping";
 
@@ -48,7 +63,7 @@ namespace Box9.Leds.Manager.Forms
             for (int i = 0; i < xPixels; i++)
             {
                 for (int j = 0; j < yPixels; j++)
-                {
+                { 
                     var pixel = new PixelPanel(Color.DarkSlateBlue, i, j)
                     {
                         Width = PixelDimensions.Width * scale,
@@ -57,18 +72,30 @@ namespace Box9.Leds.Manager.Forms
                         Top = displayPanel.ClientRectangle.Top + j * scale * (PixelDimensions.Height + PixelDimensions.Gap),
                     };
 
+                    var pixelMapping = initialPixelMappings.SingleOrDefault(p => p.X == i && p.Y == j);
+                    if (pixelMapping != null)
+                    {
+                        MapPixel(pixel, pixelMapping.Order);
+                    }
+
                     pixel.MouseEnter += (s, args) =>
                     {
-                        if (enableDraw)
+                        if (enableDraw && !mappedPixels.ContainsValue(pixel))
                         {
-                            mappedPixels.Add(mappedPixels.Count + 1, pixel);
-                            pixel.UpdateColor(Color.White);
+                            MapPixel(pixel, mappedPixels.Count + 1);
                         }
+                    };
+
+                    pixel.MouseMove += (s, arg) =>
+                    {
+                        pixel.Cursor = enableDraw
+                            ? Cursors.Cross
+                            : Cursors.Arrow;
                     };
 
                     pixel.MouseClick += (s, args) =>
                     {
-                        enableDraw = !enableDraw;
+                        ToggleDraw(!enableDraw);
                     };
 
                     this.displayPanel.Controls.Add(pixel);
@@ -77,8 +104,64 @@ namespace Box9.Leds.Manager.Forms
 
             this.displayPanel.MouseClick += (s, args) =>
             {
-                enableDraw = !enableDraw;
+                ToggleDraw(!enableDraw);
             };
+
+            this.displayPanel.MouseMove += (s, args) =>
+            {
+                this.displayPanel.Cursor = enableDraw
+                    ? Cursors.Cross
+                    : Cursors.Arrow;
+            };
+        }
+
+        private void MapPixel(PixelPanel pixel, int order)
+        {
+            Invoke(new Action(() =>
+            {
+                mappedPixels.Add(order, pixel);
+            }));
+
+            pixel.UpdateColor(Color.White);
+            pixel.UpdateText(Color.Black, mappedPixels.Count.ToString());
+            pixel.Refresh();
+        }
+
+        private void ToggleDraw(bool enabled)
+        {
+            enableDraw = enabled;
+
+            if (enabled)
+            {
+                this.toolStripStatusLabel.Text = "Draw mode enabled...";
+            }
+            else
+            {
+                this.toolStripStatusLabel.Text = "Click to start mapping pixels";
+            }
+        }
+
+        private void buttonUndo_Click(object sender, System.EventArgs e)
+        {
+            var removedPixel = mappedPixels[mappedPixels.Count];
+            removedPixel.UpdateColor(Color.DarkSlateBlue);
+            removedPixel.UpdateText(Color.Black, string.Empty);
+            removedPixel.Refresh();
+
+            mappedPixels.Remove(mappedPixels.Count);
+        }
+
+        private void buttonClear_Click(object sender, System.EventArgs e)
+        {
+            while (mappedPixels.Any())
+            {
+                buttonUndo_Click(null, null);
+            }
+        }
+
+        private void buttonConfirm_Click(object sender, EventArgs e)
+        {
+            ConfigurationConfirmed(this, mappedPixels);
         }
     }
 }

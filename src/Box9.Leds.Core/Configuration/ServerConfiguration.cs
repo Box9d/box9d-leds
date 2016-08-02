@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
+using Box9.Leds.Core.Coordination;
 using Box9.Leds.Core.Servers;
 using Newtonsoft.Json;
 
@@ -17,6 +19,8 @@ namespace Box9.Leds.Core.Configuration
 
         public int YPixels { get; set; }
 
+        public List<PixelMapping> PixelMappings { get; set; }
+
         public int Port { get; set; }
 
         public ServerVideoConfiguration VideoConfiguration { get; set; }
@@ -24,6 +28,8 @@ namespace Box9.Leds.Core.Configuration
         public ServerConfiguration(Guid? id = null)
         {
             Id = id.HasValue ? id.Value : Guid.NewGuid();
+
+            PixelMappings = new List<PixelMapping>();
         }
 
         public override string ToString()
