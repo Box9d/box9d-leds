@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Box9.Leds.Core.Configuration
 {
@@ -34,6 +35,9 @@ namespace Box9.Leds.Core.Configuration
             storageKey += VideoConfig.SourceFilePath
                 .Replace("\\", string.Empty)
                 .Replace(":", string.Empty);
+            storageKey += serverConfig.PixelMappings
+                .Select(pm => pm.Order.ToString() + pm.X.ToString() + pm.Y.ToString())
+                .Aggregate((prev, curr) => prev += curr);
 
             return storageKey.GetHashCode().ToString();
         }

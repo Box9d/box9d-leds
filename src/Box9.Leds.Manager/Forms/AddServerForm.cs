@@ -130,6 +130,7 @@ namespace Box9.Leds.Manager.Forms
             configuration.ServerType = server.ServerType;
             configuration.XPixels = int.Parse(textBoxXPixels.Text);
             configuration.YPixels = int.Parse(textBoxYPixels.Text);
+            configuration.PixelMappings = pixelMappings;
             configuration.VideoConfiguration = new ServerVideoConfiguration
             {
                 StartAtXPercent = (int)startAtPercentageX.SelectedItem,

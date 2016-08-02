@@ -113,6 +113,14 @@ namespace Box9.Leds.Manager.Forms
                     ? Cursors.Cross
                     : Cursors.Arrow;
             };
+
+            this.displayPanel.PreviewKeyDown += (s, args) =>
+            {
+                if (args.Control && args.KeyCode == Keys.Z)
+                {
+                    buttonUndo_Click(null, null);
+                }
+            };
         }
 
         private void MapPixel(PixelPanel pixel, int order)
@@ -125,6 +133,8 @@ namespace Box9.Leds.Manager.Forms
             pixel.UpdateColor(Color.White);
             pixel.UpdateText(Color.Black, mappedPixels.Count.ToString());
             pixel.Refresh();
+
+            displayPanel.Focus();
         }
 
         private void ToggleDraw(bool enabled)
@@ -143,12 +153,15 @@ namespace Box9.Leds.Manager.Forms
 
         private void buttonUndo_Click(object sender, System.EventArgs e)
         {
-            var removedPixel = mappedPixels[mappedPixels.Count];
-            removedPixel.UpdateColor(Color.DarkSlateBlue);
-            removedPixel.UpdateText(Color.Black, string.Empty);
-            removedPixel.Refresh();
+            if (mappedPixels.Any())
+            {
+                var removedPixel = mappedPixels[mappedPixels.Count];
+                removedPixel.UpdateColor(Color.DarkSlateBlue);
+                removedPixel.UpdateText(Color.Black, string.Empty);
+                removedPixel.Refresh();
 
-            mappedPixels.Remove(mappedPixels.Count);
+                mappedPixels.Remove(mappedPixels.Count);
+            }
         }
 
         private void buttonClear_Click(object sender, System.EventArgs e)

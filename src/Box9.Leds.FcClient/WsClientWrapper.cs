@@ -83,45 +83,11 @@ namespace Box9.Leds.FcClient
                 0,0,0,0
             };
 
-            var pixels = request.PixelUpdates
-                .OrderBy(p => p.X)
-                .OrderBy(p => p.Y);
-
-            bool lateralReverse = false;
-            int iMax = pixels.Max(p => p.X);
-            int jMax = pixels.Max(p => p.Y);
-
-            for (int j = 0; j <= jMax; j++)
+            foreach (var pixel in request.PixelUpdates)
             {
-                for (int i = 0; i <= iMax; i++)
-                {
-                    PixelInfo pixel = null;
-                    if (lateralReverse)
-                    {
-                        pixel = request.PixelUpdates
-                            .SingleOrDefault(p => p.X == iMax - i && p.Y == j);
-                    }
-                    else
-                    {
-                        pixel = request.PixelUpdates
-                            .SingleOrDefault(p => p.X == i && p.Y == j);
-                    }
-
-                    if (pixel != null)
-                    {
-                        data.Add(pixel.Color.R);
-                        data.Add(pixel.Color.G);
-                        data.Add(pixel.Color.B);
-                    }
-                    else
-                    {
-                        data.Add(0);
-                        data.Add(0);
-                        data.Add(0);
-                    }
-                }
-
-                lateralReverse = !lateralReverse;
+                data.Add(pixel.Color.R);
+                data.Add(pixel.Color.G);
+                data.Add(pixel.Color.B);
             }
 
             await socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, CancellationToken.None);

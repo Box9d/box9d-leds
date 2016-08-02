@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using AForge.Video.FFMPEG;
 using Box9.Leds.Core.Configuration;
 using Box9.Leds.Core.UpdatePixels;
@@ -44,17 +45,14 @@ namespace Box9.Leds.Video
                     var frame = reader.ReadVideoFrame();
                     var frameVideoData = new FrameVideoData();
 
-                    for (int i = 0; i < serverConfiguration.XPixels; i++)
+                    foreach (var pixelMapping in serverConfiguration.PixelMappings.OrderBy(pm => pm.Order))
                     {
-                        for (int j = 0; j < serverConfiguration.YPixels; j++)
+                        frameVideoData.PixelInfo.Add(new PixelInfo
                         {
-                            frameVideoData.PixelInfo.Add(new PixelInfo
-                            {
-                                X = i,
-                                Y = j,
-                                Color = frame.GetPixel(startX + (i * xPixelGap), startY + (j * yPixelGap))
-                            });
-                        }
+                            X = pixelMapping.X,
+                            Y = pixelMapping.Y,
+                            Color = frame.GetPixel(startX + (pixelMapping.X * xPixelGap), startY + (pixelMapping.Y * yPixelGap))
+                        });
                     }
 
                     if (chunkCounter == framesPerStorageKey)

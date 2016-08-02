@@ -32,6 +32,10 @@ namespace Box9.Leds.Core
                         {
                             brush = new SolidBrush(pixel.Color);
                         }
+                        else
+                        {
+                            brush = new SolidBrush(Color.Black);
+                        }
 
                         graphics.FillEllipse(brush, currentX, currentY, PixelDimensions.Width, PixelDimensions.Height);
 
