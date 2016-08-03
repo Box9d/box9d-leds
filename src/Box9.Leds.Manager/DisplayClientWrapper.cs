@@ -48,7 +48,6 @@ namespace Box9.Leds.Manager
                 panel.BackgroundImage = bitmap;
             }));
 
-            Thread.Sleep(30); // Reloading Bitmaps is hard work!
             await Task.Yield();
         }
 
