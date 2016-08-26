@@ -55,6 +55,10 @@
     <Compile Include="LedLayouts\CustomLedLayout.cs" />
     <Compile Include="LedLayouts\LedLayout.cs" />
     <Compile Include="LedLayouts\SnareDrumLedLayout.cs" />
+    <Compile Include="Messages\ColorCorrection\ColorCorrectionColor.cs" />
+    <Compile Include="Messages\ColorCorrection\ColorCorrectionDevice.cs" />
+    <Compile Include="Messages\ColorCorrection\ColorCorrectionRequest.cs" />
+    <Compile Include="Messages\ColorCorrection\ColorCorrectionResponse.cs" />
     <Compile Include="Messages\ConnectedDevices\ConnectedDeviceResponse.cs" />
     <Compile Include="Messages\ConnectedDevices\ConnectedDevicesRequest.cs" />
     <Compile Include="Messages\ConnectedDevices\ConnectedDevicesResponse.cs" />

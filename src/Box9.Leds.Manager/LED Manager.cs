@@ -5,7 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Box9.Leds.Core.Configuration;
+using Box9.Leds.Core.Messages.ColorCorrection;
+using Box9.Leds.Core.Messages.ConnectedDevices;
+using Box9.Leds.Core.Messages.ServerInfo;
 using Box9.Leds.DataStorage;
+using Box9.Leds.FcClient;
 using Box9.Leds.Manager.Events;
 using Box9.Leds.Manager.Extensions;
 using Box9.Leds.Manager.Forms;
@@ -21,6 +25,7 @@ namespace Box9.Leds.Manager
         private string videoSourceFilePath;
         private readonly IConfigurationStorageClient configurationStorage;
         private DisposablePlayback disposablePlayback;
+        private bool displayOutput;
 
         public List<ServerForm> ServerForms { get; private set; }
 
@@ -29,6 +34,33 @@ namespace Box9.Leds.Manager
             InitializeComponent();
             configurationStorage = new ConfigurationStorageClient();
             ServerForms = new List<ServerForm>();
+        }
+
+        private async void LedManager_Load(object sender, EventArgs e)
+        {
+            this.trackBarBrightness.ValueChanged += (s, args) =>
+            {
+                this.labelBrightness.Text = string.Format("Brightness {0}%", trackBarBrightness.Value);
+            };
+
+            this.trackBarBrightness.MouseUp += (s, args) =>
+            {
+                foreach (var server in this.listBoxServers.Items.Cast<ServerConfiguration>().Where(sc => sc.ServerType == Core.Servers.ServerType.FadeCandy))
+                {
+                    Task.Run(async () =>
+                    {
+                        var client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", server.IPAddress, server.Port)));
+
+                        var serverInfo = await client.SendMessage(new ConnectedDevicesRequest());
+                        var fadecandySerials = serverInfo.Devices.Select(d => d.Serial);
+
+                        foreach (var serial in fadecandySerials)
+                        {
+                            await client.SendMessage(new ColorCorrectionRequest(trackBarBrightness.Value, serial));
+                        }
+                    });
+                }
+            };
         }
 
         private void ServerAddedHandle(ServerConfiguration server)
@@ -208,7 +240,7 @@ namespace Box9.Leds.Manager
 
                 this.Invoke(new Action(() =>
                 {
-                    this.ToggleControlAvailabilites(false, buttonPlay, trackBarStartTime, labelStartTime);
+                    this.ToggleControlAvailabilites(false, buttonPlay, trackBarStartTime, labelStartTime, checkBoxDisplayOutputOnScreen);
 
                     this.trackBarStartTime.Maximum = this.disposablePlayback.DurationInSeconds;
                     this.trackBarStartTime.Minimum = 0;
@@ -238,7 +270,7 @@ namespace Box9.Leds.Manager
         {
             var startTime = new TimeSpan(0, 0, this.trackBarStartTime.Value);
 
-            Task.Run(() => this.disposablePlayback.Play(startTime.Minutes, startTime.Hours));
+            Task.Run(() => this.disposablePlayback.Play(startTime.Minutes, startTime.Hours, displayOutput));
 
             this.ToggleControlAvailabilites(false, buttonStop);
 
@@ -294,6 +326,11 @@ namespace Box9.Leds.Manager
             {
                 this.stripStatusLabel.Text = message.Status + ": " + message.Message;
             }));
+        }
+
+        private void checkBoxDisplayOutputOnScreen_CheckedChanged(object sender, EventArgs e)
+        {
+            this.displayOutput = checkBoxDisplayOutputOnScreen.Checked;
         }
     }
 }

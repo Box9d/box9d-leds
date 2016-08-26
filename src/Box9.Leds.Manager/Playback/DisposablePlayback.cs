@@ -75,7 +75,7 @@ namespace Box9.Leds.Manager.Playback
             this.DurationInSeconds = (int)audioPlayback.DurationInSeconds;
         }
 
-        public async Task Play(int minutes = 0, int seconds = 0)
+        public async Task Play(int minutes = 0, int seconds = 0, bool displayOutputOnScreen = true)
         {
             this.audioPlayer.Stopped += () =>
             {
@@ -88,7 +88,8 @@ namespace Box9.Leds.Manager.Playback
             }
 
             this.audioPlayer.Play(minutes, seconds);
-            foreach (var videoPlayer in videoPlayers)
+            foreach (var videoPlayer in videoPlayers
+                .Where(vp => displayOutputOnScreen || vp.ServerType == ServerType.FadeCandy))
             {
                 videoPlayer.Play(cancelTokenSource.Token, minutes, seconds);
             }

@@ -13,6 +13,7 @@ using Box9.Leds.Core.LedLayouts;
 using Box9.Leds.Core.Messages.UpdatePixels;
 using Box9.Leds.Core.Multitasking;
 using Box9.Leds.Core.Patterns;
+using Box9.Leds.Core.Servers;
 using Box9.Leds.DataStorage;
 using Box9.Leds.FcClient;
 using Box9.Leds.Video.Storage;
@@ -22,6 +23,8 @@ namespace Box9.Leds.Video
 {
     public class VideoPlayer : IDisposable
     {
+        public ServerType ServerType { get; private set; }
+
         private readonly IClientWrapper fcClient;
         private readonly VideoData videoData;
         private readonly ServerConfiguration serverConfiguration;
@@ -37,6 +40,8 @@ namespace Box9.Leds.Video
 
         public VideoPlayer(IClientWrapper fcClient, IChunkedStorageClient<int, FrameVideoData> storageClient, VideoData videoData, ServerConfiguration serverConfiguration)
         {
+            this.ServerType = serverConfiguration.ServerType;
+
             this.fcClient = fcClient;
             this.videoData = videoData;
             this.serverConfiguration = serverConfiguration;
