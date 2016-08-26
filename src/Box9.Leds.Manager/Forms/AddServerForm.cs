@@ -238,7 +238,7 @@ namespace Box9.Leds.Manager.Forms
                 form.Close();
 
                 pixelMappings = mappings
-                    .Select(m => new PixelMapping { Order = m.Key, X = m.Value.XCoordinate, Y = m.Value.YCoordinate })
+                    .Select(m => new PixelMapping { Order = m.Key, X = m.Value.X, Y = m.Value.Y })
                     .ToList();
 
                 ValidateSelectButtonAvailability();
