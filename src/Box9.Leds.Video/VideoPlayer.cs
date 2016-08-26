@@ -30,7 +30,7 @@ namespace Box9.Leds.Video
         private IChunkedStorageClient<int, FrameVideoData> storageClient;
         private VideoStatus currentStatus;
 
-        private int loadedStorageKeys;
+        private Dictionary<int, bool> storageKeysLoaded;
 
         public delegate void ChangeVideoStatus(VideoStatus status);
         public event ChangeVideoStatus VideoStatusChanged;
@@ -43,8 +43,12 @@ namespace Box9.Leds.Video
             this.storageClient = storageClient;
 
             this.videoFrameQueue = new ChunkedConcurrentQueue<FrameVideoData>();
+            this.storageKeysLoaded = new Dictionary<int, bool>();
 
-            LoadBuffer(BufferReadyForStorageKeys());
+            BufferReadyForStorageKeys();
+            LoadBuffer(storageKeysLoaded
+                .Where(skl => !skl.Value)
+                .Select(skl => skl.Key));
 
             VideoStatusChanged += VideoStatusChangedHandle;
             VideoStatusChanged(VideoStatus.ReadyToPlay);
@@ -67,6 +71,7 @@ namespace Box9.Leds.Video
             int loadedChunkStorageKey = 1;
             int currentFrame = 1;
             int totalPlayTime = (int)Math.Round((double)((double)videoData.TotalNumberOfFrames / (double)videoData.Framerate) * 1000, 0);
+            double timeSinceLastBufferLoad = 0;
 
             FrameVideoData[] loadedChunk = null;
             while (playStopwatch.ElapsedMilliseconds < totalPlayTime && !cancellationToken.IsCancellationRequested)
@@ -103,8 +108,15 @@ namespace Box9.Leds.Video
                     });
                 }
 
-                var readyForStorageKeys = BufferReadyForStorageKeys();
-                Task.Run(() => LoadBuffer(readyForStorageKeys));
+                if (VideoSettings.CheckBufferSeconds * 1000 < playStopwatch.ElapsedMilliseconds - timeSinceLastBufferLoad)
+                {
+                    BufferReadyForStorageKeys();
+                    var readyForStorageKeys = storageKeysLoaded
+                        .Where(skl => !skl.Value)
+                        .Select(skl => skl.Key);
+                    Task.Run(() => LoadBuffer(readyForStorageKeys));
+                    timeSinceLastBufferLoad = playStopwatch.ElapsedMilliseconds;
+                }
             }
 
             var allPixelsBlack = Block.GeneratePattern(
@@ -115,20 +127,27 @@ namespace Box9.Leds.Video
                 PixelUpdates = allPixelsBlack
             });
 
-            await fcClient.CloseAsync();
-            loadedStorageKeys = 0;
+            await fcClient.SendPixelUpdates(new UpdatePixelsRequest
+            {
+                PixelUpdates = allPixelsBlack
+            });
 
-            LoadBuffer(BufferReadyForStorageKeys());
+            await fcClient.CloseAsync();
+            storageKeysLoaded = new Dictionary<int, bool>();
+
+            BufferReadyForStorageKeys();
+            LoadBuffer(storageKeysLoaded
+                .Where(skl => !skl.Value)
+                .Select(skl => skl.Key));
             VideoStatusChanged(VideoStatus.ReadyToPlay);     
         }
 
-        private IEnumerable<int> BufferReadyForStorageKeys()
+        private void BufferReadyForStorageKeys()
         {
-            while (VideoSettings.BufferInSeconds * videoData.Framerate > videoFrameQueue.NumberOfItemsInAllChunks
-               && loadedStorageKeys < videoData.FrameStorageKeys.Count())
+            var targetChunkLoad = VideoSettings.BufferInSeconds * videoData.Framerate;
+            while (storageKeysLoaded.Where(lsk => !lsk.Value).Count() * videoData.FramesPerStorageKey < targetChunkLoad)
             {
-                loadedStorageKeys++;
-                yield return loadedStorageKeys;
+                storageKeysLoaded.Add(storageKeysLoaded.Count() + 1, false);
             }
         }
 
@@ -142,6 +161,7 @@ namespace Box9.Leds.Video
                 if (storageClient.LoadIfExists(storageKey, out chunk))
                 {
                     videoFrameQueue.EnqueueChunk(chunk);
+                    storageKeysLoaded[storageKey] = true;
                 }
             }
         }
