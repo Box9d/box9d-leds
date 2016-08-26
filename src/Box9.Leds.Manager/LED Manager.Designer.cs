@@ -51,8 +51,11 @@
             this.buttonStop = new System.Windows.Forms.Button();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.stripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.trackBarStartTime = new System.Windows.Forms.TrackBar();
+            this.labelStartTime = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarStartTime)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -61,7 +64,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(716, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(748, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -106,7 +109,7 @@
             // 
             // buttonAddServer
             // 
-            this.buttonAddServer.Location = new System.Drawing.Point(12, 301);
+            this.buttonAddServer.Location = new System.Drawing.Point(12, 380);
             this.buttonAddServer.Name = "buttonAddServer";
             this.buttonAddServer.Size = new System.Drawing.Size(75, 23);
             this.buttonAddServer.TabIndex = 2;
@@ -116,7 +119,7 @@
             // 
             // buttonRemoveServer
             // 
-            this.buttonRemoveServer.Location = new System.Drawing.Point(103, 301);
+            this.buttonRemoveServer.Location = new System.Drawing.Point(103, 380);
             this.buttonRemoveServer.Name = "buttonRemoveServer";
             this.buttonRemoveServer.Size = new System.Drawing.Size(75, 23);
             this.buttonRemoveServer.TabIndex = 3;
@@ -129,7 +132,7 @@
             this.listBoxServers.FormattingEnabled = true;
             this.listBoxServers.Location = new System.Drawing.Point(12, 65);
             this.listBoxServers.Name = "listBoxServers";
-            this.listBoxServers.Size = new System.Drawing.Size(166, 225);
+            this.listBoxServers.Size = new System.Drawing.Size(166, 303);
             this.listBoxServers.TabIndex = 4;
             // 
             // labelServers
@@ -213,7 +216,7 @@
             // buttonPlay
             // 
             this.buttonPlay.Enabled = false;
-            this.buttonPlay.Location = new System.Drawing.Point(487, 301);
+            this.buttonPlay.Location = new System.Drawing.Point(487, 380);
             this.buttonPlay.Name = "buttonPlay";
             this.buttonPlay.Size = new System.Drawing.Size(75, 23);
             this.buttonPlay.TabIndex = 12;
@@ -224,7 +227,7 @@
             // buttonStop
             // 
             this.buttonStop.Enabled = false;
-            this.buttonStop.Location = new System.Drawing.Point(596, 301);
+            this.buttonStop.Location = new System.Drawing.Point(596, 380);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(75, 23);
             this.buttonStop.TabIndex = 13;
@@ -236,9 +239,9 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.stripStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 334);
+            this.statusStrip.Location = new System.Drawing.Point(0, 406);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(716, 22);
+            this.statusStrip.Size = new System.Drawing.Size(748, 22);
             this.statusStrip.TabIndex = 14;
             this.statusStrip.Text = "statusStrip";
             // 
@@ -247,11 +250,30 @@
             this.stripStatusLabel.Name = "stripStatusLabel";
             this.stripStatusLabel.Size = new System.Drawing.Size(0, 17);
             // 
+            // trackBarStartTime
+            // 
+            this.trackBarStartTime.Enabled = false;
+            this.trackBarStartTime.Location = new System.Drawing.Point(487, 297);
+            this.trackBarStartTime.Name = "trackBarStartTime";
+            this.trackBarStartTime.Size = new System.Drawing.Size(184, 45);
+            this.trackBarStartTime.TabIndex = 15;
+            // 
+            // labelStartTime
+            // 
+            this.labelStartTime.AutoSize = true;
+            this.labelStartTime.Location = new System.Drawing.Point(487, 349);
+            this.labelStartTime.Name = "labelStartTime";
+            this.labelStartTime.Size = new System.Drawing.Size(111, 13);
+            this.labelStartTime.TabIndex = 16;
+            this.labelStartTime.Text = "Start playback at 0:00";
+            // 
             // LedManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(716, 356);
+            this.ClientSize = new System.Drawing.Size(748, 428);
+            this.Controls.Add(this.labelStartTime);
+            this.Controls.Add(this.trackBarStartTime);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.buttonPlay);
@@ -272,6 +294,7 @@
             this.menuStrip1.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarStartTime)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -302,6 +325,8 @@
         private System.Windows.Forms.ToolStripMenuItem newConfigurationToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel stripStatusLabel;
+        private System.Windows.Forms.TrackBar trackBarStartTime;
+        private System.Windows.Forms.Label labelStartTime;
     }
 }
 

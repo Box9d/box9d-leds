@@ -194,7 +194,7 @@ namespace Box9.Leds.Manager
 
             this.Invoke(new Action(() =>
             {
-                this.ToggleButtonAvailabilities(false);
+                this.ToggleControlAvailabilites(false);
             }));
 
             try
@@ -203,14 +203,25 @@ namespace Box9.Leds.Manager
 
                 this.Invoke(new Action(() =>
                 {
-                    this.ToggleButtonAvailabilities(false, buttonPlay);
+                    this.ToggleControlAvailabilites(false, buttonPlay, trackBarStartTime, labelStartTime);
+
+                    this.trackBarStartTime.Maximum = this.disposablePlayback.DurationInSeconds;
+                    this.trackBarStartTime.Minimum = 0;
+                    this.trackBarStartTime.TickFrequency = 1;
+
+                    this.trackBarStartTime.ValueChanged += (sender, e) =>
+                    {
+                        var startTime = new TimeSpan(0, 0, trackBarStartTime.Value);
+
+                        labelStartTime.Text = string.Format("Start playback at {0}", startTime.ToString(@"mm\:ss"));
+                    };
                 }));
             }
             catch (Exception ex)
             {
                 this.Invoke(new Action(() =>
                 {
-                    this.ToggleButtonAvailabilities(true, this.buttonPlay, this.buttonStop);
+                    this.ToggleControlAvailabilites(true, this.buttonPlay, this.buttonStop, this.trackBarStartTime);
                     MessageBox.Show(ex.Message);
                 }));
             }
@@ -220,15 +231,17 @@ namespace Box9.Leds.Manager
 
         private void buttonPlay_Click(object sender, EventArgs e)
         {
-            Task.Run(() => this.disposablePlayback.Play());
+            var startTime = new TimeSpan(0, 0, this.trackBarStartTime.Value);
 
-            this.ToggleButtonAvailabilities(false, buttonStop);
+            Task.Run(() => this.disposablePlayback.Play(startTime.Minutes, startTime.Hours));
+
+            this.ToggleControlAvailabilites(false, buttonStop);
 
             this.disposablePlayback.Finished += () =>
             {
                 this.Invoke(new Action(() =>
                 {
-                    this.ToggleButtonAvailabilities(true, buttonPlay, buttonStop);
+                    this.ToggleControlAvailabilites(true, buttonPlay, buttonStop);
                     this.disposablePlayback.Dispose();
 
                     foreach (var server in ServerForms)
@@ -246,7 +259,8 @@ namespace Box9.Leds.Manager
         {
             this.Invoke(new Action(() =>
             {
-                this.ToggleButtonAvailabilities(true, buttonPlay, buttonStop);
+                this.trackBarStartTime.Value = 0;
+                this.ToggleControlAvailabilites(true, buttonPlay, buttonStop, trackBarStartTime);
                 this.disposablePlayback.Stop();
                 this.disposablePlayback.Dispose();
 

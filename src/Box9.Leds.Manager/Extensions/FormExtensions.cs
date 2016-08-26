@@ -5,21 +5,21 @@ namespace Box9.Leds.Manager.Extensions
 {
     public static class FormExtensions
     {
-        public static void ToggleButtonAvailabilities(this Form form, bool enabled, params Button[] exceptions)
+        public static void ToggleControlAvailabilites(this Form form, bool enabled, params Control[] exceptions)
         {
-            foreach (var control in form.Controls)
+            foreach (var obj in form.Controls)
             {
-                if (control is Button)
+                if (obj is Control)
                 {
-                    var button = ((Button)control);
+                    var control = ((Control)obj);
 
                     if (exceptions.AsEnumerable().Contains(control))
                     {
-                        button.Enabled = !enabled;
+                        control.Enabled = !enabled;
                     }
                     else
                     {
-                        button.Enabled = enabled;
+                        control.Enabled = enabled;
                     }
                 }
             }

@@ -26,6 +26,8 @@ namespace Box9.Leds.Manager.Playback
         private readonly DBreezeEngine engine;
         private CancellationTokenSource cancelTokenSource;
 
+        public int DurationInSeconds;
+
         public DisposablePlayback(LedManager ledManager, LedConfiguration ledConfiguration, IEnumerable<DisposableVideoPlayback> videoPlaybacks, AudioData audioPlayback)
         {
             engine = DBreezeEngineFactory.GetDBreezeEngine();
@@ -69,6 +71,8 @@ namespace Box9.Leds.Manager.Playback
 
             audioPlayer = new Mp3AudioPlayer(audioPlayback);
             cancelTokenSource = new CancellationTokenSource();
+
+            this.DurationInSeconds = (int)audioPlayback.DurationInSeconds;
         }
 
         public async Task Play(int minutes = 0, int seconds = 0)
