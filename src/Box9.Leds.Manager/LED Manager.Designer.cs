@@ -53,9 +53,12 @@
             this.stripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.trackBarStartTime = new System.Windows.Forms.TrackBar();
             this.labelStartTime = new System.Windows.Forms.Label();
+            this.trackBarBrightness = new System.Windows.Forms.TrackBar();
+            this.labelBrightness = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarStartTime)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarBrightness)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -119,7 +122,7 @@
             // 
             // buttonRemoveServer
             // 
-            this.buttonRemoveServer.Location = new System.Drawing.Point(103, 380);
+            this.buttonRemoveServer.Location = new System.Drawing.Point(113, 380);
             this.buttonRemoveServer.Name = "buttonRemoveServer";
             this.buttonRemoveServer.Size = new System.Drawing.Size(75, 23);
             this.buttonRemoveServer.TabIndex = 3;
@@ -132,7 +135,7 @@
             this.listBoxServers.FormattingEnabled = true;
             this.listBoxServers.Location = new System.Drawing.Point(12, 65);
             this.listBoxServers.Name = "listBoxServers";
-            this.listBoxServers.Size = new System.Drawing.Size(166, 303);
+            this.listBoxServers.Size = new System.Drawing.Size(176, 225);
             this.listBoxServers.TabIndex = 4;
             // 
             // labelServers
@@ -267,11 +270,34 @@
             this.labelStartTime.TabIndex = 16;
             this.labelStartTime.Text = "Start playback at 0:00";
             // 
+            // trackBarBrightness
+            // 
+            this.trackBarBrightness.LargeChange = 10;
+            this.trackBarBrightness.Location = new System.Drawing.Point(12, 308);
+            this.trackBarBrightness.Maximum = 100;
+            this.trackBarBrightness.Name = "trackBarBrightness";
+            this.trackBarBrightness.Size = new System.Drawing.Size(184, 45);
+            this.trackBarBrightness.SmallChange = 10;
+            this.trackBarBrightness.TabIndex = 17;
+            this.trackBarBrightness.TickFrequency = 10;
+            this.trackBarBrightness.Value = 100;
+            // 
+            // labelBrightness
+            // 
+            this.labelBrightness.AutoSize = true;
+            this.labelBrightness.Location = new System.Drawing.Point(12, 349);
+            this.labelBrightness.Name = "labelBrightness";
+            this.labelBrightness.Size = new System.Drawing.Size(85, 13);
+            this.labelBrightness.TabIndex = 18;
+            this.labelBrightness.Text = "Brightness 100%";
+            // 
             // LedManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(748, 428);
+            this.Controls.Add(this.labelBrightness);
+            this.Controls.Add(this.trackBarBrightness);
             this.Controls.Add(this.labelStartTime);
             this.Controls.Add(this.trackBarStartTime);
             this.Controls.Add(this.statusStrip);
@@ -290,11 +316,13 @@
             this.Controls.Add(this.menuStrip1);
             this.Name = "LedManager";
             this.Text = "LED Manager";
+            this.Load += new System.EventHandler(this.LedManager_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarStartTime)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarBrightness)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -327,6 +355,8 @@
         private System.Windows.Forms.ToolStripStatusLabel stripStatusLabel;
         private System.Windows.Forms.TrackBar trackBarStartTime;
         private System.Windows.Forms.Label labelStartTime;
+        private System.Windows.Forms.TrackBar trackBarBrightness;
+        private System.Windows.Forms.Label labelBrightness;
     }
 }
 

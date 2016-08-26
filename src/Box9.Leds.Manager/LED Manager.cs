@@ -5,7 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Box9.Leds.Core.Configuration;
+using Box9.Leds.Core.Messages.ColorCorrection;
+using Box9.Leds.Core.Messages.ConnectedDevices;
+using Box9.Leds.Core.Messages.ServerInfo;
 using Box9.Leds.DataStorage;
+using Box9.Leds.FcClient;
 using Box9.Leds.Manager.Events;
 using Box9.Leds.Manager.Extensions;
 using Box9.Leds.Manager.Forms;
@@ -29,6 +33,33 @@ namespace Box9.Leds.Manager
             InitializeComponent();
             configurationStorage = new ConfigurationStorageClient();
             ServerForms = new List<ServerForm>();
+        }
+
+        private async void LedManager_Load(object sender, EventArgs e)
+        {
+            this.trackBarBrightness.ValueChanged += (s, args) =>
+            {
+                this.labelBrightness.Text = string.Format("Brightness {0}%", trackBarBrightness.Value);
+            };
+
+            this.trackBarBrightness.MouseUp += (s, args) =>
+            {
+                foreach (var server in this.listBoxServers.Items.Cast<ServerConfiguration>())
+                {
+                    Task.Run(async () =>
+                    {
+                        var client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", server.IPAddress, server.Port)));
+
+                        var serverInfo = await client.SendMessage(new ConnectedDevicesRequest());
+                        var fadecandySerials = serverInfo.Devices.Select(d => d.Serial);
+
+                        foreach (var serial in fadecandySerials)
+                        {
+                            await client.SendMessage(new ColorCorrectionRequest(trackBarBrightness.Value, serial));
+                        }
+                    });
+                }
+            };
         }
 
         private void ServerAddedHandle(ServerConfiguration server)
