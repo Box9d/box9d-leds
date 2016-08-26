@@ -12,8 +12,9 @@ namespace Box9.Leds.Video
         private readonly FileStream fileStream;
         private readonly Mp3FileReader mp3FileReader;
         private readonly WaveStream wavStream;
-        private readonly BlockAlignReductionStream baStream;
-        private readonly WaveOut wave;
+
+        private BlockAlignReductionStream baStream;
+        private WaveOut wave;
 
         public delegate void PlaybackFinished();
         public event PlaybackFinished Stopped;
@@ -24,11 +25,7 @@ namespace Box9.Leds.Video
 
             fileStream = File.OpenRead(videoAudioData.FilePath);
             mp3FileReader = new Mp3FileReader(fileStream);
-            wavStream = WaveFormatConversionStream.CreatePcmStream(mp3FileReader);
-            baStream = new BlockAlignReductionStream(wavStream);
-            wave = new WaveOut(WaveCallbackInfo.FunctionCallback());
-
-            wave.Init(baStream);           
+            wavStream = WaveFormatConversionStream.CreatePcmStream(mp3FileReader);    
         }
 
         public void Dispose()
@@ -41,9 +38,15 @@ namespace Box9.Leds.Video
             wave.Dispose();
         }
 
-        public void Play()
+        public void Play(int minutes = 0, int seconds = 0)
         {
+            wavStream.CurrentTime = wavStream.CurrentTime.Add(new TimeSpan(0, minutes, seconds));
+
+            baStream = new BlockAlignReductionStream(wavStream);
+            wave = new WaveOut(WaveCallbackInfo.FunctionCallback());
+            wave.Init(baStream);
             wave.Play();
+
             wave.PlaybackStopped += PlaybackStoppedHandler;
         }
 
