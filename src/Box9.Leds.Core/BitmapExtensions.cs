@@ -39,11 +39,15 @@ namespace Box9.Leds.Core
                         }
 
                         graphics.FillEllipse(brush, currentX, currentY, PixelDimensions.Width * scale, PixelDimensions.Height * scale);
-                        graphics.DrawString(pixel.Text, 
-                            new Font(FontFamily.GenericSansSerif, 7), 
-                            new SolidBrush(Color.Black), 
-                            new PointF(currentX + (PixelDimensions.Width * scale / 2) - 3 * pixel.Text.Length, 
+
+                        if (pixel != null && !string.IsNullOrEmpty(pixel.Text))
+                        {
+                            graphics.DrawString(pixel.Text,
+                            new Font(FontFamily.GenericSansSerif, 7),
+                            new SolidBrush(Color.Black),
+                            new PointF(currentX + (PixelDimensions.Width * scale / 2) - 3 * pixel.Text.Length,
                                 currentY + (PixelDimensions.Height * scale) / 4));
+                        }
 
                         currentY += (PixelDimensions.Height + PixelDimensions.Gap) * scale;
                     }
