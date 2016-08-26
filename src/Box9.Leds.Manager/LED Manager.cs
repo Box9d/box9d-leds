@@ -184,6 +184,11 @@ namespace Box9.Leds.Manager
                 {
                     listIssues.Items.Add(issue);
                 }
+
+                listIssues.DoubleClick += (s, args) =>
+                {
+                    MessageBox.Show(listIssues.SelectedItem.ToString());
+                };
             }
         }
 
