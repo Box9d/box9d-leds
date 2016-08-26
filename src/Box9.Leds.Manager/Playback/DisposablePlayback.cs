@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -70,18 +71,22 @@ namespace Box9.Leds.Manager.Playback
             cancelTokenSource = new CancellationTokenSource();
         }
 
-        public async Task Play()
+        public async Task Play(int minutes = 0, int seconds = 0)
         {
             this.audioPlayer.Stopped += () =>
             {
                 Finished();
             };
 
-            this.audioPlayer.Play();
-
             foreach (var videoPlayer in videoPlayers)
             {
-                videoPlayer.Play(cancelTokenSource.Token);
+                videoPlayer.PreBuffer(minutes, seconds);
+            }
+
+            this.audioPlayer.Play(minutes, seconds);
+            foreach (var videoPlayer in videoPlayers)
+            {
+                videoPlayer.Play(cancelTokenSource.Token, minutes, seconds);
             }
 
             await Task.Yield();
