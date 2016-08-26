@@ -55,6 +55,7 @@
             this.labelStartTime = new System.Windows.Forms.Label();
             this.trackBarBrightness = new System.Windows.Forms.TrackBar();
             this.labelBrightness = new System.Windows.Forms.Label();
+            this.checkBoxDisplayOutputOnScreen = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarStartTime)).BeginInit();
@@ -67,7 +68,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(748, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(751, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -112,7 +113,7 @@
             // 
             // buttonAddServer
             // 
-            this.buttonAddServer.Location = new System.Drawing.Point(12, 380);
+            this.buttonAddServer.Location = new System.Drawing.Point(12, 418);
             this.buttonAddServer.Name = "buttonAddServer";
             this.buttonAddServer.Size = new System.Drawing.Size(75, 23);
             this.buttonAddServer.TabIndex = 2;
@@ -122,7 +123,7 @@
             // 
             // buttonRemoveServer
             // 
-            this.buttonRemoveServer.Location = new System.Drawing.Point(113, 380);
+            this.buttonRemoveServer.Location = new System.Drawing.Point(113, 418);
             this.buttonRemoveServer.Name = "buttonRemoveServer";
             this.buttonRemoveServer.Size = new System.Drawing.Size(75, 23);
             this.buttonRemoveServer.TabIndex = 3;
@@ -219,7 +220,7 @@
             // buttonPlay
             // 
             this.buttonPlay.Enabled = false;
-            this.buttonPlay.Location = new System.Drawing.Point(487, 380);
+            this.buttonPlay.Location = new System.Drawing.Point(487, 418);
             this.buttonPlay.Name = "buttonPlay";
             this.buttonPlay.Size = new System.Drawing.Size(75, 23);
             this.buttonPlay.TabIndex = 12;
@@ -230,7 +231,7 @@
             // buttonStop
             // 
             this.buttonStop.Enabled = false;
-            this.buttonStop.Location = new System.Drawing.Point(596, 380);
+            this.buttonStop.Location = new System.Drawing.Point(596, 418);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(75, 23);
             this.buttonStop.TabIndex = 13;
@@ -242,9 +243,9 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.stripStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 406);
+            this.statusStrip.Location = new System.Drawing.Point(0, 444);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(748, 22);
+            this.statusStrip.Size = new System.Drawing.Size(751, 22);
             this.statusStrip.TabIndex = 14;
             this.statusStrip.Text = "statusStrip";
             // 
@@ -291,11 +292,23 @@
             this.labelBrightness.TabIndex = 18;
             this.labelBrightness.Text = "Brightness 100%";
             // 
+            // checkBoxDisplayOutputOnScreen
+            // 
+            this.checkBoxDisplayOutputOnScreen.AutoSize = true;
+            this.checkBoxDisplayOutputOnScreen.Location = new System.Drawing.Point(490, 381);
+            this.checkBoxDisplayOutputOnScreen.Name = "checkBoxDisplayOutputOnScreen";
+            this.checkBoxDisplayOutputOnScreen.Size = new System.Drawing.Size(143, 17);
+            this.checkBoxDisplayOutputOnScreen.TabIndex = 19;
+            this.checkBoxDisplayOutputOnScreen.Text = "Display output on screen";
+            this.checkBoxDisplayOutputOnScreen.UseVisualStyleBackColor = true;
+            this.checkBoxDisplayOutputOnScreen.CheckedChanged += new System.EventHandler(this.checkBoxDisplayOutputOnScreen_CheckedChanged);
+            // 
             // LedManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(748, 428);
+            this.ClientSize = new System.Drawing.Size(751, 466);
+            this.Controls.Add(this.checkBoxDisplayOutputOnScreen);
             this.Controls.Add(this.labelBrightness);
             this.Controls.Add(this.trackBarBrightness);
             this.Controls.Add(this.labelStartTime);
@@ -357,6 +370,7 @@
         private System.Windows.Forms.Label labelStartTime;
         private System.Windows.Forms.TrackBar trackBarBrightness;
         private System.Windows.Forms.Label labelBrightness;
+        private System.Windows.Forms.CheckBox checkBoxDisplayOutputOnScreen;
     }
 }
 

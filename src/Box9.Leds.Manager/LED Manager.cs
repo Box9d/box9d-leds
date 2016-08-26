@@ -25,6 +25,7 @@ namespace Box9.Leds.Manager
         private string videoSourceFilePath;
         private readonly IConfigurationStorageClient configurationStorage;
         private DisposablePlayback disposablePlayback;
+        private bool displayOutput;
 
         public List<ServerForm> ServerForms { get; private set; }
 
@@ -44,7 +45,7 @@ namespace Box9.Leds.Manager
 
             this.trackBarBrightness.MouseUp += (s, args) =>
             {
-                foreach (var server in this.listBoxServers.Items.Cast<ServerConfiguration>())
+                foreach (var server in this.listBoxServers.Items.Cast<ServerConfiguration>().Where(sc => sc.ServerType == Core.Servers.ServerType.FadeCandy))
                 {
                     Task.Run(async () =>
                     {
@@ -234,7 +235,7 @@ namespace Box9.Leds.Manager
 
                 this.Invoke(new Action(() =>
                 {
-                    this.ToggleControlAvailabilites(false, buttonPlay, trackBarStartTime, labelStartTime);
+                    this.ToggleControlAvailabilites(false, buttonPlay, trackBarStartTime, labelStartTime, checkBoxDisplayOutputOnScreen);
 
                     this.trackBarStartTime.Maximum = this.disposablePlayback.DurationInSeconds;
                     this.trackBarStartTime.Minimum = 0;
@@ -264,7 +265,7 @@ namespace Box9.Leds.Manager
         {
             var startTime = new TimeSpan(0, 0, this.trackBarStartTime.Value);
 
-            Task.Run(() => this.disposablePlayback.Play(startTime.Minutes, startTime.Hours));
+            Task.Run(() => this.disposablePlayback.Play(startTime.Minutes, startTime.Hours, displayOutput));
 
             this.ToggleControlAvailabilites(false, buttonStop);
 
@@ -320,6 +321,11 @@ namespace Box9.Leds.Manager
             {
                 this.stripStatusLabel.Text = message.Status + ": " + message.Message;
             }));
+        }
+
+        private void checkBoxDisplayOutputOnScreen_CheckedChanged(object sender, EventArgs e)
+        {
+            this.displayOutput = checkBoxDisplayOutputOnScreen.Checked;
         }
     }
 }
