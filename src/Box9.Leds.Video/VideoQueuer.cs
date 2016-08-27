@@ -1,9 +1,10 @@
 ﻿using System.Collections.Concurrent;
 using System.Drawing;
+using System.Threading;
 using AForge.Video.FFMPEG;
 using Box9.Leds.Core.Configuration;
 
-namespace Box9.Leds.RealtimeVideo
+namespace Box9.Leds.Video
 {
     public class VideoQueuer
     {
@@ -27,14 +28,16 @@ namespace Box9.Leds.RealtimeVideo
                 var framerate = reader.FrameRate;
                 var frameCount = reader.FrameCount;
                 
-                while (currentFrame <= reader.FrameCount)
+                while (currentFrame <= frameCount)
                 {
                     var frame = reader.ReadVideoFrame();
-
-                    if (currentFrame / framerate > minutes * 60 + seconds)
+                    if (currentFrame / framerate + 1 > minutes * 60 + seconds)
                     {
-                        Frames.TryAdd(currentFrame, frame);
+                        Frames.TryAdd(currentFrame, frame.Clone(new Rectangle(0, 0, frame.Width, frame.Height), System.Drawing.Imaging.PixelFormat.DontCare));
                     }
+
+                    frame.Dispose();
+
                     currentFrame++;
                 }
             }

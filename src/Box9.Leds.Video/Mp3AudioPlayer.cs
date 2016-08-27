@@ -45,16 +45,21 @@ namespace Box9.Leds.Video
             baStream = new BlockAlignReductionStream(wavStream);
             wave = new WaveOut(WaveCallbackInfo.FunctionCallback());
             wave.Init(baStream);
-            wave.Play();
-
             wave.PlaybackStopped += PlaybackStoppedHandler;
+            wave.Play();
         }
 
         public void Stop()
         {
-            if (wave.PlaybackState == PlaybackState.Playing)
+            if (wave != null && wave.PlaybackState == PlaybackState.Playing)
             {
-                wave.Stop();
+                try
+                {
+                    wave.Stop();
+                }
+                catch
+                {
+                }
             }
         }
 

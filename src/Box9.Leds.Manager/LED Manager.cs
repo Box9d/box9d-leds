@@ -15,7 +15,7 @@ using Box9.Leds.Manager.Extensions;
 using Box9.Leds.Manager.Forms;
 using Box9.Leds.Manager.Playback;
 using Box9.Leds.Manager.Validation;
-using Box9.Leds.RealtimeVideo;
+using Box9.Leds.Video;
 
 namespace Box9.Leds.Manager
 {
@@ -214,12 +214,17 @@ namespace Box9.Leds.Manager
         private async Task ValidateForm()
         {
             IConfigurationValidator validator = new ConfigurationValidator();
+            SaveConfig();
             var config = GetConfig();
             var result = await validator.Validate(config);
 
             if (result.OK)
             {
                  InitializePlayback(config);
+            }
+            else
+            {
+                MessageBox.Show(result.Errors.Aggregate((prev, curr) => prev + Environment.NewLine + curr));
             }
 
             await Task.Yield();
@@ -273,9 +278,12 @@ namespace Box9.Leds.Manager
         private void buttonPlay_Click(object sender, EventArgs e)
         {
             var startTime = new TimeSpan(0, 0, this.trackBarStartTime.Value);
-            this.videoPlayback.Load(startTime.Minutes, startTime.Seconds);
 
-            Task.Run(() => videoPlayback.Play(this.clientServers, startTime.Minutes, startTime.Seconds, cancellationTokenSource.Token));
+            Task.Run(() =>
+            {
+                videoPlayback.Load(startTime.Minutes, startTime.Seconds);
+                videoPlayback.Play(this.clientServers, startTime.Minutes, startTime.Seconds, cancellationTokenSource.Token);
+            });
 
             this.ToggleControlAvailabilites(false, buttonStop);
         }

@@ -61,12 +61,12 @@ namespace Box9.Leds.Manager.Playback
                     server = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", videoPlayback.ServerConfig.IPAddress, videoPlayback.ServerConfig.Port)));
                 }
 
-                var videoPlayer = new VideoPlayer(server, VideoStorageFactory.GetVideoStorageClient(engine, 
-                    ledConfiguration.GetServerVideoStorageKey(videoPlayback.ServerConfig)), 
-                    videoPlayback.VideoData, 
-                    videoPlayback.ServerConfig);
+                //var videoPlayer = new VideoPlayer(server, VideoStorageFactory.GetVideoStorageClient(engine, 
+                //    ledConfiguration.GetServerVideoStorageKey(videoPlayback.ServerConfig)), 
+                //    videoPlayback.VideoData, 
+                //    videoPlayback.ServerConfig);
 
-                videoPlayers.Add(videoPlayer);
+                //videoPlayers.Add(videoPlayer);
             }
 
             audioPlayer = new Mp3AudioPlayer(audioPlayback);
@@ -82,17 +82,17 @@ namespace Box9.Leds.Manager.Playback
                 Finished();
             };
 
-            foreach (var videoPlayer in videoPlayers)
-            {
-                videoPlayer.PreBuffer(minutes, seconds);
-            }
+            //foreach (var videoPlayer in videoPlayers)
+            //{
+            //    videoPlayer.PreBuffer(minutes, seconds);
+            //}
 
-            this.audioPlayer.Play(minutes, seconds);
-            foreach (var videoPlayer in videoPlayers
-                .Where(vp => displayOutputOnScreen || vp.ServerType == ServerType.FadeCandy))
-            {
-                videoPlayer.Play(cancelTokenSource.Token, minutes, seconds);
-            }
+            //this.audioPlayer.Play(minutes, seconds);
+            //foreach (var videoPlayer in videoPlayers
+            //    .Where(vp => displayOutputOnScreen || vp.ServerType == ServerType.FadeCandy))
+            //{
+            //    videoPlayer.Play(cancelTokenSource.Token, minutes, seconds);
+            //}
 
             await Task.Yield();
         }
@@ -111,12 +111,12 @@ namespace Box9.Leds.Manager.Playback
 
         public void Dispose()
         {
-            foreach (var videoPlayer in videoPlayers)
-            {
-                videoPlayer.Dispose();
-            }
+            //foreach (var videoPlayer in videoPlayers)
+            //{
+            //    videoPlayer.Dispose();
+            //}
 
-            engine.Dispose();
+            //engine.Dispose();
         }
     }
 }
