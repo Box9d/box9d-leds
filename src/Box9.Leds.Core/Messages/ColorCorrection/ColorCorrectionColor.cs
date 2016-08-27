@@ -6,20 +6,22 @@ namespace Box9.Leds.Core.Messages.ColorCorrection
     public class ColorCorrectionColor
     {
         [JsonProperty(PropertyName = "gamma")]
-        public string Gamma
+        public double Gamma
         {
             get
             {
-                return "2.5";
+                return 2.5;
             }
         }
 
         [JsonProperty(PropertyName = "whitepoint")]
-        public string Whitepoint { get; private set; }
+        public double[] Whitepoint { get; private set; }
 
         public ColorCorrectionColor(int brightnessPercent)
         {
-            Whitepoint = Math.Round((double)brightnessPercent / 100, 1).ToString();
+            var whitepoint = Math.Round((double)brightnessPercent / 100, 1);
+
+            Whitepoint = new double[3] { whitepoint, whitepoint, whitepoint };
         }
     }
 }
