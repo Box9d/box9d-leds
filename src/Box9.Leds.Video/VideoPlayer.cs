@@ -89,11 +89,11 @@ namespace Box9.Leds.Video
 
             int loadedChunkStorageKey = 1;
             int currentFrame = 1 + (minutes * 60 + seconds) * videoData.Framerate;
-            int totalPlayTime = (int)Math.Round((double)((double)videoData.TotalNumberOfFrames / (double)videoData.Framerate) * 1000, 0) - (minutes * 60 + seconds) * videoData.Framerate;
+            int totalPlayTimeMillseconds = (int)Math.Round((double)((double)videoData.TotalNumberOfFrames / (double)videoData.Framerate) * 1000, 0) - (minutes * 60 + seconds) * 1000;
             double timeSinceLastBufferLoad = 0;
 
             FrameVideoData[] loadedChunk = null;
-            while (playStopwatch.ElapsedMilliseconds < totalPlayTime && !cancellationToken.IsCancellationRequested)
+            while (playStopwatch.ElapsedMilliseconds < totalPlayTimeMillseconds && !cancellationToken.IsCancellationRequested)
             {
                 try
                 {
@@ -164,10 +164,6 @@ namespace Box9.Leds.Video
             await fcClient.CloseAsync();
             storageKeysLoaded = new Dictionary<int, bool>();
 
-            BufferReadyForStorageKeys();
-            LoadBuffer(storageKeysLoaded
-                .Where(skl => !skl.Value)
-                .Select(skl => skl.Key));
             VideoStatusChanged(VideoStatus.ReadyToPlay);     
         }
 

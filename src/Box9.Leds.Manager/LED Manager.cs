@@ -270,7 +270,7 @@ namespace Box9.Leds.Manager
         {
             var startTime = new TimeSpan(0, 0, this.trackBarStartTime.Value);
 
-            Task.Run(() => this.disposablePlayback.Play(startTime.Minutes, startTime.Hours, displayOutput));
+            Task.Run(() => this.disposablePlayback.Play(startTime.Minutes, startTime.Seconds, displayOutput));
 
             this.ToggleControlAvailabilites(false, buttonStop);
 
