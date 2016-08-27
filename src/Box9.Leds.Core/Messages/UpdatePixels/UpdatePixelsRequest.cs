@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using Box9.Leds.Core.UpdatePixels;
 
 namespace Box9.Leds.Core.Messages.UpdatePixels

@@ -15,17 +15,21 @@ using Box9.Leds.Manager.Extensions;
 using Box9.Leds.Manager.Forms;
 using Box9.Leds.Manager.Playback;
 using Box9.Leds.Manager.Validation;
+using Box9.Leds.RealtimeVideo;
 
 namespace Box9.Leds.Manager
 {
     public partial class LedManager : Form
     {
         private AddServerForm addServerForm;
+        private List<ClientServer> clientServers;
         private string loadedConfigFilePath;
         private string videoSourceFilePath;
         private readonly IConfigurationStorageClient configurationStorage;
         private DisposablePlayback disposablePlayback;
+        private VideoPlayer videoPlayback;
         private bool displayOutput;
+        private CancellationTokenSource cancellationTokenSource;
 
         public List<ServerForm> ServerForms { get; private set; }
 
@@ -34,6 +38,7 @@ namespace Box9.Leds.Manager
             InitializeComponent();
             configurationStorage = new ConfigurationStorageClient();
             ServerForms = new List<ServerForm>();
+            clientServers = new List<ClientServer>();
         }
 
         private async void LedManager_Load(object sender, EventArgs e)
@@ -120,6 +125,28 @@ namespace Box9.Leds.Manager
             }
         }
 
+        private LedConfiguration GetConfig()
+        {
+            var servers = new List<ServerConfiguration>();
+            foreach (var server in this.listBoxServers.Items)
+            {
+                servers.Add((ServerConfiguration)server);
+            }
+
+            return new LedConfiguration
+            {
+                Servers = servers,
+                VideoConfig = new VideoConfiguration
+                {
+                    SourceFilePath = this.videoSourceFilePath
+                },
+                AudioConfig = new AudioConfiguration
+                {
+                    SourceFilePath = this.videoSourceFilePath
+                }
+            };
+        }
+
         private void LoadConfig(LedConfiguration config)
         {
             this.listBoxServers.RemoveAllItems();
@@ -184,122 +211,83 @@ namespace Box9.Leds.Manager
             }
         }
 
-        private async void buttonInitializePlayback_Click(object sender, EventArgs e)
+        private async Task ValidateForm()
         {
-            if (string.IsNullOrEmpty(loadedConfigFilePath))
-            {
-                var dialogResult = SaveConfigAs();
-                if (dialogResult != DialogResult.OK)
-                {
-                    return; // Don't validate if the file isn't saved
-                }
-            }
-            else
-            {
-                SaveConfig();
-            }
-
-            listIssues.RemoveAllItems();
-
             IConfigurationValidator validator = new ConfigurationValidator();
-            var config = configurationStorage.Get(this.loadedConfigFilePath);
+            var config = GetConfig();
             var result = await validator.Validate(config);
 
             if (result.OK)
             {
-                Task.Run(() => InitializePlayback(config));
-            }
-            else
-            {
-                buttonPlay.Enabled = false;
-                foreach (var issue in result.Errors)
-                {
-                    listIssues.Items.Add(issue);
-                }
-
-                listIssues.DoubleClick += (s, args) =>
-                {
-                    MessageBox.Show(listIssues.SelectedItem.ToString());
-                };
-            }
-        }
-
-        private async Task InitializePlayback(LedConfiguration config)
-        {
-            var disposablePlaybackFactory = new DisposablePlaybackFactory();
-            disposablePlaybackFactory.StatusUpdate += DisposablePlaybackInitializeUpdate;
-
-            this.Invoke(new Action(() =>
-            {
-                this.ToggleControlAvailabilites(false);
-            }));
-
-            try
-            {
-                this.disposablePlayback = disposablePlaybackFactory.InitializeFromConfig(this, config);
-
-                this.Invoke(new Action(() =>
-                {
-                    this.ToggleControlAvailabilites(false, buttonPlay, trackBarStartTime, labelStartTime, checkBoxDisplayOutputOnScreen);
-
-                    this.trackBarStartTime.Maximum = this.disposablePlayback.DurationInSeconds;
-                    this.trackBarStartTime.Minimum = 0;
-                    this.trackBarStartTime.TickFrequency = 1;
-
-                    this.trackBarStartTime.ValueChanged += (sender, e) =>
-                    {
-                        var startTime = new TimeSpan(0, 0, trackBarStartTime.Value);
-
-                        labelStartTime.Text = string.Format("Start playback at {0}", startTime.ToString(@"mm\:ss"));
-                    };
-                }));
-            }
-            catch (Exception ex)
-            {
-                this.Invoke(new Action(() =>
-                {
-                    this.ToggleControlAvailabilites(true, this.buttonPlay, this.buttonStop, this.trackBarStartTime);
-                    MessageBox.Show(ex.Message);
-                }));
+                 InitializePlayback(config);
             }
 
             await Task.Yield();
         }
 
+        private void InitializePlayback(LedConfiguration config)
+        {
+            this.ToggleControlAvailabilites(false);
+
+            clientServers = new List<ClientServer>();
+            foreach (var serverConfig in config.Servers.Where(s => checkBoxDisplayOutputOnScreen.Checked || s.ServerType == Core.Servers.ServerType.FadeCandy))
+            {
+                var serverForm = new ServerForm(serverConfig);
+                serverForm.StartPosition = FormStartPosition.Manual;
+                serverForm.Visible = true;
+                serverForm.BringToFront();
+                serverForm.Show();
+
+                this.ServerForms.Add(serverForm);
+
+                IClientWrapper client;
+                if (serverConfig.ServerType == Core.Servers.ServerType.DisplayOnly)
+                {
+                    client = new DisplayClientWrapper(serverForm.DisplayPanel, serverConfig);
+                }
+                else
+                {
+                    client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", serverConfig.IPAddress, serverConfig.Port)));
+                }
+
+                clientServers.Add(new ClientServer(client, serverConfig));
+            }
+
+            this.videoPlayback = new VideoPlayer(configurationStorage.Get(loadedConfigFilePath));
+            this.cancellationTokenSource = new CancellationTokenSource();
+
+            this.ToggleControlAvailabilites(false, buttonPlay, trackBarStartTime, labelStartTime, checkBoxDisplayOutputOnScreen);
+
+            this.trackBarStartTime.Maximum = videoPlayback.GetDurationInSeconds();
+            this.trackBarStartTime.Minimum = 0;
+            this.trackBarStartTime.TickFrequency = 1;
+
+            this.trackBarStartTime.ValueChanged += (sender, e) =>
+            {
+                var startTime = new TimeSpan(0, 0, trackBarStartTime.Value);
+
+                labelStartTime.Text = string.Format("Start playback at {0}", startTime.ToString(@"mm\:ss"));
+            };
+        }
+
         private void buttonPlay_Click(object sender, EventArgs e)
         {
             var startTime = new TimeSpan(0, 0, this.trackBarStartTime.Value);
+            this.videoPlayback.Load(startTime.Minutes, startTime.Seconds);
 
-            Task.Run(() => this.disposablePlayback.Play(startTime.Minutes, startTime.Seconds, displayOutput));
+            Task.Run(() => videoPlayback.Play(this.clientServers, startTime.Minutes, startTime.Seconds, cancellationTokenSource.Token));
 
             this.ToggleControlAvailabilites(false, buttonStop);
-
-            this.disposablePlayback.Finished += () =>
-            {
-                this.Invoke(new Action(() =>
-                {
-                    this.ToggleControlAvailabilites(true, buttonPlay, buttonStop);
-                    this.disposablePlayback.Dispose();
-
-                    foreach (var server in ServerForms)
-                    {
-                        server.Close();
-                        server.Dispose();
-                    }
-
-                    ServerForms = new List<ServerForm>();
-                }));
-            };
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
         {
+            this.cancellationTokenSource.Cancel();
+
             this.Invoke(new Action(() =>
             {
                 this.trackBarStartTime.Value = 0;
                 this.ToggleControlAvailabilites(true, buttonPlay, buttonStop, trackBarStartTime);
-                this.disposablePlayback.Stop();
-                this.disposablePlayback.Dispose();
 
                 foreach (var server in ServerForms)
                 {
@@ -331,6 +319,11 @@ namespace Box9.Leds.Manager
         private void checkBoxDisplayOutputOnScreen_CheckedChanged(object sender, EventArgs e)
         {
             this.displayOutput = checkBoxDisplayOutputOnScreen.Checked;
+        }
+
+        private async void buttonValidatePlayback_Click(object sender, EventArgs e)
+        {
+            await ValidateForm();
         }
     }
 }

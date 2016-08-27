@@ -83,6 +83,33 @@ namespace Box9.Leds.Core
             return bitmap;
         }
 
+        public static IEnumerable<PixelInfo> CreatePixelInfo(Bitmap image, ServerConfiguration serverConfiguration)
+        {
+            var startX = image.Width * serverConfiguration.VideoConfiguration.StartAtXPercent / 100;
+            var startY = image.Height * serverConfiguration.VideoConfiguration.StartAtYPercent / 100;
+            var finishX = startX + (image.Width * serverConfiguration.VideoConfiguration.XPercent / 100);
+            var finishY = startY + (image.Height * serverConfiguration.VideoConfiguration.YPercent / 100);
+
+            var xPixelGap = (finishX - startX) / serverConfiguration.XPixels;
+            var yPixelGap = (finishY - startY) / serverConfiguration.YPixels;
+
+            foreach (var pixelMapping in serverConfiguration.PixelMappings.OrderBy(pm => pm.Order))
+            {
+                var x = startX + (pixelMapping.X * xPixelGap);
+                var y = startY + (pixelMapping.Y * yPixelGap);
+
+                x = x >= finishX ? finishX - 1 : x;
+                y = y >= finishY ? finishY - 1 : y;
+
+                yield return new PixelInfo
+                {
+                    X = pixelMapping.X,
+                    Y = pixelMapping.Y,
+                    Color = image.GetPixel(x, y)
+                };
+            }
+        }
+
         public static byte[] Encode(Bitmap bitmap)
         {
             using (var stream = new MemoryStream())

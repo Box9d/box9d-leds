@@ -44,9 +44,7 @@
             this.importVideoButton = new System.Windows.Forms.Button();
             this.labelVideoFilePath = new System.Windows.Forms.Label();
             this.labelVideo = new System.Windows.Forms.Label();
-            this.buttonInitializePlayback = new System.Windows.Forms.Button();
             this.labelPlayback = new System.Windows.Forms.Label();
-            this.listIssues = new System.Windows.Forms.ListBox();
             this.buttonPlay = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
@@ -56,6 +54,7 @@
             this.trackBarBrightness = new System.Windows.Forms.TrackBar();
             this.labelBrightness = new System.Windows.Forms.Label();
             this.checkBoxDisplayOutputOnScreen = new System.Windows.Forms.CheckBox();
+            this.buttonValidatePlayback = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarStartTime)).BeginInit();
@@ -68,7 +67,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(751, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(742, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -113,7 +112,7 @@
             // 
             // buttonAddServer
             // 
-            this.buttonAddServer.Location = new System.Drawing.Point(12, 418);
+            this.buttonAddServer.Location = new System.Drawing.Point(12, 293);
             this.buttonAddServer.Name = "buttonAddServer";
             this.buttonAddServer.Size = new System.Drawing.Size(75, 23);
             this.buttonAddServer.TabIndex = 2;
@@ -123,7 +122,7 @@
             // 
             // buttonRemoveServer
             // 
-            this.buttonRemoveServer.Location = new System.Drawing.Point(113, 418);
+            this.buttonRemoveServer.Location = new System.Drawing.Point(113, 293);
             this.buttonRemoveServer.Name = "buttonRemoveServer";
             this.buttonRemoveServer.Size = new System.Drawing.Size(75, 23);
             this.buttonRemoveServer.TabIndex = 3;
@@ -136,7 +135,7 @@
             this.listBoxServers.FormattingEnabled = true;
             this.listBoxServers.Location = new System.Drawing.Point(12, 65);
             this.listBoxServers.Name = "listBoxServers";
-            this.listBoxServers.Size = new System.Drawing.Size(176, 225);
+            this.listBoxServers.Size = new System.Drawing.Size(176, 160);
             this.listBoxServers.TabIndex = 4;
             // 
             // labelServers
@@ -189,16 +188,6 @@
             this.labelVideo.TabIndex = 8;
             this.labelVideo.Text = "Video";
             // 
-            // buttonInitializePlayback
-            // 
-            this.buttonInitializePlayback.Location = new System.Drawing.Point(487, 65);
-            this.buttonInitializePlayback.Name = "buttonInitializePlayback";
-            this.buttonInitializePlayback.Size = new System.Drawing.Size(138, 23);
-            this.buttonInitializePlayback.TabIndex = 9;
-            this.buttonInitializePlayback.Text = "Initialize playback...";
-            this.buttonInitializePlayback.UseVisualStyleBackColor = true;
-            this.buttonInitializePlayback.Click += new System.EventHandler(this.buttonInitializePlayback_Click);
-            // 
             // labelPlayback
             // 
             this.labelPlayback.AutoSize = true;
@@ -209,18 +198,10 @@
             this.labelPlayback.TabIndex = 10;
             this.labelPlayback.Text = "Playback";
             // 
-            // listIssues
-            // 
-            this.listIssues.FormattingEnabled = true;
-            this.listIssues.Location = new System.Drawing.Point(487, 104);
-            this.listIssues.Name = "listIssues";
-            this.listIssues.Size = new System.Drawing.Size(184, 186);
-            this.listIssues.TabIndex = 11;
-            // 
             // buttonPlay
             // 
             this.buttonPlay.Enabled = false;
-            this.buttonPlay.Location = new System.Drawing.Point(487, 418);
+            this.buttonPlay.Location = new System.Drawing.Point(487, 293);
             this.buttonPlay.Name = "buttonPlay";
             this.buttonPlay.Size = new System.Drawing.Size(75, 23);
             this.buttonPlay.TabIndex = 12;
@@ -231,7 +212,7 @@
             // buttonStop
             // 
             this.buttonStop.Enabled = false;
-            this.buttonStop.Location = new System.Drawing.Point(596, 418);
+            this.buttonStop.Location = new System.Drawing.Point(596, 293);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(75, 23);
             this.buttonStop.TabIndex = 13;
@@ -243,9 +224,9 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.stripStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 444);
+            this.statusStrip.Location = new System.Drawing.Point(0, 335);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(751, 22);
+            this.statusStrip.Size = new System.Drawing.Size(742, 22);
             this.statusStrip.TabIndex = 14;
             this.statusStrip.Text = "statusStrip";
             // 
@@ -257,7 +238,7 @@
             // trackBarStartTime
             // 
             this.trackBarStartTime.Enabled = false;
-            this.trackBarStartTime.Location = new System.Drawing.Point(487, 297);
+            this.trackBarStartTime.Location = new System.Drawing.Point(490, 65);
             this.trackBarStartTime.Name = "trackBarStartTime";
             this.trackBarStartTime.Size = new System.Drawing.Size(184, 45);
             this.trackBarStartTime.TabIndex = 15;
@@ -265,7 +246,7 @@
             // labelStartTime
             // 
             this.labelStartTime.AutoSize = true;
-            this.labelStartTime.Location = new System.Drawing.Point(487, 349);
+            this.labelStartTime.Location = new System.Drawing.Point(487, 97);
             this.labelStartTime.Name = "labelStartTime";
             this.labelStartTime.Size = new System.Drawing.Size(111, 13);
             this.labelStartTime.TabIndex = 16;
@@ -274,7 +255,7 @@
             // trackBarBrightness
             // 
             this.trackBarBrightness.LargeChange = 10;
-            this.trackBarBrightness.Location = new System.Drawing.Point(12, 308);
+            this.trackBarBrightness.Location = new System.Drawing.Point(487, 128);
             this.trackBarBrightness.Maximum = 100;
             this.trackBarBrightness.Name = "trackBarBrightness";
             this.trackBarBrightness.Size = new System.Drawing.Size(184, 45);
@@ -286,7 +267,7 @@
             // labelBrightness
             // 
             this.labelBrightness.AutoSize = true;
-            this.labelBrightness.Location = new System.Drawing.Point(12, 349);
+            this.labelBrightness.Location = new System.Drawing.Point(487, 174);
             this.labelBrightness.Name = "labelBrightness";
             this.labelBrightness.Size = new System.Drawing.Size(85, 13);
             this.labelBrightness.TabIndex = 18;
@@ -295,7 +276,7 @@
             // checkBoxDisplayOutputOnScreen
             // 
             this.checkBoxDisplayOutputOnScreen.AutoSize = true;
-            this.checkBoxDisplayOutputOnScreen.Location = new System.Drawing.Point(490, 381);
+            this.checkBoxDisplayOutputOnScreen.Location = new System.Drawing.Point(487, 208);
             this.checkBoxDisplayOutputOnScreen.Name = "checkBoxDisplayOutputOnScreen";
             this.checkBoxDisplayOutputOnScreen.Size = new System.Drawing.Size(143, 17);
             this.checkBoxDisplayOutputOnScreen.TabIndex = 19;
@@ -303,11 +284,22 @@
             this.checkBoxDisplayOutputOnScreen.UseVisualStyleBackColor = true;
             this.checkBoxDisplayOutputOnScreen.CheckedChanged += new System.EventHandler(this.checkBoxDisplayOutputOnScreen_CheckedChanged);
             // 
+            // buttonValidatePlayback
+            // 
+            this.buttonValidatePlayback.Location = new System.Drawing.Point(487, 254);
+            this.buttonValidatePlayback.Name = "buttonValidatePlayback";
+            this.buttonValidatePlayback.Size = new System.Drawing.Size(122, 23);
+            this.buttonValidatePlayback.TabIndex = 20;
+            this.buttonValidatePlayback.Text = "Validate playback";
+            this.buttonValidatePlayback.UseVisualStyleBackColor = true;
+            this.buttonValidatePlayback.Click += new System.EventHandler(this.buttonValidatePlayback_Click);
+            // 
             // LedManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(751, 466);
+            this.ClientSize = new System.Drawing.Size(742, 357);
+            this.Controls.Add(this.buttonValidatePlayback);
             this.Controls.Add(this.checkBoxDisplayOutputOnScreen);
             this.Controls.Add(this.labelBrightness);
             this.Controls.Add(this.trackBarBrightness);
@@ -316,9 +308,7 @@
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.buttonPlay);
-            this.Controls.Add(this.listIssues);
             this.Controls.Add(this.labelPlayback);
-            this.Controls.Add(this.buttonInitializePlayback);
             this.Controls.Add(this.labelVideo);
             this.Controls.Add(this.labelVideoFilePath);
             this.Controls.Add(this.importVideoButton);
@@ -358,9 +348,7 @@
         private System.Windows.Forms.Button importVideoButton;
         private System.Windows.Forms.Label labelVideoFilePath;
         private System.Windows.Forms.Label labelVideo;
-        private System.Windows.Forms.Button buttonInitializePlayback;
         private System.Windows.Forms.Label labelPlayback;
-        private System.Windows.Forms.ListBox listIssues;
         private System.Windows.Forms.Button buttonPlay;
         private System.Windows.Forms.Button buttonStop;
         private System.Windows.Forms.ToolStripMenuItem newConfigurationToolStripMenuItem;
@@ -371,6 +359,7 @@
         private System.Windows.Forms.TrackBar trackBarBrightness;
         private System.Windows.Forms.Label labelBrightness;
         private System.Windows.Forms.CheckBox checkBoxDisplayOutputOnScreen;
+        private System.Windows.Forms.Button buttonValidatePlayback;
     }
 }
 
