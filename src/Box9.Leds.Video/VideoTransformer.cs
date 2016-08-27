@@ -47,11 +47,17 @@ namespace Box9.Leds.Video
 
                     foreach (var pixelMapping in serverConfiguration.PixelMappings.OrderBy(pm => pm.Order))
                     {
+                        var x = startX + (pixelMapping.X * xPixelGap);
+                        var y = startY + (pixelMapping.Y * yPixelGap);
+
+                        x = x >= finishX ? finishX -1 : x;
+                        y = y >= finishY ? finishY -1 : y;
+
                         frameVideoData.PixelInfo.Add(new PixelInfo
                         {
                             X = pixelMapping.X,
                             Y = pixelMapping.Y,
-                            Color = frame.GetPixel(startX + (pixelMapping.X * xPixelGap), startY + (pixelMapping.Y * yPixelGap))
+                            Color = frame.GetPixel(x, y)
                         });
                     }
 
