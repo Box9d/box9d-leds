@@ -162,10 +162,6 @@
       <Project>{7CE537D5-6007-4E49-A2C9-A1EF48BEAF12}</Project>
       <Name>Box9.Leds.FcClient</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Box9.Leds.RealtimeVideo\Box9.Leds.RealtimeVideo.csproj">
-      <Project>{9d2c4ec4-9ae2-4930-b79b-c1c6e3a65008}</Project>
-      <Name>Box9.Leds.RealtimeVideo</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Box9.Leds.Video\Box9.Leds.Video.csproj">
       <Project>{F7F691B5-4ECE-4B68-9DF1-1DB144819387}</Project>
       <Name>Box9.Leds.Video</Name>

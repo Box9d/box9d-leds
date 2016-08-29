@@ -90,7 +90,13 @@ namespace Box9.Leds.FcClient
                 data.Add(pixel.Color.B);
             }
 
-            await socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, CancellationToken.None);
+            try
+            {
+                await socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, CancellationToken.None);
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }
