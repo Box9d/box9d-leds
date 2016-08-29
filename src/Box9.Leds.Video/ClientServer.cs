@@ -2,7 +2,7 @@
 using Box9.Leds.Core.Configuration;
 using Box9.Leds.FcClient;
 
-namespace Box9.Leds.RealtimeVideo
+namespace Box9.Leds.Video
 {
     public class ClientServer
     {
