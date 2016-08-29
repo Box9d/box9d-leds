@@ -265,16 +265,29 @@ namespace Box9.Leds.Manager
         {
             var startTime = new TimeSpan(0, 0, this.trackBarStartTime.Value);
 
-            Task.Run(() =>
+            Task.Run(async() =>
             {
-                videoPlayback.Load(startTime.Minutes, startTime.Seconds);
-                videoPlayback.Play(this.clientServers, startTime.Minutes, startTime.Seconds, cancellationTokenSource.Token);
+                try
+                {
+                    videoPlayback.Load(startTime.Minutes, startTime.Seconds);
+                    await videoPlayback.Play(this.clientServers, startTime.Minutes, startTime.Seconds, cancellationTokenSource.Token);
+                    videoPlayback.Dispose();
+                }
+                finally
+                {
+                    Stop();
+                }
             });
 
             this.ToggleControlAvailabilites(false, buttonStop, trackBarBrightness);
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
+        {
+            Stop();
+        }
+
+        private void Stop()
         {
             this.cancellationTokenSource.Cancel();
 

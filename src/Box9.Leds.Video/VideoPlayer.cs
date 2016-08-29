@@ -14,31 +14,30 @@ using Box9.Leds.Video;
 
 namespace Box9.Leds.Video
 {
-    public class VideoPlayer
+    public class VideoPlayer : IDisposable
     {
         private readonly LedConfiguration configuration;
         private readonly VideoQueuer videoQueuer;
+        private readonly VideoFileReader videoFileReader;
         private AudioData audioData;
 
         public VideoPlayer(LedConfiguration configuration)
         {
             this.configuration = configuration;
             this.videoQueuer = new VideoQueuer(configuration);
+            this.videoFileReader = new VideoFileReader();
         }
 
         public int GetDurationInSeconds()
         {
-            using (var videoFileReader = new VideoFileReader())
-            {
-                videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
+            videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
 
-                return (int)videoFileReader.FrameCount / videoFileReader.FrameRate;
-            }
+            return (int)videoFileReader.FrameCount / videoFileReader.FrameRate;
         }
 
         public void Load(int minutes, int seconds)
         {
-            videoQueuer.QueueFrames(minutes, seconds);
+            videoQueuer.QueueFrames(minutes, seconds, videoFileReader);
 
             var audioTransformer = new VideoAudioTransformer(configuration.VideoConfig.SourceFilePath);
             audioData = audioTransformer.ExtractAndSaveAudio();
@@ -49,13 +48,10 @@ namespace Box9.Leds.Video
             long totalFrames;
             int frameRate;
 
-            using (var videoFileReader = new VideoFileReader())
-            {
-                videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
+            videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
 
-                totalFrames = videoFileReader.FrameCount;
-                frameRate = videoFileReader.FrameRate;
-            }
+            totalFrames = videoFileReader.FrameCount;
+            frameRate = videoFileReader.FrameRate;
 
             foreach (var clientServer in clientServers)
             {
@@ -65,11 +61,10 @@ namespace Box9.Leds.Video
             int totalPlayTimeMillseconds = (int)Math.Round((double)((double)totalFrames / (double)frameRate) * 1000, 0) - (minutes * 60 + seconds) * 1000;
 
             IMp3AudioPlayer audioPlayer = new Mp3AudioPlayer(audioData);
+            audioPlayer.Play(minutes, seconds);
 
             var playStopwatch = new Stopwatch();
             playStopwatch.Start();
-
-            audioPlayer.Play();
 
             while (playStopwatch.ElapsedMilliseconds < totalPlayTimeMillseconds && !cancellationToken.IsCancellationRequested)
             {
@@ -87,7 +82,7 @@ namespace Box9.Leds.Video
                         clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest
                         {
                             PixelUpdates = pixelUpdates
-                        });
+                        });                 
                     }
                 }
             }
@@ -110,6 +105,11 @@ namespace Box9.Leds.Video
 
                 await clientServer.Client.CloseAsync();
             }
+        }
+
+        public void Dispose()
+        {
+            videoFileReader.Dispose();
         }
     }
 }

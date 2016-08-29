@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Box9.Leds.Core.Messages;
 using Box9.Leds.Core.Messages.UpdatePixels;
-using Box9.Leds.Core.UpdatePixels;
 using Newtonsoft.Json;
 
 namespace Box9.Leds.FcClient
@@ -92,10 +91,17 @@ namespace Box9.Leds.FcClient
 
             try
             {
-                await socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, CancellationToken.None);
+                lock(socket)
+                {
+                    socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, CancellationToken.None);
+                }               
             }
-            catch (Exception)
+            finally
             {
+                if (socket.State != WebSocketState.Open)
+                {
+                    await ConnectAsync();
+                }
             }
         }
     }
