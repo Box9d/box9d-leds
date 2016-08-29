@@ -50,21 +50,7 @@ namespace Box9.Leds.Manager
 
             this.trackBarBrightness.MouseUp += (s, args) =>
             {
-                foreach (var server in this.listBoxServers.Items.Cast<ServerConfiguration>().Where(sc => sc.ServerType == Core.Servers.ServerType.FadeCandy))
-                {
-                    Task.Run(async () =>
-                    {
-                        var client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", server.IPAddress, server.Port)));
-
-                        var serverInfo = await client.SendMessage(new ConnectedDevicesRequest());
-                        var fadecandySerials = serverInfo.Devices.Select(d => d.Serial);
-
-                        foreach (var serial in fadecandySerials)
-                        {
-                            await client.SendMessage(new ColorCorrectionRequest(trackBarBrightness.Value, serial));
-                        }
-                    });
-                }
+                AdjustBrightnessOfConnectedServers(this.trackBarBrightness.Value);
             };
         }
 
@@ -285,7 +271,7 @@ namespace Box9.Leds.Manager
                 videoPlayback.Play(this.clientServers, startTime.Minutes, startTime.Seconds, cancellationTokenSource.Token);
             });
 
-            this.ToggleControlAvailabilites(false, buttonStop);
+            this.ToggleControlAvailabilites(false, buttonStop, trackBarBrightness);
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
@@ -329,9 +315,28 @@ namespace Box9.Leds.Manager
             this.displayOutput = checkBoxDisplayOutputOnScreen.Checked;
         }
 
+
         private async void buttonValidatePlayback_Click(object sender, EventArgs e)
         {
             await ValidateForm();
+        }
+        private async Task AdjustBrightnessOfConnectedServers(int brightnessPercentage)
+        {
+            foreach (var server in this.listBoxServers.Items.Cast<ServerConfiguration>().Where(sc => sc.ServerType == Core.Servers.ServerType.FadeCandy))
+            {
+                var client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", server.IPAddress, server.Port)));
+                await client.ConnectAsync();
+
+                var serverInfo = await client.SendMessage(new ConnectedDevicesRequest());
+                var fadecandySerials = serverInfo.Devices.Select(d => d.Serial);
+
+                foreach (var serial in fadecandySerials)
+                {
+                    await client.SendMessage(new ColorCorrectionRequest(trackBarBrightness.Value, serial));
+                }
+
+                await client.CloseAsync();
+            }
         }
     }
 }
