@@ -22,6 +22,7 @@ namespace Box9.Leds.FcClient
         private readonly int sendMaxBufferLength;
         private readonly int receiveMaxBufferLength;
         private readonly BlockingCollection<byte[]> updatePixelsQueue;
+        private bool dequeueingStarted;
 
         public WsClientWrapper(Uri serverAddress)
         {
@@ -33,6 +34,8 @@ namespace Box9.Leds.FcClient
             this.receiveMaxBufferLength = 4096;
 
             State = WebSocketState.None;
+
+            dequeueingStarted = false;
         }
 
         public async Task ConnectAsync()
@@ -45,8 +48,6 @@ namespace Box9.Leds.FcClient
             }
 
             State = socket.State;
-
-            Task.Run(async () => await DequeuePixelUpdates());
         }
 
         public async Task<TResponse> SendMessage<TResponse>(IJsonRequest<TResponse> request)
@@ -80,6 +81,7 @@ namespace Box9.Leds.FcClient
         public void Dispose()
         {
             updatePixelsQueue.CompleteAdding();
+            updatePixelsQueue.Dispose();
             socket.Dispose();
         }
 
@@ -97,11 +99,18 @@ namespace Box9.Leds.FcClient
                 data.Add(pixel.Color.B);
             }
 
+            if (!dequeueingStarted)
+            {
+                Task.Run(async () => await DequeuePixelUpdates());
+            }
+
             updatePixelsQueue.Add(data.ToArray());
         }
 
         private async Task DequeuePixelUpdates()
         {
+            dequeueingStarted = true;
+
             while (!updatePixelsQueue.IsAddingCompleted)
             {
                 byte[] update;
@@ -121,6 +130,7 @@ namespace Box9.Leds.FcClient
                 }
             }
 
+            dequeueingStarted = false;
             updatePixelsQueue.Dispose();
         }
     }
