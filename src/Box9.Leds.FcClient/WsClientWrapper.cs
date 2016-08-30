@@ -120,6 +120,20 @@ namespace Box9.Leds.FcClient
                     {
                         await socket.SendAsync(new ArraySegment<byte>(update), WebSocketMessageType.Binary, true, CancellationToken.None);
                     }
+                    catch (Exception ex)
+                    {
+                        var fileName = Path.Combine(Path.GetTempPath(), string.Format("LedAppError_{0}_{1}_{2}_{3}_{4}.log ",
+                            DateTime.Now.Year,
+                            DateTime.Now.Month,
+                            DateTime.Now.Day,
+                            DateTime.Now.Hour,
+                            DateTime.Now.Minute));
+
+                        using (var streamWriter = File.AppendText(fileName))
+                        {
+                            streamWriter.WriteLine(ex.Message);
+                        }
+                    }
                     finally
                     {
                         if (socket.State != WebSocketState.Open)
