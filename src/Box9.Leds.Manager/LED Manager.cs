@@ -272,6 +272,13 @@ namespace Box9.Leds.Manager
                     videoPlayback.Load(startTime.Minutes, startTime.Seconds);
                     await videoPlayback.Play(this.clientServers, startTime.Minutes, startTime.Seconds, cancellationTokenSource.Token);
                 }
+                catch(Exception ex)
+                {
+                    this.Invoke(new Action(() =>
+                    {
+                        MessageBox.Show(string.Format("Playback failed: {0}", ex.Message));
+                    }));
+                }
                 finally
                 {
                     Stop();
@@ -327,11 +334,11 @@ namespace Box9.Leds.Manager
             this.displayOutput = checkBoxDisplayOutputOnScreen.Checked;
         }
 
-
         private async void buttonValidatePlayback_Click(object sender, EventArgs e)
         {
             await ValidateForm();
         }
+
         private async Task AdjustBrightnessOfConnectedServers(int brightnessPercentage)
         {
             foreach (var server in this.listBoxServers.Items.Cast<ServerConfiguration>().Where(sc => sc.ServerType == Core.Servers.ServerType.FadeCandy))
