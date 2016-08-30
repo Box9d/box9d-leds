@@ -1,12 +1,16 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using AForge.Video.FFMPEG;
+using Box9.Leds.Core;
 using Box9.Leds.Core.Configuration;
 
 namespace Box9.Leds.Video
 {
-    public class VideoQueuer
+    public class VideoQueuer : IDisposable
     {
         public ConcurrentDictionary<int, Bitmap> Frames { get; }
 
@@ -34,12 +38,21 @@ namespace Box9.Leds.Video
                 {
                     if (currentFrame / framerate + 1 > minutes * 60 + seconds)
                     {
-                        Frames.TryAdd(currentFrame, frame);
+                        Frames.TryAdd(currentFrame, frame.Clone(new Rectangle(0,0, frame.Width, frame.Height), System.Drawing.Imaging.PixelFormat.DontCare));
                     }
 
+                    frame.Dispose();
                     frame = videoFileReader.ReadVideoFrame();
                     currentFrame++;
                 }
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var frame in Frames)
+            {
+                frame.Value.Dispose();
             }
         }
     }

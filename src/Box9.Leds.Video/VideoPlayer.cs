@@ -10,6 +10,7 @@ using Box9.Leds.Core;
 using Box9.Leds.Core.Configuration;
 using Box9.Leds.Core.Messages.UpdatePixels;
 using Box9.Leds.Core.Patterns;
+using Box9.Leds.FcClient;
 using Box9.Leds.Video;
 
 namespace Box9.Leds.Video
@@ -17,7 +18,7 @@ namespace Box9.Leds.Video
     public class VideoPlayer
     {
         private readonly LedConfiguration configuration;
-        private readonly VideoQueuer videoQueuer;
+        private VideoQueuer videoQueuer;
         private AudioData audioData;
 
         public VideoPlayer(LedConfiguration configuration)
@@ -88,6 +89,8 @@ namespace Box9.Leds.Video
                             PixelUpdates = pixelUpdates
                         });                 
                     }
+
+                    frame.Dispose();
                 }
             }
 
@@ -107,8 +110,17 @@ namespace Box9.Leds.Video
                 clientServer.Client.SendPixelUpdates(request);
                 clientServer.Client.SendPixelUpdates(request);
 
-                await clientServer.Client.CloseAsync();
+                if (clientServer.ServerConfiguration.ServerType == Core.Servers.ServerType.FadeCandy)
+                {
+                    ((WsClientWrapper)clientServer.Client).FinishedUpdates += async() =>
+                    {
+                        await clientServer.Client.CloseAsync();
+                    };
+                }
             }
+
+            this.videoQueuer.Dispose();
+            this.videoQueuer = new VideoQueuer(configuration);
         }
     }
 }

@@ -24,6 +24,9 @@ namespace Box9.Leds.FcClient
         private readonly BlockingCollection<byte[]> updatePixelsQueue;
         private bool dequeueingStarted;
 
+        public delegate void FinishedUpdatesHandler();
+        public event FinishedUpdatesHandler FinishedUpdates;
+
         public WsClientWrapper(Uri serverAddress)
         {
             updatePixelsQueue = new BlockingCollection<byte[]>();
@@ -36,6 +39,10 @@ namespace Box9.Leds.FcClient
             State = WebSocketState.None;
 
             dequeueingStarted = false;
+
+            FinishedUpdates += () =>
+            {
+            };
         }
 
         public async Task ConnectAsync()
