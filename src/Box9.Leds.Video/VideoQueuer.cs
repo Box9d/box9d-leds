@@ -29,16 +29,15 @@ namespace Box9.Leds.Video
                 var framerate = videoFileReader.FrameRate;
                 var frameCount = videoFileReader.FrameCount;
 
-                while (currentFrame <= frameCount)
+                var frame = videoFileReader.ReadVideoFrame();
+                while (frame != null)
                 {
-                    var frame = videoFileReader.ReadVideoFrame();
                     if (currentFrame / framerate + 1 > minutes * 60 + seconds)
                     {
-                        Frames.TryAdd(currentFrame, frame.Clone(new Rectangle(0, 0, frame.Width, frame.Height), System.Drawing.Imaging.PixelFormat.DontCare));
+                        Frames.TryAdd(currentFrame, frame);
                     }
 
-                    frame.Dispose();
-
+                    frame = videoFileReader.ReadVideoFrame();
                     currentFrame++;
                 }
             }
