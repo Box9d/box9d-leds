@@ -14,30 +14,31 @@ using Box9.Leds.Video;
 
 namespace Box9.Leds.Video
 {
-    public class VideoPlayer : IDisposable
+    public class VideoPlayer
     {
         private readonly LedConfiguration configuration;
         private readonly VideoQueuer videoQueuer;
-        private readonly VideoFileReader videoFileReader;
         private AudioData audioData;
 
         public VideoPlayer(LedConfiguration configuration)
         {
             this.configuration = configuration;
             this.videoQueuer = new VideoQueuer(configuration);
-            this.videoFileReader = new VideoFileReader();
         }
 
         public int GetDurationInSeconds()
         {
-            videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
+            using (var videoFileReader = new VideoFileReader())
+            {
+                videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
 
-            return (int)videoFileReader.FrameCount / videoFileReader.FrameRate;
+                return (int)videoFileReader.FrameCount / videoFileReader.FrameRate;
+            }  
         }
 
         public void Load(int minutes, int seconds)
         {
-            videoQueuer.QueueFrames(minutes, seconds, videoFileReader);
+            videoQueuer.QueueFrames(minutes, seconds);
 
             var audioTransformer = new VideoAudioTransformer(configuration.VideoConfig.SourceFilePath);
             audioData = audioTransformer.ExtractAndSaveAudio();
@@ -48,10 +49,13 @@ namespace Box9.Leds.Video
             long totalFrames;
             int frameRate;
 
-            videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
+            using (var videoFileReader = new VideoFileReader())
+            {
+                videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
 
-            totalFrames = videoFileReader.FrameCount;
-            frameRate = videoFileReader.FrameRate;
+                totalFrames = videoFileReader.FrameCount;
+                frameRate = videoFileReader.FrameRate;
+            }  
 
             foreach (var clientServer in clientServers)
             {
@@ -100,16 +104,11 @@ namespace Box9.Leds.Video
                     PixelUpdates = allPixelsBlack
                 };
 
-                await clientServer.Client.SendPixelUpdates(request);
-                await clientServer.Client.SendPixelUpdates(request);
+                clientServer.Client.SendPixelUpdates(request);
+                clientServer.Client.SendPixelUpdates(request);
 
                 await clientServer.Client.CloseAsync();
             }
-        }
-
-        public void Dispose()
-        {
-            videoFileReader.Dispose();
         }
     }
 }

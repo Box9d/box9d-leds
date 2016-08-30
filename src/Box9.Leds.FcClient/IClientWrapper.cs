@@ -14,6 +14,6 @@ namespace Box9.Leds.FcClient
         Task<TResponse> SendMessage<TResponse>(IJsonRequest<TResponse> request)
             where TResponse : new();
 
-        Task SendPixelUpdates(UpdatePixelsRequest request);
+        void SendPixelUpdates(UpdatePixelsRequest request);
     }
 }

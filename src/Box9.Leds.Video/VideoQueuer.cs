@@ -19,25 +19,28 @@ namespace Box9.Leds.Video
             Frames = new ConcurrentDictionary<int, Bitmap>();
         }
 
-        public void QueueFrames(int minutes, int seconds, VideoFileReader videoFileReader)
+        public void QueueFrames(int minutes, int seconds)
         {
             int currentFrame = 1;
 
-            videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
-            var framerate = videoFileReader.FrameRate;
-            var frameCount = videoFileReader.FrameCount;
-
-            while (currentFrame <= frameCount)
+            using (var videoFileReader = new VideoFileReader())
             {
-                var frame = videoFileReader.ReadVideoFrame();
-                if (currentFrame / framerate + 1 > minutes * 60 + seconds)
+                videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
+                var framerate = videoFileReader.FrameRate;
+                var frameCount = videoFileReader.FrameCount;
+
+                while (currentFrame <= frameCount)
                 {
-                    Frames.TryAdd(currentFrame, frame.Clone(new Rectangle(0, 0, frame.Width, frame.Height), System.Drawing.Imaging.PixelFormat.DontCare));
+                    var frame = videoFileReader.ReadVideoFrame();
+                    if (currentFrame / framerate + 1 > minutes * 60 + seconds)
+                    {
+                        Frames.TryAdd(currentFrame, frame.Clone(new Rectangle(0, 0, frame.Width, frame.Height), System.Drawing.Imaging.PixelFormat.DontCare));
+                    }
+
+                    frame.Dispose();
+
+                    currentFrame++;
                 }
-
-                frame.Dispose();
-
-                currentFrame++;
             }
         }
     }

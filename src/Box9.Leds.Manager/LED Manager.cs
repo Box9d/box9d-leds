@@ -271,7 +271,6 @@ namespace Box9.Leds.Manager
                 {
                     videoPlayback.Load(startTime.Minutes, startTime.Seconds);
                     await videoPlayback.Play(this.clientServers, startTime.Minutes, startTime.Seconds, cancellationTokenSource.Token);
-                    videoPlayback.Dispose();
                 }
                 finally
                 {
@@ -289,10 +288,10 @@ namespace Box9.Leds.Manager
 
         private void Stop()
         {
-            this.cancellationTokenSource.Cancel();
-
             this.Invoke(new Action(() =>
             {
+                this.cancellationTokenSource.Cancel();
+
                 this.trackBarStartTime.Value = 0;
                 this.ToggleControlAvailabilites(true, buttonPlay, buttonStop, trackBarStartTime);
 

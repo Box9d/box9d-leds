@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,9 +21,12 @@ namespace Box9.Leds.FcClient
         private readonly Uri serverAddress;
         private readonly int sendMaxBufferLength;
         private readonly int receiveMaxBufferLength;
+        private readonly BlockingCollection<byte[]> updatePixelsQueue;
 
         public WsClientWrapper(Uri serverAddress)
         {
+            updatePixelsQueue = new BlockingCollection<byte[]>();
+
             socket = new ClientWebSocket();
             this.serverAddress = serverAddress;
             this.sendMaxBufferLength = 4096;
@@ -41,6 +45,8 @@ namespace Box9.Leds.FcClient
             }
 
             State = socket.State;
+
+            Task.Run(async () => await DequeuePixelUpdates());
         }
 
         public async Task<TResponse> SendMessage<TResponse>(IJsonRequest<TResponse> request)
@@ -67,15 +73,17 @@ namespace Box9.Leds.FcClient
 
         public async Task CloseAsync()
         {
+            updatePixelsQueue.CompleteAdding();
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
         }
 
         public void Dispose()
         {
+            updatePixelsQueue.CompleteAdding();
             socket.Dispose();
         }
 
-        public async Task SendPixelUpdates(UpdatePixelsRequest request)
+        public void SendPixelUpdates(UpdatePixelsRequest request)
         {
             var data = new List<byte>
             {
@@ -89,20 +97,31 @@ namespace Box9.Leds.FcClient
                 data.Add(pixel.Color.B);
             }
 
-            try
+            updatePixelsQueue.Add(data.ToArray());
+        }
+
+        private async Task DequeuePixelUpdates()
+        {
+            while (!updatePixelsQueue.IsAddingCompleted)
             {
-                lock(socket)
+                byte[] update;
+                if (updatePixelsQueue.TryTake(out update))
                 {
-                    socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, CancellationToken.None);
-                }               
-            }
-            finally
-            {
-                if (socket.State != WebSocketState.Open)
-                {
-                    await ConnectAsync();
+                    try
+                    {
+                        await socket.SendAsync(new ArraySegment<byte>(update), WebSocketMessageType.Binary, true, CancellationToken.None);
+                    }
+                    finally
+                    {
+                        if (socket.State != WebSocketState.Open)
+                        {
+                            await ConnectAsync();
+                        }
+                    }
                 }
             }
+
+            updatePixelsQueue.Dispose();
         }
     }
 }
