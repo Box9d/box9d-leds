@@ -55,6 +55,7 @@
             this.labelBrightness = new System.Windows.Forms.Label();
             this.checkBoxDisplayOutputOnScreen = new System.Windows.Forms.CheckBox();
             this.buttonValidatePlayback = new System.Windows.Forms.Button();
+            this.buttonEditServer = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarStartTime)).BeginInit();
@@ -122,7 +123,7 @@
             // 
             // buttonRemoveServer
             // 
-            this.buttonRemoveServer.Location = new System.Drawing.Point(113, 293);
+            this.buttonRemoveServer.Location = new System.Drawing.Point(113, 254);
             this.buttonRemoveServer.Name = "buttonRemoveServer";
             this.buttonRemoveServer.Size = new System.Drawing.Size(75, 23);
             this.buttonRemoveServer.TabIndex = 3;
@@ -294,11 +295,22 @@
             this.buttonValidatePlayback.UseVisualStyleBackColor = true;
             this.buttonValidatePlayback.Click += new System.EventHandler(this.buttonValidatePlayback_Click);
             // 
+            // buttonEditServer
+            // 
+            this.buttonEditServer.Location = new System.Drawing.Point(12, 254);
+            this.buttonEditServer.Name = "buttonEditServer";
+            this.buttonEditServer.Size = new System.Drawing.Size(75, 23);
+            this.buttonEditServer.TabIndex = 21;
+            this.buttonEditServer.Text = "Edit";
+            this.buttonEditServer.UseVisualStyleBackColor = true;
+            this.buttonEditServer.Click += new System.EventHandler(this.buttonEditServer_Click);
+            // 
             // LedManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(742, 357);
+            this.Controls.Add(this.buttonEditServer);
             this.Controls.Add(this.buttonValidatePlayback);
             this.Controls.Add(this.checkBoxDisplayOutputOnScreen);
             this.Controls.Add(this.labelBrightness);
@@ -360,6 +372,7 @@
         private System.Windows.Forms.Label labelBrightness;
         private System.Windows.Forms.CheckBox checkBoxDisplayOutputOnScreen;
         private System.Windows.Forms.Button buttonValidatePlayback;
+        private System.Windows.Forms.Button buttonEditServer;
     }
 }
 

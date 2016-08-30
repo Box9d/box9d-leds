@@ -39,18 +39,6 @@ namespace Box9.Leds.Manager.Playback
             {
                 ServerForm currentServerForm = null;
 
-                ledManager.Invoke(new Action(() =>
-                {
-                    var serverForm = new ServerForm(videoPlayback.ServerConfig);
-                    serverForm.StartPosition = FormStartPosition.Manual;
-                    serverForm.Visible = true;
-                    serverForm.BringToFront();
-                    serverForm.Show();
-
-                    currentServerForm = serverForm;
-                    ledManager.ServerForms.Add(serverForm);
-                }));
-
                 IClientWrapper server;
                 if (videoPlayback.ServerConfig.ServerType == ServerType.DisplayOnly)
                 {

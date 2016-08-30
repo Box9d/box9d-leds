@@ -31,13 +31,10 @@ namespace Box9.Leds.Manager
         private bool displayOutput;
         private CancellationTokenSource cancellationTokenSource;
 
-        public List<ServerForm> ServerForms { get; private set; }
-
         public LedManager()
         {
             InitializeComponent();
             configurationStorage = new ConfigurationStorageClient();
-            ServerForms = new List<ServerForm>();
             clientServers = new List<ClientServer>();
         }
 
@@ -59,15 +56,51 @@ namespace Box9.Leds.Manager
             this.listBoxServers.Items.Add(server);
         }
 
+        private void ServerEditedHandle(ServerConfiguration server)
+        {
+            ServerConfiguration editedServer = null;
+            int editedServerIndex = 0;
+            foreach (var config in listBoxServers.Items.Cast<ServerConfiguration>())
+            {
+                if (config.Id == server.Id)
+                {
+                    editedServer = config;
+                    break;
+                }
+
+                editedServerIndex++;
+            }
+
+            if (editedServer != null)
+            {
+                this.listBoxServers.Items.Remove(editedServer);
+                this.listBoxServers.Items.Insert(editedServerIndex, server);
+            }
+        }
+
         private void buttonAddServer_Click(object sender, EventArgs e)
         {
-            addServerForm = new AddServerForm();
-            addServerForm.StartPosition = FormStartPosition.Manual;
-            addServerForm.Location = new System.Drawing.Point(this.Location.X + 20, this.Location.X + 20);
+            AddOrEditServer();
+        }
 
-            addServerForm.ServerAdded += ServerAddedHandle;
+        private void AddOrEditServer(ServerConfiguration serverConfig = null)
+        {
+            var serverForm = new AddServerForm();
 
-            addServerForm.Show();
+            if (serverConfig != null)
+            {
+                serverForm = new AddServerForm(serverConfig);
+                serverForm.ServerEdited += ServerEditedHandle;
+            }
+            else
+            {
+                serverForm.ServerAdded += ServerAddedHandle;
+            }
+
+            serverForm.StartPosition = FormStartPosition.Manual;
+            serverForm.Location = new System.Drawing.Point(this.Location.X + 20, this.Location.X + 20);
+
+            serverForm.Show();
         }
 
         private void buttonRemoveServer_Click(object sender, EventArgs e)
@@ -223,25 +256,12 @@ namespace Box9.Leds.Manager
             clientServers = new List<ClientServer>();
             foreach (var serverConfig in config.Servers.Where(s => checkBoxDisplayOutputOnScreen.Checked || s.ServerType == Core.Servers.ServerType.FadeCandy))
             {
-                var serverForm = new ServerForm(serverConfig);
-                serverForm.StartPosition = FormStartPosition.Manual;
-                serverForm.Visible = true;
-                serverForm.BringToFront();
-                serverForm.Show();
-
-                this.ServerForms.Add(serverForm);
-
                 IClientWrapper client;
-                if (serverConfig.ServerType == Core.Servers.ServerType.DisplayOnly)
-                {
-                    client = new DisplayClientWrapper(serverForm.DisplayPanel, serverConfig);
-                }
-                else
+                if (serverConfig.ServerType == Core.Servers.ServerType.FadeCandy)
                 {
                     client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", serverConfig.IPAddress, serverConfig.Port)));
+                    clientServers.Add(new ClientServer(client, serverConfig));
                 }
-
-                clientServers.Add(new ClientServer(client, serverConfig));
             }
 
             this.videoPlayback = new VideoPlayer(configurationStorage.Get(loadedConfigFilePath));
@@ -301,14 +321,6 @@ namespace Box9.Leds.Manager
 
                 this.trackBarStartTime.Value = 0;
                 this.ToggleControlAvailabilites(true, buttonPlay, buttonStop, trackBarStartTime);
-
-                foreach (var server in ServerForms)
-                {
-                    server.Close();
-                    server.Dispose();
-                }
-
-                ServerForms = new List<ServerForm>();
             }));
         }
 
@@ -355,6 +367,14 @@ namespace Box9.Leds.Manager
                 }
 
                 await client.CloseAsync();
+            }
+        }
+
+        private void buttonEditServer_Click(object sender, EventArgs e)
+        {
+            if (this.listBoxServers.SelectedIndex > -1)
+            {
+                AddOrEditServer((ServerConfiguration)this.listBoxServers.SelectedItem);
             }
         }
     }

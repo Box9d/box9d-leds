@@ -16,6 +16,9 @@ namespace Box9.Leds.Manager.Forms
 {
     public partial class AddServerForm : Form
     {
+        private readonly bool isEdit;
+        private readonly ServerConfiguration editConfig;
+
         private ClientSearch clientSearch;
         private int ipsSearched;
         private Task searchTask;
@@ -25,14 +28,28 @@ namespace Box9.Leds.Manager.Forms
         public delegate void ServerAddedHandler(ServerConfiguration server);
         public event ServerAddedHandler ServerAdded;
 
+        public delegate void ServerEditedHandler(ServerConfiguration server);
+        public event ServerEditedHandler ServerEdited;
+
         public AddServerForm()
         {
             InitializeComponent();
+
+            pixelMappings = new List<PixelMapping>();
+            isEdit = false;
+        }
+
+        public AddServerForm(ServerConfiguration serverConfiguration)
+        {
+            InitializeComponent();
+
+            editConfig = serverConfiguration;
+            pixelMappings = serverConfiguration.PixelMappings;
+            isEdit = true;
         }
 
         private void AddServerForm_Load(object sender, EventArgs e)
         {
-            pixelMappings = new List<PixelMapping>();
             cts = new CancellationTokenSource();
             this.clientSearch = new ClientSearch();
             clientSearch.ServerFound += AddServerToList;
@@ -46,14 +63,39 @@ namespace Box9.Leds.Manager.Forms
             this.widthPercentage.AsPercentageOptions();
             this.heightPercentage.AsPercentageOptions();
 
-            availableServersList.Items.Add(new DisplayOnlyServer());
-
             ServerAdded += ServerAddedHandle;
 
             this.startAtPercentageX.DropDownStyle = ComboBoxStyle.DropDownList;
             this.startAtPercentageY.DropDownStyle = ComboBoxStyle.DropDownList;
             this.widthPercentage.DropDownStyle = ComboBoxStyle.DropDownList;
             this.heightPercentage.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            if (isEdit)
+            {
+                if (editConfig.ServerType == ServerType.FadeCandy)
+                {
+                    var server = new FadecandyServer(IPAddress.Parse(editConfig.IPAddress), editConfig.Port);
+
+                    availableServersList.Items.Add(server);
+                    availableServersList.SelectedItem = server;
+                }
+                else
+                {
+                    var server = new DisplayOnlyServer();
+
+                    availableServersList.Items.Add(server);
+                    availableServersList.SelectedItem = server;
+                }
+
+                this.textBoxXPixels.Text = editConfig.XPixels.ToString();
+                this.textBoxYPixels.Text = editConfig.YPixels.ToString();
+                this.startAtPercentageX.SelectedItem = editConfig.VideoConfiguration.StartAtXPercent;
+                this.startAtPercentageY.SelectedItem = editConfig.VideoConfiguration.StartAtYPercent;
+                this.widthPercentage.SelectedItem = editConfig.VideoConfiguration.XPercent;
+                this.heightPercentage.SelectedItem = editConfig.VideoConfiguration.YPercent;
+
+                ValidateVideoSplitting();
+            }
         }
 
         private void scanForServersButton_Click(object sender, EventArgs e)

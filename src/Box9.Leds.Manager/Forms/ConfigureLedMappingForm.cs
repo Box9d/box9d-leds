@@ -13,6 +13,8 @@ namespace Box9.Leds.Manager.Forms
 {
     public partial class ConfigureLedMappingForm : Form
     {
+        private readonly bool isEdit;
+
         private readonly int xPixels;
         private readonly int yPixels;
 
