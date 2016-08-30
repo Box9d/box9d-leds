@@ -181,7 +181,7 @@ namespace Box9.Leds.Manager.Forms
         private void textBoxXPixels_TextChanged(object sender, EventArgs e)
         {
             this.textBoxXPixels.ValidateAsInteger();
-            this.textBoxXPixels.ValidateTextLength(2);
+            this.textBoxXPixels.ValidateTextLength(3);
 
             ValidateConfigureMappingButtonAvailability();
             ValidateSelectButtonAvailability();
@@ -190,7 +190,7 @@ namespace Box9.Leds.Manager.Forms
         private void textBoxYPixels_TextChanged(object sender, EventArgs e)
         {
             this.textBoxYPixels.ValidateAsInteger();
-            this.textBoxYPixels.ValidateTextLength(2);
+            this.textBoxYPixels.ValidateTextLength(3);
 
             ValidateConfigureMappingButtonAvailability();
             ValidateSelectButtonAvailability();
