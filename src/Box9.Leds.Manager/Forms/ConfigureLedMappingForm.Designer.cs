@@ -45,7 +45,7 @@
             // buttonUndo
             // 
             this.buttonUndo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonUndo.Location = new System.Drawing.Point(13, 239);
+            this.buttonUndo.Location = new System.Drawing.Point(13, 265);
             this.buttonUndo.Name = "buttonUndo";
             this.buttonUndo.Size = new System.Drawing.Size(75, 23);
             this.buttonUndo.TabIndex = 2;
@@ -56,7 +56,7 @@
             // buttonConfirm
             // 
             this.buttonConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonConfirm.Location = new System.Drawing.Point(257, 239);
+            this.buttonConfirm.Location = new System.Drawing.Point(257, 265);
             this.buttonConfirm.Name = "buttonConfirm";
             this.buttonConfirm.Size = new System.Drawing.Size(75, 23);
             this.buttonConfirm.TabIndex = 3;
@@ -67,7 +67,7 @@
             // buttonClear
             // 
             this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonClear.Location = new System.Drawing.Point(94, 239);
+            this.buttonClear.Location = new System.Drawing.Point(94, 265);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(75, 23);
             this.buttonClear.TabIndex = 4;
@@ -79,7 +79,7 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 274);
+            this.statusStrip.Location = new System.Drawing.Point(0, 300);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(344, 22);
             this.statusStrip.TabIndex = 5;
@@ -106,12 +106,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(344, 296);
+            this.ClientSize = new System.Drawing.Size(344, 322);
             this.Controls.Add(this.displayPanel);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonConfirm);
             this.Controls.Add(this.buttonUndo);
+            this.MaximumSize = new System.Drawing.Size(2500, 1600);
             this.Name = "ConfigureLedMappingForm";
             this.Text = "Server";
             this.Load += new System.EventHandler(this.ServerForm_Load);
