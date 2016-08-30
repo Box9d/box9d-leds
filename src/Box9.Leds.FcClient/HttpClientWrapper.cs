@@ -45,7 +45,7 @@ namespace Box9.Leds.FcClient
             return JsonConvert.DeserializeObject<TResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task SendPixelUpdates(UpdatePixelsRequest request)
+        public void SendPixelUpdates(UpdatePixelsRequest request)
         {
             var jsonRequest = JsonConvert.SerializeObject(request);
 
@@ -55,7 +55,7 @@ namespace Box9.Leds.FcClient
                 var bitmap = BitmapExtensions.CreateFromPixelInfo(request.PixelUpdates, new Core.Configuration.ServerConfiguration { XPixels = request.PixelUpdates.Max(p => p.X), YPixels = request.PixelUpdates.Max(p => p.Y) });
                 var encodedBitmap = BitmapExtensions.Encode(bitmap);
 
-                await httpClient.PostAsync(uri.AbsoluteUri, new ByteArrayContent(encodedBitmap));
+                httpClient.PostAsync(uri.AbsoluteUri, new ByteArrayContent(encodedBitmap)).Wait();
 
                 // await httpClient.PostAsync(uri.AbsoluteUri, new StringContent(jsonRequest));
             }

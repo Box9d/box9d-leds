@@ -38,7 +38,7 @@ namespace Box9.Leds.Manager
             throw new NotImplementedException("Unable to send message to a display client");
         }
 
-        public async Task SendPixelUpdates(UpdatePixelsRequest request)
+        public void SendPixelUpdates(UpdatePixelsRequest request)
         {
             var bitmap = BitmapExtensions.CreateFromPixelInfo(request.PixelUpdates, serverConfiguration);
 
@@ -47,8 +47,6 @@ namespace Box9.Leds.Manager
                 panel.BackgroundImageLayout = ImageLayout.None;
                 panel.BackgroundImage = bitmap;
             }));
-
-            await Task.Yield();
         }
 
         public async Task CloseAsync()
