@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AForge.Video.FFMPEG;
@@ -82,12 +83,16 @@ namespace Box9.Leds.Video
                     {
                         foreach (var clientServer in clientServers)
                         {
-                            var pixelUpdates = BitmapExtensions.CreatePixelInfo(frame, clientServer.ServerConfiguration);
-
-                            clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest
+                            if (clientServer.ServerConfiguration.ServerType == Core.Servers.ServerType.FadeCandy)
                             {
-                                PixelUpdates = pixelUpdates
-                            });
+                                var pixelUpdates = BitmapExtensions.CreatePixelInfo(frame, clientServer.ServerConfiguration);
+
+                                clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest(pixelUpdates));
+                            }
+                            else
+                            {
+                                clientServer.Client.SendBitmap(frame);
+                            }
                         }
 
                         frame.Dispose();
@@ -98,15 +103,12 @@ namespace Box9.Leds.Video
             audioPlayer.Stop();
             audioPlayer.Dispose();
 
-            foreach (var clientServer in clientServers)
+            foreach (var clientServer in clientServers.Where(cs => cs.ServerConfiguration.ServerType == Core.Servers.ServerType.FadeCandy))
             {
                 var allPixelsBlack = Block.GeneratePattern(
                 Color.Black, clientServer.ServerConfiguration, clientServer.ServerConfiguration.XPixels, clientServer.ServerConfiguration.YPixels, 0, 0);
 
-                var request = new UpdatePixelsRequest
-                {
-                    PixelUpdates = allPixelsBlack
-                };
+                var request = new UpdatePixelsRequest(allPixelsBlack);
 
                 clientServer.Client.SendPixelUpdates(request);
                 clientServer.Client.SendPixelUpdates(request);

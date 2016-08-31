@@ -1,24 +1,21 @@
 ﻿using System;
-using System.Threading;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Box9.Leds.Core;
-using Box9.Leds.Core.Configuration;
 using Box9.Leds.Core.Messages;
 using Box9.Leds.Core.Messages.UpdatePixels;
 using Box9.Leds.FcClient;
+using Box9.Leds.Manager.Forms;
 
 namespace Box9.Leds.Manager
 {
     public class DisplayClientWrapper : IClientWrapper
     {
-        private readonly Panel panel;
-        private readonly ServerConfiguration serverConfiguration;
+        private readonly VideoForm form;
 
-        public DisplayClientWrapper(Panel panel, ServerConfiguration serverConfiguration)
+        public DisplayClientWrapper(VideoForm form)
         {
-            this.panel = panel;
-            this.serverConfiguration = serverConfiguration;
+            this.form = form;
         }
 
         public async Task ConnectAsync()
@@ -40,13 +37,24 @@ namespace Box9.Leds.Manager
 
         public void SendPixelUpdates(UpdatePixelsRequest request)
         {
-            var bitmap = BitmapExtensions.CreateFromPixelInfo(request.PixelUpdates, serverConfiguration);
+            throw new InvalidOperationException("Cannot send pixel updates to display client");
+        }
 
-            panel.Invoke(new Action(() =>
+        public void SendBitmap(Bitmap bitmap)
+        {
+            try
             {
-                panel.BackgroundImageLayout = ImageLayout.None;
-                panel.BackgroundImage = bitmap;
-            }));
+                var clone = bitmap.GetThumbnailImage(0, 0, null, IntPtr.Zero);
+
+                form.Invoke(new Action(() =>
+                {
+                    form.DisplayPanel.BackgroundImage = clone;
+                    form.DisplayPanel.BackgroundImageLayout = ImageLayout.Stretch;
+                }));
+            }
+            catch
+            {
+            } 
         }
 
         public async Task CloseAsync()

@@ -1,6 +1,6 @@
 ﻿namespace Box9.Leds.Manager.Forms
 {
-    partial class ServerForm
+    partial class VideoForm
     {
         /// <summary>
         /// Required designer variable.

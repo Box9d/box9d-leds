@@ -13,7 +13,6 @@ using Box9.Leds.FcClient;
 using Box9.Leds.Manager.Events;
 using Box9.Leds.Manager.Extensions;
 using Box9.Leds.Manager.Forms;
-using Box9.Leds.Manager.Playback;
 using Box9.Leds.Manager.Validation;
 using Box9.Leds.Video;
 
@@ -26,10 +25,10 @@ namespace Box9.Leds.Manager
         private string loadedConfigFilePath;
         private string videoSourceFilePath;
         private readonly IConfigurationStorageClient configurationStorage;
-        private DisposablePlayback disposablePlayback;
         private VideoPlayer videoPlayback;
         private bool displayOutput;
         private CancellationTokenSource cancellationTokenSource;
+        private VideoForm videoForm;
 
         public LedManager()
         {
@@ -256,12 +255,22 @@ namespace Box9.Leds.Manager
             clientServers = new List<ClientServer>();
             foreach (var serverConfig in config.Servers.Where(s => checkBoxDisplayOutputOnScreen.Checked || s.ServerType == Core.Servers.ServerType.FadeCandy))
             {
-                IClientWrapper client;
                 if (serverConfig.ServerType == Core.Servers.ServerType.FadeCandy)
                 {
-                    client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", serverConfig.IPAddress, serverConfig.Port)));
+                    var client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", serverConfig.IPAddress, serverConfig.Port)));
                     clientServers.Add(new ClientServer(client, serverConfig));
                 }
+            }
+
+            if (checkBoxDisplayOutputOnScreen.Checked)
+            {
+                this.videoForm = new VideoForm();
+                videoForm.BringToFront();
+                videoForm.Show();
+
+                var client = new DisplayClientWrapper(videoForm);
+
+                clientServers.Add(new ClientServer(client, new ServerConfiguration { ServerType = Core.Servers.ServerType.DisplayOnly }));
             }
 
             this.videoPlayback = new VideoPlayer(configurationStorage.Get(loadedConfigFilePath));
@@ -321,6 +330,11 @@ namespace Box9.Leds.Manager
 
                 this.trackBarStartTime.Value = 0;
                 this.ToggleControlAvailabilites(true, buttonPlay, buttonStop, trackBarStartTime);
+
+                if (this.videoForm != null)
+                {
+                    this.videoForm.Close();
+                }
             }));
         }
 

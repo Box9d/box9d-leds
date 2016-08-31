@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading.Tasks;
 using Box9.Leds.Core.Messages;
 using Box9.Leds.Core.Messages.UpdatePixels;
@@ -15,5 +16,7 @@ namespace Box9.Leds.FcClient
             where TResponse : new();
 
         void SendPixelUpdates(UpdatePixelsRequest request);
+
+        void SendBitmap(Bitmap bitmap);
     }
 }

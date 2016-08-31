@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
@@ -153,6 +154,11 @@ namespace Box9.Leds.FcClient
 
             dequeueingStarted = false;
             updatePixelsQueue.Dispose();
+        }
+
+        public void SendBitmap(Bitmap bitmap)
+        {
+            throw new InvalidOperationException("Cannot send a bitmap to a FadeCandy server");
         }
     }
 }
