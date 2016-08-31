@@ -7,6 +7,10 @@ using Box9.Leds.FcClient.Search;
 using AForge.Video.FFMPEG;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System;
+using System.Runtime.InteropServices;
+using System.IO;
+using Box9.Leds.Core;
 
 namespace Box9.Leds.TestHarness
 {
@@ -32,8 +36,6 @@ namespace Box9.Leds.TestHarness
                     SourceFilePath = videoPath
                 }
             });
-
-            // var bitmap = new Bitmap(0, 0, PixelFormat.Format24bppRgb);
 
             videoQueuer.QueueFrames(0, 0);
         }

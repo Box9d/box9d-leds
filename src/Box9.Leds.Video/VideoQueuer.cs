@@ -2,30 +2,33 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Threading;
 using AForge.Video.FFMPEG;
 using Box9.Leds.Core;
 using Box9.Leds.Core.Configuration;
+using NReco.VideoConverter;
 
 namespace Box9.Leds.Video
 {
     public class VideoQueuer : IDisposable
     {
         public ConcurrentDictionary<int, Bitmap> Frames { get; }
-
         private readonly LedConfiguration configuration;
 
         public VideoQueuer(LedConfiguration configuration)
         {
             this.configuration = configuration;
-
             Frames = new ConcurrentDictionary<int, Bitmap>();
         }
 
         public void QueueFrames(int minutes, int seconds)
         {
-            int currentFrame = 1;
+            var thumbnailReader = new FFMpegConverter();
+            var imageConverter = new ImageConverter();
 
             using (var videoFileReader = new VideoFileReader())
             {
@@ -33,16 +36,27 @@ namespace Box9.Leds.Video
                 var framerate = videoFileReader.FrameRate;
                 var frameCount = videoFileReader.FrameCount;
 
-                var frame = videoFileReader.ReadVideoFrame();
-                while (frame != null)
+                var currentFrame = 1 + (minutes * 60 + seconds) * framerate;
+
+                while (currentFrame < frameCount)
                 {
-                    if (currentFrame / framerate + 1 > minutes * 60 + seconds)
+                    using (var frame = videoFileReader.ReadVideoFrame())
                     {
-                        Frames.TryAdd(currentFrame, frame.Clone(new Rectangle(0,0, frame.Width, frame.Height), System.Drawing.Imaging.PixelFormat.DontCare));
+                        if (frame == null)
+                        {
+                            break;
+                        }
+
+                        if (currentFrame / framerate + 1 > minutes * 60 + seconds)
+                        {
+                            var clone = (Bitmap)frame.GetThumbnailImage(0, 0, null, IntPtr.Zero);
+
+                            Frames.TryAdd(currentFrame, clone);
+                        }
+
+                        frame.Dispose();
                     }
 
-                    frame.Dispose();
-                    frame = videoFileReader.ReadVideoFrame();
                     currentFrame++;
                 }
             }
@@ -50,9 +64,9 @@ namespace Box9.Leds.Video
 
         public void Dispose()
         {
-            foreach (var frame in Frames)
+            foreach (var frame in Frames.Where(f => f.Value != null).Select(f => f.Value))
             {
-                frame.Value.Dispose();
+                frame.Dispose();
             }
         }
     }

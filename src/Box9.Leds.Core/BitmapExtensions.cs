@@ -127,5 +127,17 @@ namespace Box9.Leds.Core
                 return new Bitmap(Image.FromStream(stream));
             }
         }
+
+        public static byte[] ToBytes(Bitmap bitmap)
+        {
+            var converter = new ImageConverter();
+            return (byte[])converter.ConvertTo(bitmap, typeof(byte[]));
+        }
+
+        public static Bitmap FromBytes(byte[] bytes)
+        {
+            var converter = new ImageConverter();
+            return (Bitmap)converter.ConvertTo(bytes, typeof(Bitmap));
+        }
     }
 }

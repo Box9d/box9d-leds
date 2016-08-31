@@ -42,7 +42,7 @@ namespace Box9.Leds.Video
             videoQueuer.QueueFrames(minutes, seconds);
 
             var audioTransformer = new VideoAudioTransformer(configuration.VideoConfig.SourceFilePath);
-            audioData = audioTransformer.ExtractAndSaveAudio();
+            this.audioData = audioTransformer.ExtractAndSaveAudio();
         }
 
         public async Task Play(IEnumerable<ClientServer> clientServers, int minutes, int seconds, CancellationToken cancellationToken)
@@ -78,19 +78,20 @@ namespace Box9.Leds.Video
 
                 if (currentFrame <= totalFrames && videoQueuer.Frames.ContainsKey(currentFrame))
                 {
-                    var frame = videoQueuer.Frames[currentFrame];
-
-                    foreach (var clientServer in clientServers)
+                    using (var frame = videoQueuer.Frames[currentFrame])
                     {
-                        var pixelUpdates = BitmapExtensions.CreatePixelInfo(frame, clientServer.ServerConfiguration);
-
-                        clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest
+                        foreach (var clientServer in clientServers)
                         {
-                            PixelUpdates = pixelUpdates
-                        });                 
-                    }
+                            var pixelUpdates = BitmapExtensions.CreatePixelInfo(frame, clientServer.ServerConfiguration);
 
-                    frame.Dispose();
+                            clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest
+                            {
+                                PixelUpdates = pixelUpdates
+                            });
+                        }
+
+                        frame.Dispose();
+                    }
                 }
             }
 
@@ -118,7 +119,6 @@ namespace Box9.Leds.Video
                     };
                 }
             }
-
             this.videoQueuer.Dispose();
             this.videoQueuer = new VideoQueuer(configuration);
         }
