@@ -107,12 +107,14 @@ namespace Box9.Leds.FcClient
                 data.Add(pixel.Color.B);
             }
 
-            if (!dequeueingStarted)
-            {
-                Task.Run(async () => await DequeuePixelUpdates());
-            }
+            socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, CancellationToken.None).Wait();
 
-            updatePixelsQueue.Add(data.ToArray());
+            //if (!dequeueingStarted)
+            //{
+            //    Task.Run(async () => await DequeuePixelUpdates());
+            //}
+
+            //updatePixelsQueue.Add(data.ToArray());
         }
 
         private async Task DequeuePixelUpdates()

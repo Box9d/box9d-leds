@@ -9,7 +9,7 @@ namespace Box9.Leds.Core.Messages.UpdatePixels
 
         public UpdatePixelsRequest(IEnumerable<PixelInfo> pixelUpdates)
         {
-            PixelUpdates = new List<PixelInfo>();
+            PixelUpdates = pixelUpdates;
         }
     }
 }

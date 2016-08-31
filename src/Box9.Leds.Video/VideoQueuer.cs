@@ -40,21 +40,16 @@ namespace Box9.Leds.Video
 
                 while (currentFrame < frameCount)
                 {
-                    using (var frame = videoFileReader.ReadVideoFrame())
+                    var frame = videoFileReader.ReadVideoFrame();
+                    
+                    if (frame == null)
                     {
-                        if (frame == null)
-                        {
-                            break;
-                        }
+                        break;
+                    }
 
-                        if (currentFrame / framerate + 1 > minutes * 60 + seconds)
-                        {
-                            var clone = (Bitmap)frame.GetThumbnailImage(0, 0, null, IntPtr.Zero);
-
-                            Frames.TryAdd(currentFrame, clone);
-                        }
-
-                        frame.Dispose();
+                    if (currentFrame / framerate + 1 > minutes * 60 + seconds)
+                    {
+                        Frames.TryAdd(currentFrame, frame);
                     }
 
                     currentFrame++;

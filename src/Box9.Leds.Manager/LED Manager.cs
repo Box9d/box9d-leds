@@ -305,7 +305,7 @@ namespace Box9.Leds.Manager
                 {
                     this.Invoke(new Action(() =>
                     {
-                        MessageBox.Show(string.Format("Playback failed: {0}", ex.Message));
+                        MessageBox.Show(string.Format("Playback failed: {0}\r\n\r\n{1}", ex.Message, ex.StackTrace));
                     }));
                 }
                 finally

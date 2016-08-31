@@ -84,7 +84,7 @@ namespace Box9.Leds.Core
         }
 
         public static IEnumerable<PixelInfo> CreatePixelInfo(Bitmap image, ServerConfiguration serverConfiguration)
-        {
+        { 
             var startX = image.Width * serverConfiguration.VideoConfiguration.StartAtXPercent / 100;
             var startY = image.Height * serverConfiguration.VideoConfiguration.StartAtYPercent / 100;
             var finishX = startX + (image.Width * serverConfiguration.VideoConfiguration.XPercent / 100);

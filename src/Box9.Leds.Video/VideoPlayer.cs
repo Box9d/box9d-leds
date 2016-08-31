@@ -50,6 +50,8 @@ namespace Box9.Leds.Video
         {
             long totalFrames;
             int frameRate;
+            int width;
+            int height;
 
             using (var videoFileReader = new VideoFileReader())
             {
@@ -57,6 +59,8 @@ namespace Box9.Leds.Video
 
                 totalFrames = videoFileReader.FrameCount;
                 frameRate = videoFileReader.FrameRate;
+                width = videoFileReader.Width;
+                height = videoFileReader.Height;
             }  
 
             foreach (var clientServer in clientServers)
@@ -79,23 +83,19 @@ namespace Box9.Leds.Video
 
                 if (currentFrame <= totalFrames && videoQueuer.Frames.ContainsKey(currentFrame))
                 {
-                    using (var frame = videoQueuer.Frames[currentFrame])
+                    var frame = videoQueuer.Frames[currentFrame];
+
+                    foreach (var clientServer in clientServers)
                     {
-                        foreach (var clientServer in clientServers)
+                        if (clientServer.ServerConfiguration.ServerType == Core.Servers.ServerType.FadeCandy)
                         {
-                            if (clientServer.ServerConfiguration.ServerType == Core.Servers.ServerType.FadeCandy)
-                            {
-                                var pixelUpdates = BitmapExtensions.CreatePixelInfo(frame, clientServer.ServerConfiguration);
-
-                                clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest(pixelUpdates));
-                            }
-                            else
-                            {
-                                clientServer.Client.SendBitmap(frame);
-                            }
+                            var pixelUpdates = BitmapExtensions.CreatePixelInfo(frame, clientServer.ServerConfiguration);
+                            clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest(pixelUpdates));
                         }
-
-                        frame.Dispose();
+                        else
+                        {
+                            clientServer.Client.SendBitmap(frame);
+                        }
                     }
                 }
             }
@@ -121,6 +121,7 @@ namespace Box9.Leds.Video
                     };
                 }
             }
+
             this.videoQueuer.Dispose();
             this.videoQueuer = new VideoQueuer(configuration);
         }
