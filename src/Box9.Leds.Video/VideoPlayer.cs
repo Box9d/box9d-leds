@@ -78,6 +78,8 @@ namespace Box9.Leds.Video
 
             while (playStopwatch.ElapsedMilliseconds < totalPlayTimeMillseconds && !cancellationToken.IsCancellationRequested)
             {
+                var frameGroup = new Dictionary<Guid, Tuple<IClientWrapper, UpdatePixelsRequest>>();
+
                 double secondsPassed = (double)playStopwatch.ElapsedMilliseconds / 1000 + minutes * 60 + seconds;
                 var currentFrame = (int)Math.Round(secondsPassed * frameRate, 0) + 1;
 
@@ -90,6 +92,7 @@ namespace Box9.Leds.Video
                         if (clientServer.ServerConfiguration.ServerType == Core.Servers.ServerType.FadeCandy)
                         {
                             var pixelUpdates = BitmapExtensions.CreatePixelInfo(frame, clientServer.ServerConfiguration);
+
                             clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest(pixelUpdates));
                         }
                         else

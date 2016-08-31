@@ -22,7 +22,8 @@ namespace Box9.Leds.FcClient
         private readonly Uri serverAddress;
         private readonly int sendMaxBufferLength;
         private readonly int receiveMaxBufferLength;
-        private readonly BlockingCollection<byte[]> updatePixelsQueue;
+        private readonly Queue<byte[]> updatePixelsQueue;
+        private bool cancelQueueRead;
         private bool dequeueingStarted;
 
         public delegate void FinishedUpdatesHandler();
@@ -30,7 +31,7 @@ namespace Box9.Leds.FcClient
 
         public WsClientWrapper(Uri serverAddress)
         {
-            updatePixelsQueue = new BlockingCollection<byte[]>();
+            updatePixelsQueue = new Queue<byte[]>();
 
             socket = new ClientWebSocket();
             this.serverAddress = serverAddress;
@@ -82,14 +83,15 @@ namespace Box9.Leds.FcClient
 
         public async Task CloseAsync()
         {
-            updatePixelsQueue.CompleteAdding();
+            cancelQueueRead = true;
+
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
         }
 
         public void Dispose()
         {
-            updatePixelsQueue.CompleteAdding();
-            updatePixelsQueue.Dispose();
+            cancelQueueRead = true;
+
             socket.Dispose();
         }
 
@@ -107,55 +109,44 @@ namespace Box9.Leds.FcClient
                 data.Add(pixel.Color.B);
             }
 
-            socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, CancellationToken.None).Wait();
+            if (!dequeueingStarted)
+            {
+                Task.Run(async () => await DequeuePixelUpdates());
+            }
 
-            //if (!dequeueingStarted)
-            //{
-            //    Task.Run(async () => await DequeuePixelUpdates());
-            //}
-
-            //updatePixelsQueue.Add(data.ToArray());
+            lock(updatePixelsQueue)
+            {
+                updatePixelsQueue.Enqueue(data.ToArray());
+            }
         }
 
         private async Task DequeuePixelUpdates()
         {
             dequeueingStarted = true;
 
-            while (!updatePixelsQueue.IsAddingCompleted)
+            while (!cancelQueueRead)
             {
-                byte[] update;
-                if (updatePixelsQueue.TryTake(out update))
+                byte[] update = null;
+                lock (updatePixelsQueue)
                 {
-                    try
+                    if (updatePixelsQueue.Count > 0)
                     {
-                        await socket.SendAsync(new ArraySegment<byte>(update), WebSocketMessageType.Binary, true, CancellationToken.None);
+                        update = updatePixelsQueue.Dequeue();
                     }
-                    catch (Exception ex)
-                    {
-                        var fileName = Path.Combine(Path.GetTempPath(), string.Format("LedAppError_{0}_{1}_{2}_{3}_{4}.log ",
-                            DateTime.Now.Year,
-                            DateTime.Now.Month,
-                            DateTime.Now.Day,
-                            DateTime.Now.Hour,
-                            DateTime.Now.Minute));
+                }
 
-                        using (var streamWriter = File.AppendText(fileName))
-                        {
-                            streamWriter.WriteLine(ex.Message);
-                        }
-                    }
-                    finally
-                    {
-                        if (socket.State != WebSocketState.Open)
-                        {
-                            await ConnectAsync();
-                        }
-                    }
+                if (update != null)
+                {
+                    await socket.SendAsync(new ArraySegment<byte>(update), WebSocketMessageType.Binary, true, CancellationToken.None);
                 }
             }
 
+            lock(updatePixelsQueue)
+            {
+                updatePixelsQueue.Clear();
+            }
+
             dequeueingStarted = false;
-            updatePixelsQueue.Dispose();
         }
 
         public void SendBitmap(Bitmap bitmap)
