@@ -87,7 +87,6 @@ namespace Box9.Leds.Video
                 if (currentFrame <= totalFrames && videoQueuer.Frames.ContainsKey(currentFrame))
                 {
                     var frame = videoQueuer.Frames[currentFrame];
-                    var frameData = new PixelMap(frame);
 
                     foreach (var clientServer in clientServers)
                     {
@@ -96,7 +95,7 @@ namespace Box9.Leds.Video
                             cancellationSource.Cancel();
                             cancellationSource = new CancellationTokenSource();
 
-                            var pixelUpdates = frameData.CreatePixelInfo(clientServer.ServerConfiguration);
+                            var pixelUpdates = BitmapExtensions.CreatePixelInfo(frame, clientServer.ServerConfiguration);
                             await clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest(pixelUpdates), cancellationSource.Token);
                         }
                         else

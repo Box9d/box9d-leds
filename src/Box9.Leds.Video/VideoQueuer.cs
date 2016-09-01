@@ -39,15 +39,26 @@ namespace Box9.Leds.Video
                 while (currentFrame < frameCount)
                 {
                     var frame = videoFileReader.ReadVideoFrame();
-                    
-                    if (frame == null)
-                    {
-                        break;
-                    }
 
-                    if (currentFrame / framerate + 1 > minutes * 60 + seconds)
+                    try
                     {
-                        Frames.Add(currentFrame, frame);
+                        if (frame == null)
+                        {
+                            break;
+                        }
+
+                        if (currentFrame / framerate + 1 > minutes * 60 + seconds)
+                        {
+                            Frames.Add(currentFrame, (Bitmap)frame.GetThumbnailImage(0, 0, null, IntPtr.Zero));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(string.Format("Couldn't queue one of more frames. Width & Height of frame was {0} & {1}", frame.Width, frame.Height), ex);
+                    }
+                    finally
+                    {
+                        frame.Dispose();
                     }
 
                     currentFrame++;
