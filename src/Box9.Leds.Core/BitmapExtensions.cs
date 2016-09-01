@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Box9.Leds.Core.Configuration;
 using Box9.Leds.Core.UpdatePixels;
+using PixelMapSharp;
 
 namespace Box9.Leds.Core
 {
@@ -84,7 +85,9 @@ namespace Box9.Leds.Core
         }
 
         public static IEnumerable<PixelInfo> CreatePixelInfo(Bitmap image, ServerConfiguration serverConfiguration)
-        { 
+        {
+            var map = new PixelMap(image);
+
             var startX = image.Width * serverConfiguration.VideoConfiguration.StartAtXPercent / 100;
             var startY = image.Height * serverConfiguration.VideoConfiguration.StartAtYPercent / 100;
             var finishX = startX + (image.Width * serverConfiguration.VideoConfiguration.XPercent / 100);
@@ -108,6 +111,25 @@ namespace Box9.Leds.Core
                     Color = image.GetPixel(x, y)
                 };
             }
+        }
+
+        public static Bitmap Resize(Bitmap bitmap, int width, int height)
+        {
+            Bitmap resizedImg = new Bitmap(width, height);
+
+            double ratioX = (double)resizedImg.Width / (double)bitmap.Width;
+            double ratioY = (double)resizedImg.Height / (double)bitmap.Height;
+            double ratio = ratioX < ratioY ? ratioX : ratioY;
+
+            int newHeight = Convert.ToInt32(bitmap.Height * ratio);
+            int newWidth = Convert.ToInt32(bitmap.Width * ratio);
+
+            using (Graphics g = Graphics.FromImage(resizedImg))
+            {
+                g.DrawImage(bitmap, 0, 0, newWidth, newHeight);
+            }
+
+            return resizedImg;
         }
 
         public static byte[] Encode(Bitmap bitmap)

@@ -11,25 +11,23 @@ using AForge.Video.FFMPEG;
 using Box9.Leds.Core;
 using Box9.Leds.Core.Configuration;
 using NReco.VideoConverter;
+using PixelMapSharp;
 
 namespace Box9.Leds.Video
 {
     public class VideoQueuer : IDisposable
     {
-        public ConcurrentDictionary<int, Bitmap> Frames { get; }
+        public Dictionary<int, Bitmap> Frames { get; }
         private readonly LedConfiguration configuration;
 
         public VideoQueuer(LedConfiguration configuration)
         {
             this.configuration = configuration;
-            Frames = new ConcurrentDictionary<int, Bitmap>();
+            Frames = new Dictionary<int, Bitmap>();
         }
 
         public void QueueFrames(int minutes, int seconds)
         {
-            var thumbnailReader = new FFMpegConverter();
-            var imageConverter = new ImageConverter();
-
             using (var videoFileReader = new VideoFileReader())
             {
                 videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
@@ -49,7 +47,7 @@ namespace Box9.Leds.Video
 
                     if (currentFrame / framerate + 1 > minutes * 60 + seconds)
                     {
-                        Frames.TryAdd(currentFrame, frame);
+                        Frames.Add(currentFrame, frame);
                     }
 
                     currentFrame++;
@@ -59,9 +57,12 @@ namespace Box9.Leds.Video
 
         public void Dispose()
         {
-            foreach (var frame in Frames.Where(f => f.Value != null).Select(f => f.Value))
+            foreach (var frame in Frames.Values)
             {
-                frame.Dispose();
+                if (frame != null)
+                {
+                    frame.Dispose();
+                }
             }
         }
     }

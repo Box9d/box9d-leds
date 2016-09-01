@@ -11,6 +11,8 @@ using System;
 using System.Runtime.InteropServices;
 using System.IO;
 using Box9.Leds.Core;
+using Box9.Leds.Core.UpdatePixels;
+using System.Collections.Generic;
 
 namespace Box9.Leds.TestHarness
 {
@@ -23,21 +25,34 @@ namespace Box9.Leds.TestHarness
 
         static async Task MainAsync(string[] args)
         {
-            var videoPath = "C:\\Users\\rzp\\Desktop\\Test Videos\\Rocket League® - Neo Tokyo Trailer.mp4";
+            IClientWrapper client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", "192.168.0.10", "7890")));
+            await client.ConnectAsync();
 
-            var videoQueuer = new VideoQueuer(new Core.Configuration.LedConfiguration
+            for (int i = 0; i < 200; i++)
             {
-                VideoConfig = new Core.Configuration.VideoConfiguration
-                {
-                    SourceFilePath = videoPath
-                },
-                AudioConfig = new Core.Configuration.AudioConfiguration
-                {
-                    SourceFilePath = videoPath
-                }
-            });
+                var listOfPixelInfo = new List<PixelInfo>();
 
-            videoQueuer.QueueFrames(0, 0);
+                for (int j = 0; j < i; j++)
+                {
+                    listOfPixelInfo.Add(new PixelInfo
+                    {
+                        X = i,
+                        Y = i,
+                        Color = Color.Black
+                    });
+                }
+
+                listOfPixelInfo.Add(new PixelInfo
+                {
+                    X = i,
+                    Y = i,
+                    Color = Color.Blue
+                });
+
+                await client.SendPixelUpdates(new Core.Messages.UpdatePixels.UpdatePixelsRequest(listOfPixelInfo));
+            }
+
+            await client.CloseAsync();
         }
     }
 }

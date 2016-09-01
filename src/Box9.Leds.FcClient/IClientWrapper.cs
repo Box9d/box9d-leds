@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Threading.Tasks;
 using Box9.Leds.Core.Messages;
 using Box9.Leds.Core.Messages.UpdatePixels;
@@ -15,7 +16,7 @@ namespace Box9.Leds.FcClient
         Task<TResponse> SendMessage<TResponse>(IJsonRequest<TResponse> request)
             where TResponse : new();
 
-        void SendPixelUpdates(UpdatePixelsRequest request);
+        Task SendPixelUpdates(UpdatePixelsRequest request, CancellationToken token = default(CancellationToken));
 
         void SendBitmap(Bitmap bitmap);
     }

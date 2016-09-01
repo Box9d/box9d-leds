@@ -13,6 +13,7 @@ using Box9.Leds.Core.Messages.UpdatePixels;
 using Box9.Leds.Core.Patterns;
 using Box9.Leds.FcClient;
 using Box9.Leds.Video;
+using PixelMapSharp;
 
 namespace Box9.Leds.Video
 {
@@ -70,30 +71,33 @@ namespace Box9.Leds.Video
 
             int totalPlayTimeMillseconds = (int)Math.Round((double)((double)totalFrames / (double)frameRate) * 1000, 0) - (minutes * 60 + seconds) * 1000;
 
-            IMp3AudioPlayer audioPlayer = new Mp3AudioPlayer(audioData);
-            audioPlayer.Play(minutes, seconds);
-
             var playStopwatch = new Stopwatch();
             playStopwatch.Start();
 
+            IMp3AudioPlayer audioPlayer = new Mp3AudioPlayer(audioData);
+            audioPlayer.Play(minutes, seconds);
+
+            var cancellationSource = new CancellationTokenSource();
+
             while (playStopwatch.ElapsedMilliseconds < totalPlayTimeMillseconds && !cancellationToken.IsCancellationRequested)
             {
-                var frameGroup = new Dictionary<Guid, Tuple<IClientWrapper, UpdatePixelsRequest>>();
-
                 double secondsPassed = (double)playStopwatch.ElapsedMilliseconds / 1000 + minutes * 60 + seconds;
                 var currentFrame = (int)Math.Round(secondsPassed * frameRate, 0) + 1;
 
                 if (currentFrame <= totalFrames && videoQueuer.Frames.ContainsKey(currentFrame))
                 {
                     var frame = videoQueuer.Frames[currentFrame];
+                    var frameData = new PixelMap(frame);
 
                     foreach (var clientServer in clientServers)
                     {
                         if (clientServer.ServerConfiguration.ServerType == Core.Servers.ServerType.FadeCandy)
                         {
-                            var pixelUpdates = BitmapExtensions.CreatePixelInfo(frame, clientServer.ServerConfiguration);
+                            cancellationSource.Cancel();
+                            cancellationSource = new CancellationTokenSource();
 
-                            clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest(pixelUpdates));
+                            var pixelUpdates = frameData.CreatePixelInfo(clientServer.ServerConfiguration);
+                            await clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest(pixelUpdates), cancellationSource.Token);
                         }
                         else
                         {
@@ -113,16 +117,9 @@ namespace Box9.Leds.Video
 
                 var request = new UpdatePixelsRequest(allPixelsBlack);
 
-                clientServer.Client.SendPixelUpdates(request);
-                clientServer.Client.SendPixelUpdates(request);
-
-                if (clientServer.ServerConfiguration.ServerType == Core.Servers.ServerType.FadeCandy)
-                {
-                    ((WsClientWrapper)clientServer.Client).FinishedUpdates += async() =>
-                    {
-                        await clientServer.Client.CloseAsync();
-                    };
-                }
+                await clientServer.Client.SendPixelUpdates(request);
+                await clientServer.Client.SendPixelUpdates(request);
+                await clientServer.Client.CloseAsync();
             }
 
             this.videoQueuer.Dispose();

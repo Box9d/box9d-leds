@@ -52,6 +52,10 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PixelMap, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PixelMap.1.0.1\lib\PixelMap.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -92,6 +96,7 @@
     <Compile Include="Multitasking\ChunkedConcurrentQueue.cs" />
     <Compile Include="Patterns\Block.cs" />
     <Compile Include="PixelDimensions.cs" />
+    <Compile Include="PixelMapExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servers\DisplayOnlyServer.cs" />
     <Compile Include="Servers\FadecandyServer.cs" />

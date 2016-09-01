@@ -75,6 +75,7 @@
     <Compile Include="Search\ClientSearch.cs" />
     <Compile Include="Search\Search.cs" />
     <Compile Include="Search\SearchStatus.cs" />
+    <Compile Include="WsClientGroupWrapper.cs" />
     <Compile Include="WsClientValidator.cs" />
     <Compile Include="WsClientWrapper.cs" />
   </ItemGroup>

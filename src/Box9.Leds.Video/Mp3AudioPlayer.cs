@@ -16,9 +16,6 @@ namespace Box9.Leds.Video
         private BlockAlignReductionStream baStream;
         private WaveOut wave;
 
-        public delegate void PlaybackFinished();
-        public event PlaybackFinished Stopped;
-
         public Mp3AudioPlayer(AudioData videoAudioData)
         {
             this.videoAudioData = videoAudioData;
@@ -45,7 +42,6 @@ namespace Box9.Leds.Video
             baStream = new BlockAlignReductionStream(wavStream);
             wave = new WaveOut(WaveCallbackInfo.FunctionCallback());
             wave.Init(baStream);
-            wave.PlaybackStopped += PlaybackStoppedHandler;
             wave.Play();
         }
 
@@ -61,15 +57,6 @@ namespace Box9.Leds.Video
                 {
                 }
             }
-        }
-
-        private void PlaybackStoppedHandler(object sender, StoppedEventArgs args)
-        {
-            Stopped();
-        }
-
-        private void StoppedHandler()
-        {
         }
     }
 }

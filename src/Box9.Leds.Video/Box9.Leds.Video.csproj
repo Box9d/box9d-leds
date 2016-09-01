@@ -82,6 +82,10 @@
       <HintPath>..\packages\NReco.VideoConverter.1.1.0.0\lib\net20\NReco.VideoConverter.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PixelMap, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PixelMap.1.0.1\lib\PixelMap.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />

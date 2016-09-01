@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Box9.Leds.Core.Messages;
@@ -35,8 +36,10 @@ namespace Box9.Leds.Manager
             throw new NotImplementedException("Unable to send message to a display client");
         }
 
-        public void SendPixelUpdates(UpdatePixelsRequest request)
+        public async Task SendPixelUpdates(UpdatePixelsRequest request, CancellationToken cancelToken = default(CancellationToken))
         {
+            await Task.Yield();
+
             throw new InvalidOperationException("Cannot send pixel updates to display client");
         }
 
