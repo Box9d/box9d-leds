@@ -232,7 +232,6 @@ namespace Box9.Leds.Manager
         private async Task ValidateForm()
         {
             IConfigurationValidator validator = new ConfigurationValidator();
-            SaveConfig();
             var config = GetConfig();
             var result = await validator.Validate(config);
 

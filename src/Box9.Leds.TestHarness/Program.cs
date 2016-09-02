@@ -13,6 +13,8 @@ using System.IO;
 using Box9.Leds.Core;
 using Box9.Leds.Core.UpdatePixels;
 using System.Collections.Generic;
+using System.Net;
+using System.Threading;
 
 namespace Box9.Leds.TestHarness
 {
@@ -25,34 +27,53 @@ namespace Box9.Leds.TestHarness
 
         static async Task MainAsync(string[] args)
         {
-            IClientWrapper client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", "192.168.0.10", "7890")));
+            Console.Write("Enter IP address of server: ");
+            var input = Console.ReadLine();
+
+            var ip = IPAddress.Parse(input);
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancelToken = cancellationTokenSource.Token;
+
+            var patternTask = SendPixelPattern(ip, cancellationTokenSource.Token);
+
+            Console.WriteLine("Press any key to exit");
+            Console.Read();
+            cancellationTokenSource.Cancel();
+
+            await patternTask;
+        }
+
+        static async Task SendPixelPattern(IPAddress ip, CancellationToken token)
+        {
+            IClientWrapper client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", ip, "7890")));
             await client.ConnectAsync();
 
-            for (int i = 0; i < 200; i++)
+            int iterations = 1;
+            while (!token.IsCancellationRequested)
             {
                 var listOfPixelInfo = new List<PixelInfo>();
 
-                for (int j = 0; j < i; j++)
+                for (int i = 0; i < iterations; i++)
                 {
                     listOfPixelInfo.Add(new PixelInfo
                     {
-                        X = i,
-                        Y = i,
                         Color = Color.Black
                     });
                 }
 
                 listOfPixelInfo.Add(new PixelInfo
                 {
-                    X = i,
-                    Y = i,
                     Color = Color.Blue
                 });
 
                 await client.SendPixelUpdates(new Core.Messages.UpdatePixels.UpdatePixelsRequest(listOfPixelInfo));
+
+                Thread.Sleep(150);
+                iterations++;
             }
 
             await client.CloseAsync();
+            client.Dispose();
         }
     }
 }
