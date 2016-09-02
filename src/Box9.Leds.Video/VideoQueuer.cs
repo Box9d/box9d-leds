@@ -49,7 +49,7 @@ namespace Box9.Leds.Video
 
                         if (currentFrame / framerate + 1 > minutes * 60 + seconds)
                         {
-                            Frames.Add(currentFrame, frame);
+                            Frames.Add(currentFrame, (Bitmap)frame.GetThumbnailImage(0,0,null, IntPtr.Zero));
                         }
                     }
                     catch (Exception ex)
@@ -57,6 +57,7 @@ namespace Box9.Leds.Video
                         throw new Exception(string.Format("Couldn't queue one of more frames. Width & Height of frame was {0} & {1}", frame.Width, frame.Height), ex);
                     }
 
+                    frame.Dispose();
                     currentFrame++;
                 }
             }

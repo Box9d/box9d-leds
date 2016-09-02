@@ -68,7 +68,7 @@ namespace Box9.Leds.TestHarness
 
                 await client.SendPixelUpdates(new Core.Messages.UpdatePixels.UpdatePixelsRequest(listOfPixelInfo));
 
-                Thread.Sleep(150);
+                Thread.Sleep(500);
                 iterations++;
             }
 
