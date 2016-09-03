@@ -86,7 +86,6 @@ namespace Box9.Leds.Core
 
         public static IEnumerable<PixelInfo> CreatePixelInfo(Bitmap image, ServerConfiguration serverConfiguration)
         {
-            var pixels = new List<string>();
             foreach (var pixelMapping in serverConfiguration.PixelMappings.OrderBy(pm => pm.Order))
             {
                 var xPercent = serverConfiguration.VideoConfiguration.StartAtXPercent + serverConfiguration.VideoConfiguration.XPercent * (pixelMapping.X + 1) / serverConfiguration.XPixels;
