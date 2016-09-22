@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using AForge.Video.FFMPEG;
-using Box9.Leds.Core.Configuration;
+using Box9.Leds.Business.Configuration;
 using Box9.Leds.Core.UpdatePixels;
 using Box9.Leds.DataStorage;
 

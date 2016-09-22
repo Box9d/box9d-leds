@@ -1,5 +1,4 @@
-﻿using System;
-using DBreeze;
+﻿using DBreeze;
 using Newtonsoft.Json;
 
 namespace Box9.Leds.DataStorage

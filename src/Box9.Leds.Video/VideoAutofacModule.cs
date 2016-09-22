@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Box9.Leds.FcClient;
 
 namespace Box9.Leds.Video
 {

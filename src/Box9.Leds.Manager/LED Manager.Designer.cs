@@ -54,7 +54,7 @@
             this.trackBarBrightness = new System.Windows.Forms.TrackBar();
             this.labelBrightness = new System.Windows.Forms.Label();
             this.checkBoxDisplayOutputOnScreen = new System.Windows.Forms.CheckBox();
-            this.buttonValidatePlayback = new System.Windows.Forms.Button();
+            this.buttonInitializePlayback = new System.Windows.Forms.Button();
             this.buttonEditServer = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -88,28 +88,24 @@
             this.newConfigurationToolStripMenuItem.Name = "newConfigurationToolStripMenuItem";
             this.newConfigurationToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.newConfigurationToolStripMenuItem.Text = "New configuration";
-            this.newConfigurationToolStripMenuItem.Click += new System.EventHandler(this.newConfigurationToolStripMenuItem_Click);
             // 
             // loadConfigurationToolStripMenuItem
             // 
             this.loadConfigurationToolStripMenuItem.Name = "loadConfigurationToolStripMenuItem";
             this.loadConfigurationToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.loadConfigurationToolStripMenuItem.Text = "Load configuration...";
-            this.loadConfigurationToolStripMenuItem.Click += new System.EventHandler(this.loadConfigurationToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.saveToolStripMenuItem.Text = "Save confuguration";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.saveAsToolStripMenuItem.Text = "Save configuration as...";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // buttonAddServer
             // 
@@ -119,7 +115,6 @@
             this.buttonAddServer.TabIndex = 2;
             this.buttonAddServer.Text = "Add new...";
             this.buttonAddServer.UseVisualStyleBackColor = true;
-            this.buttonAddServer.Click += new System.EventHandler(this.buttonAddServer_Click);
             // 
             // buttonRemoveServer
             // 
@@ -129,7 +124,6 @@
             this.buttonRemoveServer.TabIndex = 3;
             this.buttonRemoveServer.Text = "Remove";
             this.buttonRemoveServer.UseVisualStyleBackColor = true;
-            this.buttonRemoveServer.Click += new System.EventHandler(this.buttonRemoveServer_Click);
             // 
             // listBoxServers
             // 
@@ -169,7 +163,6 @@
             this.importVideoButton.TabIndex = 6;
             this.importVideoButton.Text = "Import video...";
             this.importVideoButton.UseVisualStyleBackColor = true;
-            this.importVideoButton.Click += new System.EventHandler(this.importVideoButton_Click);
             // 
             // labelVideoFilePath
             // 
@@ -208,7 +201,6 @@
             this.buttonPlay.TabIndex = 12;
             this.buttonPlay.Text = "Play";
             this.buttonPlay.UseVisualStyleBackColor = true;
-            this.buttonPlay.Click += new System.EventHandler(this.buttonPlay_Click);
             // 
             // buttonStop
             // 
@@ -219,7 +211,6 @@
             this.buttonStop.TabIndex = 13;
             this.buttonStop.Text = "Stop";
             this.buttonStop.UseVisualStyleBackColor = true;
-            this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
             // 
             // statusStrip
             // 
@@ -238,7 +229,6 @@
             // 
             // trackBarStartTime
             // 
-            this.trackBarStartTime.Enabled = false;
             this.trackBarStartTime.Location = new System.Drawing.Point(490, 65);
             this.trackBarStartTime.Name = "trackBarStartTime";
             this.trackBarStartTime.Size = new System.Drawing.Size(184, 45);
@@ -283,17 +273,15 @@
             this.checkBoxDisplayOutputOnScreen.TabIndex = 19;
             this.checkBoxDisplayOutputOnScreen.Text = "Display output on screen";
             this.checkBoxDisplayOutputOnScreen.UseVisualStyleBackColor = true;
-            this.checkBoxDisplayOutputOnScreen.CheckedChanged += new System.EventHandler(this.checkBoxDisplayOutputOnScreen_CheckedChanged);
             // 
-            // buttonValidatePlayback
+            // buttonInitializePlayback
             // 
-            this.buttonValidatePlayback.Location = new System.Drawing.Point(487, 254);
-            this.buttonValidatePlayback.Name = "buttonValidatePlayback";
-            this.buttonValidatePlayback.Size = new System.Drawing.Size(122, 23);
-            this.buttonValidatePlayback.TabIndex = 20;
-            this.buttonValidatePlayback.Text = "Validate playback";
-            this.buttonValidatePlayback.UseVisualStyleBackColor = true;
-            this.buttonValidatePlayback.Click += new System.EventHandler(this.buttonValidatePlayback_Click);
+            this.buttonInitializePlayback.Location = new System.Drawing.Point(487, 254);
+            this.buttonInitializePlayback.Name = "buttonInitializePlayback";
+            this.buttonInitializePlayback.Size = new System.Drawing.Size(122, 23);
+            this.buttonInitializePlayback.TabIndex = 20;
+            this.buttonInitializePlayback.Text = "Validate playback";
+            this.buttonInitializePlayback.UseVisualStyleBackColor = true;
             // 
             // buttonEditServer
             // 
@@ -303,7 +291,6 @@
             this.buttonEditServer.TabIndex = 21;
             this.buttonEditServer.Text = "Edit";
             this.buttonEditServer.UseVisualStyleBackColor = true;
-            this.buttonEditServer.Click += new System.EventHandler(this.buttonEditServer_Click);
             // 
             // LedManager
             // 
@@ -311,7 +298,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(742, 357);
             this.Controls.Add(this.buttonEditServer);
-            this.Controls.Add(this.buttonValidatePlayback);
+            this.Controls.Add(this.buttonInitializePlayback);
             this.Controls.Add(this.checkBoxDisplayOutputOnScreen);
             this.Controls.Add(this.labelBrightness);
             this.Controls.Add(this.trackBarBrightness);
@@ -371,7 +358,7 @@
         private System.Windows.Forms.TrackBar trackBarBrightness;
         private System.Windows.Forms.Label labelBrightness;
         private System.Windows.Forms.CheckBox checkBoxDisplayOutputOnScreen;
-        private System.Windows.Forms.Button buttonValidatePlayback;
+        private System.Windows.Forms.Button buttonInitializePlayback;
         private System.Windows.Forms.Button buttonEditServer;
     }
 }

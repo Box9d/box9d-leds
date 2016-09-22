@@ -71,6 +71,10 @@
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Rug.Osc, Version=1.2.5.17694, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Rug.Osc.1.2.5\lib\Rug.Osc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -91,6 +95,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Box9.Leds.Business\Box9.Leds.Business.csproj">
+      <Project>{AABEAF9E-777B-4135-81C5-CA34D2F93D62}</Project>
+      <Name>Box9.Leds.Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Box9.Leds.Core\Box9.Leds.Core.csproj">
       <Project>{329e36f9-1120-4dc0-9dee-104b03783a48}</Project>
       <Name>Box9.Leds.Core</Name>

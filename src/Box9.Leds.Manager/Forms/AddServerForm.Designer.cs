@@ -30,7 +30,7 @@
         {
             this.scanForServersButton = new System.Windows.Forms.Button();
             this.availableServersList = new System.Windows.Forms.ListBox();
-            this.selectServerButton = new System.Windows.Forms.Button();
+            this.buttonConfirm = new System.Windows.Forms.Button();
             this.searchProgress = new System.Windows.Forms.ProgressBar();
             this.cancel = new System.Windows.Forms.Button();
             this.labelStartXPercent = new System.Windows.Forms.Label();
@@ -59,7 +59,6 @@
             this.scanForServersButton.TabIndex = 0;
             this.scanForServersButton.Text = "Scan for servers...";
             this.scanForServersButton.UseVisualStyleBackColor = true;
-            this.scanForServersButton.Click += new System.EventHandler(this.scanForServersButton_Click);
             // 
             // availableServersList
             // 
@@ -68,18 +67,16 @@
             this.availableServersList.Name = "availableServersList";
             this.availableServersList.Size = new System.Drawing.Size(251, 290);
             this.availableServersList.TabIndex = 1;
-            this.availableServersList.SelectedIndexChanged += new System.EventHandler(this.availableServersList_SelectedIndexChanged);
             // 
-            // selectServerButton
+            // buttonConfirm
             // 
-            this.selectServerButton.Enabled = false;
-            this.selectServerButton.Location = new System.Drawing.Point(332, 327);
-            this.selectServerButton.Name = "selectServerButton";
-            this.selectServerButton.Size = new System.Drawing.Size(82, 23);
-            this.selectServerButton.TabIndex = 2;
-            this.selectServerButton.Text = "Select";
-            this.selectServerButton.UseVisualStyleBackColor = true;
-            this.selectServerButton.Click += new System.EventHandler(this.selectServerButton_Click);
+            this.buttonConfirm.Enabled = false;
+            this.buttonConfirm.Location = new System.Drawing.Point(332, 327);
+            this.buttonConfirm.Name = "buttonConfirm";
+            this.buttonConfirm.Size = new System.Drawing.Size(82, 23);
+            this.buttonConfirm.TabIndex = 2;
+            this.buttonConfirm.Text = "Confirm";
+            this.buttonConfirm.UseVisualStyleBackColor = true;
             // 
             // searchProgress
             // 
@@ -96,7 +93,6 @@
             this.cancel.TabIndex = 4;
             this.cancel.Text = "Cancel";
             this.cancel.UseVisualStyleBackColor = true;
-            this.cancel.Click += new System.EventHandler(this.cancel_Click);
             // 
             // labelStartXPercent
             // 
@@ -179,7 +175,6 @@
             this.startAtPercentageX.Name = "startAtPercentageX";
             this.startAtPercentageX.Size = new System.Drawing.Size(51, 21);
             this.startAtPercentageX.TabIndex = 13;
-            this.startAtPercentageX.SelectedIndexChanged += new System.EventHandler(this.startAtPercentageX_SelectedIndexChanged);
             // 
             // startAtPercentageY
             // 
@@ -188,7 +183,6 @@
             this.startAtPercentageY.Name = "startAtPercentageY";
             this.startAtPercentageY.Size = new System.Drawing.Size(51, 21);
             this.startAtPercentageY.TabIndex = 14;
-            this.startAtPercentageY.SelectedIndexChanged += new System.EventHandler(this.startAtPercentageY_SelectedIndexChanged);
             // 
             // widthPercentage
             // 
@@ -197,7 +191,6 @@
             this.widthPercentage.Name = "widthPercentage";
             this.widthPercentage.Size = new System.Drawing.Size(51, 21);
             this.widthPercentage.TabIndex = 15;
-            this.widthPercentage.SelectedIndexChanged += new System.EventHandler(this.widthPercentage_SelectedIndexChanged);
             // 
             // heightPercentage
             // 
@@ -206,7 +199,6 @@
             this.heightPercentage.Name = "heightPercentage";
             this.heightPercentage.Size = new System.Drawing.Size(51, 21);
             this.heightPercentage.TabIndex = 16;
-            this.heightPercentage.SelectedIndexChanged += new System.EventHandler(this.heightPercentage_SelectedIndexChanged);
             // 
             // textBoxXPixels
             // 
@@ -214,7 +206,6 @@
             this.textBoxXPixels.Name = "textBoxXPixels";
             this.textBoxXPixels.Size = new System.Drawing.Size(35, 20);
             this.textBoxXPixels.TabIndex = 17;
-            this.textBoxXPixels.TextChanged += new System.EventHandler(this.textBoxXPixels_TextChanged);
             // 
             // textBoxYPixels
             // 
@@ -222,8 +213,7 @@
             this.textBoxYPixels.Name = "textBoxYPixels";
             this.textBoxYPixels.Size = new System.Drawing.Size(35, 20);
             this.textBoxYPixels.TabIndex = 18;
-            this.textBoxYPixels.TextChanged += new System.EventHandler(this.textBoxYPixels_TextChanged);
-            // 
+            //
             // labelLedMapping
             // 
             this.labelLedMapping.AutoSize = true;
@@ -243,7 +233,6 @@
             this.buttonConfigureLedMapping.TabIndex = 20;
             this.buttonConfigureLedMapping.Text = "Configure...";
             this.buttonConfigureLedMapping.UseVisualStyleBackColor = true;
-            this.buttonConfigureLedMapping.Click += new System.EventHandler(this.buttonConfigureLedMapping_Click);
             // 
             // AddServerForm
             // 
@@ -268,7 +257,7 @@
             this.Controls.Add(this.labelStartXPercent);
             this.Controls.Add(this.cancel);
             this.Controls.Add(this.searchProgress);
-            this.Controls.Add(this.selectServerButton);
+            this.Controls.Add(this.buttonConfirm);
             this.Controls.Add(this.availableServersList);
             this.Controls.Add(this.scanForServersButton);
             this.Name = "AddServerForm";
@@ -283,7 +272,7 @@
 
         private System.Windows.Forms.Button scanForServersButton;
         private System.Windows.Forms.ListBox availableServersList;
-        private System.Windows.Forms.Button selectServerButton;
+        private System.Windows.Forms.Button buttonConfirm;
         private System.Windows.Forms.ProgressBar searchProgress;
         private System.Windows.Forms.Button cancel;
         private System.Windows.Forms.Label labelStartXPercent;

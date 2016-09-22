@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Box9.Leds.Core.Messages;
-using Box9.Leds.Core.Messages.UpdatePixels;
 using Box9.Leds.FcClient;
+using Box9.Leds.FcClient.Messages;
+using Box9.Leds.FcClient.Messages.UpdatePixels;
 using Box9.Leds.Manager.Forms;
 
 namespace Box9.Leds.Manager

@@ -1,5 +1,5 @@
 ﻿using System;
-using Box9.Leds.Core.Configuration;
+using Box9.Leds.Business.Configuration;
 using Box9.Leds.FcClient;
 
 namespace Box9.Leds.Video

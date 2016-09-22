@@ -71,10 +71,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IClientWrapper.cs" />
+    <Compile Include="FadecandyUris.cs" />
+    <Compile Include="Messages\ColorCorrection\ColorCorrectionColor.cs" />
+    <Compile Include="Messages\ColorCorrection\ColorCorrectionDevice.cs" />
+    <Compile Include="Messages\ColorCorrection\ColorCorrectionRequest.cs" />
+    <Compile Include="Messages\ColorCorrection\ColorCorrectionResponse.cs" />
+    <Compile Include="Messages\ConnectedDevices\ConnectedDeviceResponse.cs" />
+    <Compile Include="Messages\ConnectedDevices\ConnectedDevicesRequest.cs" />
+    <Compile Include="Messages\ConnectedDevices\ConnectedDevicesResponse.cs" />
+    <Compile Include="Messages\IJsonRequest.cs" />
+    <Compile Include="Messages\ServerInfo\ColorResponse.cs" />
+    <Compile Include="Messages\ServerInfo\DeviceResponse.cs" />
+    <Compile Include="Messages\ServerInfo\ServerInfoConfigResponse.cs" />
+    <Compile Include="Messages\ServerInfo\ServerInfoRequest.cs" />
+    <Compile Include="Messages\ServerInfo\ServerInfoResponse.cs" />
+    <Compile Include="Messages\UpdateBitmap\UpdateBitmapRequest.cs" />
+    <Compile Include="Messages\UpdatePixels\UpdatePixelsRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\ClientSearch.cs" />
-    <Compile Include="Search\Search.cs" />
-    <Compile Include="Search\SearchStatus.cs" />
+    <Compile Include="Search\IClientSearch.cs" />
     <Compile Include="WsClientValidator.cs" />
     <Compile Include="WsClientWrapper.cs" />
   </ItemGroup>

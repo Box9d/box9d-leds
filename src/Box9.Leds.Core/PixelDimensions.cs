@@ -2,8 +2,8 @@
 {
     public class PixelDimensions
     {
-        public const int Height = 6;
-        public const int Width = 6;
-        public const int Gap = 2;
+        public const int Height = 10;
+        public const int Width = 10;
+        public const int Gap = 3;
     }
 }

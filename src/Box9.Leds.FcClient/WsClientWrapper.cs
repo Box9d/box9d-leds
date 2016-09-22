@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Box9.Leds.Core.Messages;
-using Box9.Leds.Core.Messages.UpdatePixels;
+using Box9.Leds.FcClient.Messages;
+using Box9.Leds.FcClient.Messages.UpdatePixels;
 using Newtonsoft.Json;
 
 namespace Box9.Leds.FcClient
@@ -42,7 +40,15 @@ namespace Box9.Leds.FcClient
             {
                 socket.Dispose();
                 socket = new ClientWebSocket();
-                await socket.ConnectAsync(serverAddress, CancellationToken.None);
+
+                try
+                {
+                    await socket.ConnectAsync(serverAddress, CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(string.Format("Could not connect to web socket at {0}", serverAddress), ex);
+                }
             }
 
             State = socket.State;

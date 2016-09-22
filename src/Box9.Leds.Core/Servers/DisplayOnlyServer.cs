@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Box9.Leds.Core.Servers
+﻿namespace Box9.Leds.Core.Servers
 {
     public class DisplayOnlyServer : ServerBase
     {

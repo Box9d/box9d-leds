@@ -67,9 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChunkedStorageClient.cs" />
-    <Compile Include="ConfigurationStorageClient.cs" />
     <Compile Include="IChunkedStorageClient.cs" />
-    <Compile Include="IConfigurationStorageClient.cs" />
     <Compile Include="IPathManager.cs" />
     <Compile Include="IStorageClient.cs" />
     <Compile Include="PathManager.cs" />
@@ -81,6 +79,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Box9.Leds.Business\Box9.Leds.Business.csproj">
+      <Project>{AABEAF9E-777B-4135-81C5-CA34D2F93D62}</Project>
+      <Name>Box9.Leds.Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Box9.Leds.Core\Box9.Leds.Core.csproj">
       <Project>{329E36F9-1120-4DC0-9DEE-104B03783A48}</Project>
       <Name>Box9.Leds.Core</Name>

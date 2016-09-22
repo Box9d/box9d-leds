@@ -32,5 +32,10 @@ namespace Box9.Leds.Manager.Extensions
 
             textBox.SelectionStart = textBox.Text.Length;
         }
+
+        public static void SetCursorToEnd(this TextBox textBox)
+        {
+            textBox.SelectionStart = textBox.Text.Length;
+        }
     }
 }

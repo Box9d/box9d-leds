@@ -74,8 +74,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DisplayClientWrapper.cs" />
-    <Compile Include="Events\EventMessage.cs" />
-    <Compile Include="Events\EventStatus.cs" />
     <Compile Include="Extensions\ComboBoxExtensions.cs" />
     <Compile Include="Extensions\FormExtensions.cs" />
     <Compile Include="Extensions\ListBoxExtensions.cs" />
@@ -105,11 +103,20 @@
     <Compile Include="LED Manager.Designer.cs">
       <DependentUpon>LED Manager.cs</DependentUpon>
     </Compile>
+    <Compile Include="Maps\AddServerViewToServerConfigurationMap.cs" />
+    <Compile Include="Maps\LedManagerViewToConfigurationMap.cs" />
+    <Compile Include="Presenters\AddServerPresenter.cs" />
+    <Compile Include="Presenters\ConfigureLedMappingPresenter.cs" />
+    <Compile Include="Presenters\PresenterBase.cs" />
+    <Compile Include="Presenters\LedManagerPresenter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validation\ConfigurationValidator.cs" />
     <Compile Include="Validation\IConfigurationValidator.cs" />
     <Compile Include="Validation\ValidationResult.cs" />
+    <Compile Include="Views\IAddServerView.cs" />
+    <Compile Include="Views\IConfigureLedMappingView.cs" />
+    <Compile Include="Views\ILedManagerView.cs" />
     <EmbeddedResource Include="Forms\AddServerForm.resx">
       <DependentUpon>AddServerForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -147,6 +154,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Box9.Leds.Business\Box9.Leds.Business.csproj">
+      <Project>{AABEAF9E-777B-4135-81C5-CA34D2F93D62}</Project>
+      <Name>Box9.Leds.Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Box9.Leds.Core\Box9.Leds.Core.csproj">
       <Project>{329E36F9-1120-4DC0-9DEE-104B03783A48}</Project>
       <Name>Box9.Leds.Core</Name>
@@ -163,7 +174,12 @@
       <Project>{F7F691B5-4ECE-4B68-9DF1-1DB144819387}</Project>
       <Name>Box9.Leds.Video</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RickPowell.ExplicitMapping\Box9.ExplicitMapping.csproj">
+      <Project>{D744381C-1080-475F-A827-290C7D4E55EF}</Project>
+      <Name>Box9.ExplicitMapping</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

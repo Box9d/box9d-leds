@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 
 namespace Box9.Leds.Video
 {

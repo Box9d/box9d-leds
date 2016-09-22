@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Box9.Leds.Core.Configuration;
+using Box9.Leds.Business.Configuration;
 using Box9.Leds.FcClient;
 
 namespace Box9.Leds.Manager.Validation
@@ -50,7 +50,7 @@ namespace Box9.Leds.Manager.Validation
             var errors = new List<string>();
 
             var clientValidator = new WsClientValidator();
-            foreach (var server in configuration.Servers.Where(s => s.ServerType == Core.Servers.ServerType.FadeCandy))
+            foreach (var server in configuration.Servers)
             {
                 bool isConnected = await clientValidator.IsServerConnected(IPAddress.Parse(server.IPAddress), server.Port);
 

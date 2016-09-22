@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.IO.MemoryMappedFiles;
-using System.Linq;
-using System.Threading;
 using AForge.Video.FFMPEG;
-using Box9.Leds.Core;
-using Box9.Leds.Core.Configuration;
-using NReco.VideoConverter;
-using PixelMapSharp;
+using Box9.Leds.Business.Configuration;
 
 namespace Box9.Leds.Video
 {

@@ -1,292 +1,223 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Box9.Leds.Core.Configuration;
-using Box9.Leds.Core.Coordination;
-using Box9.Leds.Core.Messages.ConnectedDevices;
-using Box9.Leds.Core.Servers;
-using Box9.Leds.FcClient.Search;
+using Box9.Leds.Business.Configuration;
+using Box9.Leds.Business.EventsArguments;
+using Box9.Leds.Core.EventsArguments;
+using Box9.Leds.Core.UpdatePixels;
 using Box9.Leds.Manager.Extensions;
+using Box9.Leds.Manager.Presenters;
+using Box9.Leds.Manager.Views;
 
 namespace Box9.Leds.Manager.Forms
 {
-    public partial class AddServerForm : Form
+    public partial class AddServerForm : Form, IAddServerView
     {
-        private readonly bool isEdit;
-        private readonly ServerConfiguration editConfig;
+        private readonly AddServerPresenter presenter;
 
-        private ClientSearch clientSearch;
-        private int ipsSearched;
-        private Task searchTask;
-        private CancellationTokenSource cts;
-        private List<PixelMapping> pixelMappings;
+        public string SelectedServer { get; set; }
 
-        public delegate void ServerAddedHandler(ServerConfiguration server);
-        public event ServerAddedHandler ServerAdded;
+        public int? ScanProgressPercentage { get; set; }
 
-        public delegate void ServerEditedHandler(ServerConfiguration server);
-        public event ServerEditedHandler ServerEdited;
+        public List<string> Servers { get; set; }
 
-        public AddServerForm()
+        public int? NumberOfHorizontalPixels { get; set; }
+
+        public int? NumberOfVerticalPixels { get; set; }
+
+        public int StartAtHorizontalPercentage { get; set; }
+
+        public int StartAtVerticalPercentage { get; set; }
+
+        public int HorizontalPercentage { get; set; }
+
+        public int VerticalPercentage { get; set; }
+
+        public int MaxAvailableHorizontalPercentage { get; set; }
+
+        public int MaxAvailableVerticalPercentage { get; set; }
+
+        public IEnumerable<PixelInfo> PixelMappings { get; set; }
+
+        public event EventHandler<EventArgs> ScanForServers;
+        public event EventHandler<StringEventArgs> ServerSelected;
+        public event EventHandler<StringEventArgs> NumberOfHorizontalPixelsChanged;
+        public event EventHandler<StringEventArgs> NumberOfVerticalPixelsChanged;
+        public event EventHandler<IntegerEventArgs> StartAtHorizontalPercentageChanged;
+        public event EventHandler<IntegerEventArgs> StartAtVerticalPercentageChanged;
+        public event EventHandler<IntegerEventArgs> HorizontalPercentageChanged;
+        public event EventHandler<IntegerEventArgs> VerticalPercentageChanged;
+        public event EventHandler<EventArgs> ConfigureLedMapping;
+        public event EventHandler<EventArgs> Cancel;
+        public event EventHandler<EventArgs> Confirm;
+        public event EventHandler<ServerConfigurationEventArgs> ServerAddedOrUpdated;
+
+        public AddServerForm(ServerConfiguration configuration = null)
         {
             InitializeComponent();
 
-            pixelMappings = new List<PixelMapping>();
-            isEdit = false;
-        }
-
-        public AddServerForm(ServerConfiguration serverConfiguration)
-        {
-            InitializeComponent();
-
-            editConfig = serverConfiguration;
-            pixelMappings = serverConfiguration.PixelMappings;
-            isEdit = true;
+            presenter = new AddServerPresenter(this, configuration);
         }
 
         private void AddServerForm_Load(object sender, EventArgs e)
         {
-            cts = new CancellationTokenSource();
-            this.clientSearch = new ClientSearch();
-            clientSearch.ServerFound += AddServerToList;
-            clientSearch.IPAddressSearched += UpdateProgress;
-            clientSearch.SearchStatusChanged += StatusChanged;
+            startAtPercentageX.AsPercentageOptions();
+            startAtPercentageY.AsPercentageOptions();
+            widthPercentage.AsPercentageOptions(1, 100);
+            heightPercentage.AsPercentageOptions(1, 100);
 
-            this.FormClosing += OnFormClosing;
+            startAtPercentageX.DropDownStyle = ComboBoxStyle.DropDownList;
+            startAtPercentageY.DropDownStyle = ComboBoxStyle.DropDownList;
+            widthPercentage.DropDownStyle = ComboBoxStyle.DropDownList;
+            heightPercentage.DropDownStyle = ComboBoxStyle.DropDownList;
 
-            this.startAtPercentageX.AsPercentageOptions();
-            this.startAtPercentageY.AsPercentageOptions();
-            this.widthPercentage.AsPercentageOptions();
-            this.heightPercentage.AsPercentageOptions();
-
-            ServerAdded += ServerAddedHandle;
-
-            this.startAtPercentageX.DropDownStyle = ComboBoxStyle.DropDownList;
-            this.startAtPercentageY.DropDownStyle = ComboBoxStyle.DropDownList;
-            this.widthPercentage.DropDownStyle = ComboBoxStyle.DropDownList;
-            this.heightPercentage.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            if (isEdit)
+            scanForServersButton.Click += (s, args) =>
             {
-                if (editConfig.ServerType == ServerType.FadeCandy)
+                ScanForServers(s, args);
+            };
+
+            availableServersList.SelectedIndexChanged += SelectedServerChangedOnUI;
+
+            textBoxXPixels.TextChanged += (s, args) =>
+            {
+                NumberOfHorizontalPixelsChanged(s, new StringEventArgs(textBoxXPixels.Text));
+            };
+
+            textBoxYPixels.TextChanged += (s, args) =>
+            {
+                NumberOfVerticalPixelsChanged(s, new StringEventArgs(textBoxYPixels.Text));
+            };
+
+            startAtPercentageX.SelectedIndexChanged += (s, args) =>
+            {
+                StartAtHorizontalPercentageChanged(s, new IntegerEventArgs(int.Parse(startAtPercentageX.SelectedIndex.ToString())));
+            };
+
+            startAtPercentageY.SelectedIndexChanged += (s, args) =>
+            {
+                StartAtVerticalPercentageChanged(s, new IntegerEventArgs(int.Parse(startAtPercentageY.SelectedIndex.ToString())));
+            };
+
+            widthPercentage.SelectedIndexChanged += HorizontalPercentageChangedOnUI;
+
+            heightPercentage.SelectedIndexChanged += VerticalPercentageChangedOnUI;
+
+            buttonConfigureLedMapping.Click += (s, args) =>
+            {
+                ConfigureLedMapping(s, args);
+            };
+
+            cancel.Click += (s, args) =>
+            {
+                Cancel(s, args);
+            };
+
+            buttonConfirm.Click += (s, args) =>
+            {
+                Confirm(s, args);
+            };
+
+            presenter.FinishedPresenting += (s, args) =>
+            {
+                presenter.ProgressUpdate -= ProgressUpdate;
+                ServerAddedOrUpdated(s, new ServerConfigurationEventArgs(args));
+                Close();
+                Dispose();
+            };
+
+            presenter.CancelledPresenting += (s, args) =>
+            {
+                presenter.ProgressUpdate -= ProgressUpdate;
+                Close();
+                Dispose();
+            };
+
+            presenter.IsDirty += Reload;
+            presenter.ProgressUpdate += ProgressUpdate;
+        }
+
+        private void Reload(object sender, EventArgs e)
+        {
+            Invoke(new Action(() =>
+            {
+                availableServersList.Items.Clear();
+                foreach (var server in Servers)
                 {
-                    var server = new FadecandyServer(IPAddress.Parse(editConfig.IPAddress), editConfig.Port);
-
                     availableServersList.Items.Add(server);
-                    availableServersList.SelectedItem = server;
-                }
-                else
-                {
-                    var server = new DisplayOnlyServer();
-
-                    availableServersList.Items.Add(server);
-                    availableServersList.SelectedItem = server;
+                    if (SelectedServer == server)
+                    {
+                        availableServersList.SelectedIndexChanged -= SelectedServerChangedOnUI;
+                        availableServersList.SelectedItem = server;
+                        availableServersList.SelectedIndexChanged += SelectedServerChangedOnUI;
+                    }
                 }
 
-                this.textBoxXPixels.Text = editConfig.XPixels.ToString();
-                this.textBoxYPixels.Text = editConfig.YPixels.ToString();
-                this.startAtPercentageX.SelectedItem = editConfig.VideoConfiguration.StartAtXPercent;
-                this.startAtPercentageY.SelectedItem = editConfig.VideoConfiguration.StartAtYPercent;
-                this.widthPercentage.SelectedItem = editConfig.VideoConfiguration.XPercent;
-                this.heightPercentage.SelectedItem = editConfig.VideoConfiguration.YPercent;
+                textBoxXPixels.Text = NumberOfHorizontalPixels.HasValue
+                    ? NumberOfHorizontalPixels.Value.ToString()
+                    : string.Empty;
+                textBoxXPixels.ValidateTextLength(3);
+                textBoxXPixels.SetCursorToEnd();
 
-                ValidateVideoSplitting();
-            }
-        }
+                textBoxYPixels.Text = NumberOfVerticalPixels.HasValue
+                    ? NumberOfVerticalPixels.Value.ToString()
+                    : string.Empty;
+                textBoxYPixels.ValidateTextLength(3);
+                textBoxYPixels.SetCursorToEnd();
 
-        private void scanForServersButton_Click(object sender, EventArgs e)
-        {
-            this.searchProgress.Value = 0;
-            this.ipsSearched = 0;
-            this.availableServersList.Items.Clear();
+                widthPercentage.SelectedIndexChanged -= HorizontalPercentageChangedOnUI;
+                widthPercentage.Items.Clear();
+                widthPercentage.AsPercentageOptions(1, MaxAvailableHorizontalPercentage);
+                widthPercentage.SelectedItem = HorizontalPercentage;
+                widthPercentage.SelectedIndexChanged += HorizontalPercentageChangedOnUI;
 
-            availableServersList.Items.Add(new DisplayOnlyServer());
+                heightPercentage.SelectedIndexChanged -= VerticalPercentageChangedOnUI;
+                heightPercentage.Items.Clear();
+                heightPercentage.AsPercentageOptions(1, MaxAvailableVerticalPercentage);
+                heightPercentage.SelectedItem = VerticalPercentage;
+                heightPercentage.SelectedIndexChanged += VerticalPercentageChangedOnUI;
 
-            searchTask = new Task(() => clientSearch.SearchForFadecandyServers(7890, cts.Token), cts.Token);
-            searchTask.Start();
-        }
+                buttonConfirm.Enabled = HorizontalPercentage > 0
+                    && VerticalPercentage > 0
+                    && StartAtHorizontalPercentage >= 0
+                    && StartAtVerticalPercentage >= 0
+                    && SelectedServer != null
+                    && NumberOfVerticalPixels.HasValue && NumberOfVerticalPixels.Value > 0
+                    && NumberOfHorizontalPixels.HasValue && NumberOfHorizontalPixels.Value > 0
+                    && PixelMappings != null && PixelMappings.Any(pm => pm.Order > 0);
 
-        private void AddServerToList(IPAddress ipAddress, IEnumerable<ConnectedDeviceResponse> devices)
-        {
-            availableServersList.Invoke(new Action(() =>
-            {
-                availableServersList.Items.Add(new FadecandyServer(ipAddress, 7890));
-            }));            
-        }
-
-        private void UpdateProgress()
-        {
-            ipsSearched++;
-
-            searchProgress.Invoke(new Action(() =>
-            {
-                searchProgress.Value = (int)Math.Round((((double)ipsSearched / (double)clientSearch.TotalIPSearches) * 100), 0);
+                buttonConfigureLedMapping.Enabled = NumberOfVerticalPixels.HasValue && NumberOfVerticalPixels.Value > 0
+                    && NumberOfHorizontalPixels.HasValue && NumberOfHorizontalPixels.Value > 0;
             }));
         }
 
-        private void StatusChanged(SearchStatus status)
+        private void ProgressUpdate(object sender, EventArgs args)
         {
-            switch (status)
+            Invoke(new Action(() =>
             {
-                case SearchStatus.Finished:
-                    ipsSearched = clientSearch.TotalIPSearches - 1;
-                    UpdateProgress();
-                    break;
-            }
+                searchProgress.Value = ScanProgressPercentage.HasValue
+                    ? ScanProgressPercentage.Value
+                    : 0;
+            }));            
         }
 
-        private void cancel_Click(object sender, EventArgs e)
+        private void SelectedServerChangedOnUI(object sender, EventArgs args)
         {
-            cts.Cancel();
-            this.Close();
+            var address = availableServersList.SelectedItem != null
+                    ? availableServersList.SelectedItem.ToString()
+                    : null;
+
+            ServerSelected(sender, new StringEventArgs(address));
         }
 
-        private void availableServersList_SelectedIndexChanged(object sender, EventArgs e)
+        private void HorizontalPercentageChangedOnUI(object sender, EventArgs args)
         {
-            ValidateSelectButtonAvailability();
+            HorizontalPercentageChanged(sender, new IntegerEventArgs(int.Parse(widthPercentage.SelectedItem.ToString())));
         }
 
-        private void availableLedLayouts_SelectedIndexChanged(object sender, EventArgs e)
+        private void VerticalPercentageChangedOnUI(object sender, EventArgs args)
         {
-            availableServersList_SelectedIndexChanged(sender, e);
-        }
-
-        private void selectServerButton_Click(object sender, EventArgs e)
-        {
-            cts.Cancel();
-
-            var server = (ServerBase)availableServersList.SelectedItem;
-
-            var configuration = new ServerConfiguration();
-            if (server.ServerType == ServerType.FadeCandy)
-            {
-                var fadeCandyServer = (FadecandyServer)server;
-                configuration.IPAddress = fadeCandyServer.IPAddress.ToString();
-                configuration.Port = fadeCandyServer.Port;
-            }
-
-            configuration.ServerType = server.ServerType;
-            configuration.XPixels = int.Parse(textBoxXPixels.Text);
-            configuration.YPixels = int.Parse(textBoxYPixels.Text);
-            configuration.PixelMappings = pixelMappings;
-            configuration.VideoConfiguration = new ServerVideoConfiguration
-            {
-                StartAtXPercent = (int)startAtPercentageX.SelectedItem,
-                StartAtYPercent = (int)startAtPercentageY.SelectedItem,
-                XPercent = (int)widthPercentage.SelectedItem,
-                YPercent = (int)heightPercentage.SelectedItem
-            };
-
-            ServerAdded(configuration);
-
-            this.Close();
-        }
-
-        private void OnFormClosing(object sender, FormClosingEventArgs e)
-        {
-            cts.Cancel();
-            this.Visible = false;
-        }
-
-        private void ServerAddedHandle(ServerConfiguration server)
-        {
-        }
-
-        private void startAtPercentageX_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ValidateVideoSplitting();
-            ValidateSelectButtonAvailability();
-        }
-
-        private void startAtPercentageY_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ValidateVideoSplitting();
-            ValidateSelectButtonAvailability();
-        }
-
-        private void widthPercentage_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ValidateVideoSplitting();
-            ValidateSelectButtonAvailability();
-        }
-
-        private void heightPercentage_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ValidateVideoSplitting();
-            ValidateSelectButtonAvailability();
-        }
-
-        private void textBoxXPixels_TextChanged(object sender, EventArgs e)
-        {
-            this.textBoxXPixels.ValidateAsInteger();
-            this.textBoxXPixels.ValidateTextLength(3);
-
-            ValidateConfigureMappingButtonAvailability();
-            ValidateSelectButtonAvailability();
-        }
-
-        private void textBoxYPixels_TextChanged(object sender, EventArgs e)
-        {
-            this.textBoxYPixels.ValidateAsInteger();
-            this.textBoxYPixels.ValidateTextLength(3);
-
-            ValidateConfigureMappingButtonAvailability();
-            ValidateSelectButtonAvailability();
-        }
-
-        private void ValidateVideoSplitting()
-        {
-            var startAtXPercent = this.startAtPercentageX.SelectedItem == null ? default(int) : (int)this.startAtPercentageX.SelectedItem;
-            var startAtYPercent = this.startAtPercentageY.SelectedItem == null ? default(int) : (int)this.startAtPercentageY.SelectedItem;
-            var xPercent = this.widthPercentage.SelectedItem == null ? default(int) : (int)this.widthPercentage.SelectedItem;
-            var yPercent = this.heightPercentage.SelectedItem == null ? default(int) : (int)this.heightPercentage.SelectedItem;
-
-            this.widthPercentage.AsPercentageOptions(0, 100 - startAtXPercent);
-            this.heightPercentage.AsPercentageOptions(0, 100 - startAtYPercent);
-        }
-
-        private void ValidateSelectButtonAvailability()
-        {
-            this.selectServerButton.Enabled = 
-                this.startAtPercentageX.SelectedIndex > -1 &&
-                this.startAtPercentageY.SelectedIndex > -1 &&
-                this.widthPercentage.SelectedIndex > -1 &&
-                this.heightPercentage.SelectedIndex > -1 &&
-                this.availableServersList.SelectedIndex > -1 &&
-                this.pixelMappings.Any() &&
-                !string.IsNullOrEmpty(this.textBoxXPixels.Text) &&
-                !string.IsNullOrEmpty(this.textBoxYPixels.Text);
-        }
-
-        private void ValidateConfigureMappingButtonAvailability()
-        {
-            this.buttonConfigureLedMapping.Enabled = 
-                !string.IsNullOrEmpty(this.textBoxXPixels.Text) &&
-                !string.IsNullOrEmpty(this.textBoxYPixels.Text);
-        }
-
-        private void buttonConfigureLedMapping_Click(object sender, EventArgs e)
-        {
-            var configureForm = new ConfigureLedMappingForm(int.Parse(textBoxXPixels.Text), int.Parse(textBoxYPixels.Text), pixelMappings);
-            configureForm.StartPosition = FormStartPosition.Manual;
-            configureForm.Location = new System.Drawing.Point(this.Location.X + 20, this.Location.X + 20);
-
-            configureForm.ConfigurationConfirmed += (form, mappings) =>
-            {
-                form.Close();
-
-                pixelMappings = mappings
-                    .Select(m => new PixelMapping { Order = m.Key, X = m.Value.X, Y = m.Value.Y })
-                    .ToList();
-
-                ValidateSelectButtonAvailability();
-            };
-
-            configureForm.Show();
+            VerticalPercentageChanged(sender, new IntegerEventArgs(int.Parse(heightPercentage.SelectedItem.ToString())));
         }
     }
 }

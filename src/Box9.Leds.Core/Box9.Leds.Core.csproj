@@ -67,41 +67,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BitmapExtensions.cs" />
-    <Compile Include="Configuration\AudioConfiguration.cs" />
-    <Compile Include="Configuration\LedConfiguration.cs" />
-    <Compile Include="Configuration\ServerConfiguration.cs" />
-    <Compile Include="Configuration\ServerVideoConfiguration.cs" />
-    <Compile Include="Configuration\VideoConfiguration.cs" />
-    <Compile Include="Coordination\PixelMapping.cs" />
+    <Compile Include="EventArgs\BooleanEventArgs.cs" />
+    <Compile Include="EventArgs\CustomTypeEventArgs.cs" />
+    <Compile Include="EventArgs\ExceptionArgs.cs" />
+    <Compile Include="EventArgs\PixelMappingEventArgs.cs" />
+    <Compile Include="EventArgs\IntegerEventArgs.cs" />
+    <Compile Include="EventArgs\StringEventArgs.cs" />
     <Compile Include="LedLayouts\CustomLedLayout.cs" />
     <Compile Include="LedLayouts\LedLayout.cs" />
     <Compile Include="LedLayouts\SnareDrumLedLayout.cs" />
-    <Compile Include="Messages\ColorCorrection\ColorCorrectionColor.cs" />
-    <Compile Include="Messages\ColorCorrection\ColorCorrectionDevice.cs" />
-    <Compile Include="Messages\ColorCorrection\ColorCorrectionRequest.cs" />
-    <Compile Include="Messages\ColorCorrection\ColorCorrectionResponse.cs" />
-    <Compile Include="Messages\ConnectedDevices\ConnectedDeviceResponse.cs" />
-    <Compile Include="Messages\ConnectedDevices\ConnectedDevicesRequest.cs" />
-    <Compile Include="Messages\ConnectedDevices\ConnectedDevicesResponse.cs" />
-    <Compile Include="Messages\IJsonRequest.cs" />
-    <Compile Include="Messages\ServerInfo\ColorResponse.cs" />
-    <Compile Include="Messages\ServerInfo\DeviceResponse.cs" />
-    <Compile Include="Messages\ServerInfo\ServerInfoConfigResponse.cs" />
-    <Compile Include="Messages\ServerInfo\ServerInfoRequest.cs" />
-    <Compile Include="Messages\ServerInfo\ServerInfoResponse.cs" />
-    <Compile Include="Messages\UpdateBitmap\UpdateBitmapRequest.cs" />
-    <Compile Include="Messages\UpdatePixels\PixelInfo.cs" />
-    <Compile Include="Messages\UpdatePixels\UpdatePixelsRequest.cs" />
     <Compile Include="Multitasking\ChunkedConcurrentQueue.cs" />
-    <Compile Include="Patterns\Block.cs" />
     <Compile Include="PixelDimensions.cs" />
-    <Compile Include="PixelMapExtensions.cs" />
+    <Compile Include="PixelInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servers\DisplayOnlyServer.cs" />
     <Compile Include="Servers\FadecandyServer.cs" />
     <Compile Include="Servers\ServerBase.cs" />
     <Compile Include="Servers\ServerType.cs" />
+    <Compile Include="Validation\Guard.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

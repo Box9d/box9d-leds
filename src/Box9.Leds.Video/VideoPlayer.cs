@@ -1,32 +1,27 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AForge.Video.FFMPEG;
-using Box9.Leds.Core;
-using Box9.Leds.Core.Configuration;
-using Box9.Leds.Core.Messages.UpdatePixels;
-using Box9.Leds.Core.Patterns;
-using Box9.Leds.FcClient;
-using Box9.Leds.Video;
-using PixelMapSharp;
+using Box9.Leds.Business.Configuration;
+using Box9.Leds.Business.Service;
+using Box9.Leds.FcClient.Messages.UpdatePixels;
 
 namespace Box9.Leds.Video
 {
     public class VideoPlayer
     {
         private readonly LedConfiguration configuration;
+        private readonly IPatternCreationService patternCreationService;
         private VideoQueuer videoQueuer;
         private AudioData audioData;
 
-        public VideoPlayer(LedConfiguration configuration)
+        public VideoPlayer(LedConfiguration configuration, IPatternCreationService patternCreationService)
         {
             this.configuration = configuration;
-            this.videoQueuer = new VideoQueuer(configuration);
+            this.patternCreationService = patternCreationService;
+            videoQueuer = new VideoQueuer(configuration);
         }
 
         public int GetDurationInSeconds()
@@ -90,18 +85,11 @@ namespace Box9.Leds.Video
 
                     foreach (var clientServer in clientServers)
                     {
-                        if (clientServer.ServerConfiguration.ServerType == Core.Servers.ServerType.FadeCandy)
-                        {
-                            cancellationSource.Cancel();
-                            cancellationSource = new CancellationTokenSource();
+                        cancellationSource.Cancel();
+                        cancellationSource = new CancellationTokenSource();
 
-                            var pixelUpdates = BitmapExtensions.CreatePixelInfo(frame, clientServer.ServerConfiguration);
-                            await clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest(pixelUpdates), cancellationSource.Token);
-                        }
-                        else
-                        {
-                            clientServer.Client.SendBitmap(frame);
-                        }
+                        var pixelUpdates = patternCreationService.FromBitmap(frame, clientServer.ServerConfiguration);
+                        await clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest(pixelUpdates), cancellationSource.Token);
                     }
                 }
             }
@@ -109,10 +97,9 @@ namespace Box9.Leds.Video
             audioPlayer.Stop();
             audioPlayer.Dispose();
 
-            foreach (var clientServer in clientServers.Where(cs => cs.ServerConfiguration.ServerType == Core.Servers.ServerType.FadeCandy))
+            foreach (var clientServer in clientServers)
             {
-                var allPixelsBlack = Block.GeneratePattern(
-                Color.Black, clientServer.ServerConfiguration, clientServer.ServerConfiguration.XPixels, clientServer.ServerConfiguration.YPixels, 0, 0);
+                var allPixelsBlack = patternCreationService.AllPixelsOff(clientServer.ServerConfiguration);
 
                 var request = new UpdatePixelsRequest(allPixelsBlack);
 

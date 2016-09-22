@@ -3,109 +3,79 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using Box9.Leds.Core.Messages.ConnectedDevices;
-using Box9.Leds.Core.Messages.ServerInfo;
+using Box9.Leds.Core.EventsArguments;
 
 namespace Box9.Leds.FcClient.Search
 {
-    public class ClientSearch
+    public class ClientSearch : IClientSearch
     {
-        public int TotalIPSearches { get; private set; }
+        public event EventHandler<StringEventArgs> ServerFound;
 
-        public delegate void ServerFoundHandler(IPAddress client, IEnumerable<ConnectedDeviceResponse> devices);
-        public event ServerFoundHandler ServerFound;
+        public event EventHandler<IntegerEventArgs> PercentageSearched;
 
-        public delegate void SearchStatusChangedHandler(SearchStatus status);
-        public event SearchStatusChangedHandler SearchStatusChanged;
-
-        public delegate void IPAddressSearchedHandler();
-        public event IPAddressSearchedHandler IPAddressSearched;
+        private int searched;
+        private int total;
+        private CancellationToken token;
 
         public ClientSearch()
         {
-            ServerFound += ServerFoundHandle;
-            IPAddressSearched += IPAddressSearchedHandle;
-            SearchStatusChanged += SearchStatusChangedHandle;
-
-            TotalIPSearches = 255; // Assume this is the normal subnet range 1-254 and 1 extra for the loopbackIP
         }
 
-        public void SearchForFadecandyServers(int port, CancellationToken token)
+        public async Task SearchForFadecandyServers(Uri[] uris, int pingTimeoutInMilliseconds, CancellationToken cancellationToken)
         {
-            SearchStatusChanged(SearchStatus.Searching);
+            searched = 0;
+            token = cancellationToken;
+            total = uris.Length;
+            var queue = new Queue<Uri>(uris);
 
-            var localIp = GetLocalIPAddress().MapToIPv4().ToString();
-            var localIpComponents = localIp.Split('.');
-
-            var subnet = string.Format("{0}.{1}.{2}.", localIpComponents[0], localIpComponents[1], localIpComponents[2]);
-
-            var searches = new List<Search>();
-
-            // Search on loopback IP
-            searches.Add(new Search(IPAddress.Loopback, port));
-
-            // Also search on all subnet addresses
-            for (int i = 1; i < TotalIPSearches; i++)
+            while (!cancellationToken.IsCancellationRequested && queue.Any())
             {
-                searches.Add(new Search(IPAddress.Parse(subnet + i), port));
+                var uri = queue.Dequeue();
+                var ping = new Ping();
+                ping.PingCompleted += PingCompleted;
+                ping.SendAsync(IPAddress.Parse(uri.Host), pingTimeoutInMilliseconds, uri.Host);
             }
 
-            var searchTasks = searches.Select(s => Task.Run((async () => await SearchIP(s.IPAddress, s.Port))));
-
-            try
+            if (!cancellationToken.IsCancellationRequested)
             {
-                Task.WaitAll(searchTasks.ToArray(), token);
-                SearchStatusChanged(SearchStatus.Finished);
-            }
-            catch (OperationCanceledException)
-            {
-                SearchStatusChanged(SearchStatus.Cancelled);
+                PercentageSearched(null, new IntegerEventArgs(0));
             }
         }
 
-        private static IPAddress GetLocalIPAddress()
+        private async void PingCompleted(object sender, PingCompletedEventArgs args)
         {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList.OrderBy(a => a.ToString()))
+            if (token.IsCancellationRequested)
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                return;
+            }
+
+            if (args.Reply.Status == IPStatus.Success)
+            {
+                var request = WebRequest.Create(string.Format("http://{0}:{1}", args.Reply.Address.ToString(), 7890));
+                request.Method = "GET";
+
+                try
                 {
-                    return ip;
+                    using (var response = (HttpWebResponse)(await request.GetResponseAsync()))
+                    {
+                        if (response.StatusCode == HttpStatusCode.OK)
+                        {
+                            ServerFound(null, new StringEventArgs(args.Reply.Address.ToString()));
+                        }
+
+                        response.Close();
+                    }
+                }
+                catch
+                {
                 }
             }
 
-            throw new Exception("Local IP Address Not Found!");
-        }
-
-        private async Task SearchIP(IPAddress ipAddress, int port)
-        {
-            try
-            {
-                IClientWrapper client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", ipAddress, port)));
-                await client.ConnectAsync();
-                var devices = await client.SendMessage(new ConnectedDevicesRequest());
-                ServerFound(ipAddress, devices.Devices);
-            }
-            catch
-            {
-            }
-
-            IPAddressSearched();
-        }
-
-        private void ServerFoundHandle(IPAddress client, IEnumerable<ConnectedDeviceResponse> devices)
-        {
-        }
-
-        private void IPAddressSearchedHandle()
-        {
-        }
-
-        private void SearchStatusChangedHandle(SearchStatus status)
-        {
+            searched++;
+            var percentageSearchedValue = (searched * 100) / total;
+            PercentageSearched(null, new IntegerEventArgs(percentageSearchedValue));
         }
     }
 }

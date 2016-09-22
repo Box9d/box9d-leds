@@ -35,7 +35,9 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.displayPanel = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.statusStrip.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // videoBrowserDialog
@@ -45,43 +47,40 @@
             // buttonUndo
             // 
             this.buttonUndo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonUndo.Location = new System.Drawing.Point(13, 265);
+            this.buttonUndo.Location = new System.Drawing.Point(12, 7);
             this.buttonUndo.Name = "buttonUndo";
-            this.buttonUndo.Size = new System.Drawing.Size(75, 23);
+            this.buttonUndo.Size = new System.Drawing.Size(75, 25);
             this.buttonUndo.TabIndex = 2;
             this.buttonUndo.Text = "Undo";
             this.buttonUndo.UseVisualStyleBackColor = true;
-            this.buttonUndo.Click += new System.EventHandler(this.buttonUndo_Click);
             // 
             // buttonConfirm
             // 
-            this.buttonConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonConfirm.Location = new System.Drawing.Point(257, 265);
+            this.buttonConfirm.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.buttonConfirm.Location = new System.Drawing.Point(274, 7);
             this.buttonConfirm.Name = "buttonConfirm";
-            this.buttonConfirm.Size = new System.Drawing.Size(75, 23);
+            this.buttonConfirm.Size = new System.Drawing.Size(75, 25);
             this.buttonConfirm.TabIndex = 3;
             this.buttonConfirm.Text = "Confirm";
             this.buttonConfirm.UseVisualStyleBackColor = true;
-            this.buttonConfirm.Click += new System.EventHandler(this.buttonConfirm_Click);
             // 
             // buttonClear
             // 
             this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonClear.Location = new System.Drawing.Point(94, 265);
+            this.buttonClear.Location = new System.Drawing.Point(93, 7);
             this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(75, 23);
+            this.buttonClear.Size = new System.Drawing.Size(75, 25);
             this.buttonClear.TabIndex = 4;
             this.buttonClear.Text = "Clear";
             this.buttonClear.UseVisualStyleBackColor = true;
-            this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 300);
+            this.statusStrip.Location = new System.Drawing.Point(0, 317);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(344, 22);
+            this.statusStrip.Size = new System.Drawing.Size(365, 22);
             this.statusStrip.TabIndex = 5;
             // 
             // toolStripStatusLabel
@@ -91,33 +90,41 @@
             // 
             // displayPanel
             // 
-            this.displayPanel.AutoScroll = true;
-            this.displayPanel.AutoScrollMargin = new System.Drawing.Size(3, 3);
-            this.displayPanel.AutoScrollMinSize = new System.Drawing.Size(500, 350);
             this.displayPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.displayPanel.BackColor = System.Drawing.SystemColors.Control;
-            this.displayPanel.Location = new System.Drawing.Point(12, 12);
+            this.displayPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.displayPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.displayPanel.Location = new System.Drawing.Point(0, 0);
             this.displayPanel.Name = "displayPanel";
-            this.displayPanel.Size = new System.Drawing.Size(320, 221);
-            this.displayPanel.TabIndex = 6;
+            this.displayPanel.Size = new System.Drawing.Size(365, 280);
+            this.displayPanel.TabIndex = 8;
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel1.Controls.Add(this.buttonClear);
+            this.panel1.Controls.Add(this.buttonUndo);
+            this.panel1.Controls.Add(this.buttonConfirm);
+            this.panel1.Location = new System.Drawing.Point(0, 279);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(357, 35);
+            this.panel1.TabIndex = 0;
             // 
             // ConfigureLedMappingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(344, 322);
+            this.ClientSize = new System.Drawing.Size(365, 339);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.displayPanel);
             this.Controls.Add(this.statusStrip);
-            this.Controls.Add(this.buttonClear);
-            this.Controls.Add(this.buttonConfirm);
-            this.Controls.Add(this.buttonUndo);
             this.MaximumSize = new System.Drawing.Size(2500, 1600);
             this.Name = "ConfigureLedMappingForm";
             this.Text = "Server";
             this.Load += new System.EventHandler(this.ServerForm_Load);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -131,5 +138,6 @@
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
         private System.Windows.Forms.Panel displayPanel;
+        private System.Windows.Forms.Panel panel1;
     }
 }
