@@ -1,7 +1,11 @@
-﻿using System.Net;
+﻿using System;
+using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using Glimr.Plugins.Core;
 
 namespace Glimr.Plugins.ManagementApi.Controllers
 {
@@ -13,26 +17,61 @@ namespace Glimr.Plugins.ManagementApi.Controllers
             return request.CreateResponse(HttpStatusCode.NotImplemented, "Not implemented");
         }
 
-        // GET api/values/5
-        public string Get(int id)
+        // POST api/plugins/{guid}
+        [HttpPost]
+        public async Task<HttpResponseMessage> Post(Guid id, string fileName)
         {
-            return "value";
+            try
+            {
+                var folder = PluginFolder.Get(id);
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+                using (var requestStream = await Request.Content.ReadAsStreamAsync())
+                using (var fileStream = File.Create(Path.Combine(folder, fileName)))
+                {
+                    await requestStream.CopyToAsync(fileStream);
+                }
+
+                return new HttpResponseMessage(HttpStatusCode.Created);
+            }
+            catch (Exception ex)
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+                response.ReasonPhrase = ex.Message;
+                return response;
+            }
         }
 
-        // POST api/values
-        public void Post(HttpPostedFile file)
+        // PUT api/plugins/{guid}
+        [HttpPut]
+        public async Task<HttpResponseMessage> Put(Guid id, string fileName)
         {
-
+            return await Post(id, fileName);
         }
 
-        // PUT api/values/5
-        public void Put(int id, [FromBody]string value)
+        [HttpDelete]
+        // DELETE api/plugins/{Guid}
+        public HttpResponseMessage Delete(Guid id)
         {
-        }
+            try
+            {
+                var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var pluginFolder = Path.Combine(appDataFolder, id.ToString());
 
-        // DELETE api/values/5
-        public void Delete(int id)
-        {
+                foreach (var file in Directory.EnumerateFiles(pluginFolder))
+                {
+                    File.Delete(file);
+                }
+
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            }
+            catch (Exception)
+            {
+                return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+            }
         }
     }
 }

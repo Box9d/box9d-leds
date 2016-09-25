@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -48,15 +52,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Glimr.Plugins.Custom.MidiInputDevice\Glimr.Plugins.Custom.MidiInputDevice.csproj">
-      <Project>{261E7E5C-3CCD-44B6-A4F0-B99A8B465988}</Project>
-      <Name>Glimr.Plugins.Custom.MidiInputDevice</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Glimr.Plugins.Custom.OscMidiInputDevice\Glimr.Plugins.Custom.OscMidiInputDevice.csproj">
-      <Project>{44D69BD1-7D7D-4074-87E2-534D15297673}</Project>
-      <Name>Glimr.Plugins.Custom.OscMidiInputDevice</Name>
+    <ProjectReference Include="..\Glimr.Plugins.Core\Glimr.Plugins.Core.csproj">
+      <Project>{A2EA7072-6D32-472D-B54B-9FEC2A89A7D4}</Project>
+      <Name>Glimr.Plugins.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Glimr.Plugins.Sdk\Glimr.Plugins.Sdk.csproj">
       <Project>{CA864247-F351-47B5-A3F3-D1BF8BE70B93}</Project>

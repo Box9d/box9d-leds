@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Glimr.Plugins.Sdk.Context
 {
@@ -6,13 +7,19 @@ namespace Glimr.Plugins.Sdk.Context
     {
         void SetInput<T>(string name, T value);
 
-        T GetOutput<T>(string name);
-
-        IEnumerable<object> GetAllOutputs();
-
-        void SetOutput<T>(string name, T value);
+        void SetInput(string name, object value);
 
         T GetInput<T>(string name);
+
+        T GetOutput<T>(string name);
+
+        object GetOutput(string name);
+
+        Dictionary<string, Type> GetPluginInputs();
+
+        Dictionary<string, Type> GetPluginOutputs();
+
+        void SetOutput<T>(string name, T value);
 
         void SignalOutputChange();
     }

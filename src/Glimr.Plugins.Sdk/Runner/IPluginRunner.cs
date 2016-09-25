@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Glimr.Plugins.Sdk.Context;
 using Glimr.Plugins.Sdk.InputDevice;
@@ -9,6 +10,6 @@ namespace Glimr.Plugins.Sdk.Runner
     {
         IPluginContext CreateContext(IPlugin plugin);
 
-        Task RunInputDevicePlugin(IInputDevicePlugin plugin, IPluginContext context, Action<IPluginContext> contextChangeHandler);
+        Task RunInputDevicePlugin(IInputDevicePlugin plugin, IPluginContext context, Action<IPluginContext> contextChangeHandler, Action<Exception> exceptionHandler, CancellationToken cancellationToken);
     }
 }

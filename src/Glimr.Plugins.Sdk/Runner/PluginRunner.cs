@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Glimr.Plugins.Sdk.Context;
 using Glimr.Plugins.Sdk.InputDevice;
@@ -28,18 +29,32 @@ namespace Glimr.Plugins.Sdk.Runner
             return new PluginContext(plugin.Configure());
         }
 
-        public async Task RunInputDevicePlugin(IInputDevicePlugin plugin, IPluginContext context, Action<IPluginContext> contextChangeHandler)
+        public async Task RunInputDevicePlugin(IInputDevicePlugin plugin, IPluginContext context, Action<IPluginContext> contextChangeHandler, Action<Exception> exceptionHandler, CancellationToken cancellationToken)
         {
+            ((PluginContext)context).OutputSet += (sender, args) =>
+            {
+                contextChangeHandler(context);
+            };
+
             var runTask = Task.Run(() =>
             {
-                plugin.Run(context);
-                ((PluginContext)context).OutputSet += (sender, args) =>
+                try
                 {
-                    contextChangeHandler(context);
-                };
+                    plugin.Run(context);
+
+                    while (cancellationToken.IsCancellationRequested)
+                    {
+                        continue;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    exceptionHandler(ex);
+                }
             });
 
             runningTasks.Add(runTask);
+
             await runTask;
         }
     }

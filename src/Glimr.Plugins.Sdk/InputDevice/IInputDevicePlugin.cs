@@ -1,4 +1,5 @@
-﻿using Glimr.Plugins.Sdk.Context;
+﻿using System.Threading;
+using Glimr.Plugins.Sdk.Context;
 
 namespace Glimr.Plugins.Sdk.InputDevice
 {

@@ -27,6 +27,10 @@ namespace Glimr.Plugins.Sdk.Context
             {
                 outputValues.Add(paramter, null);
             }
+
+            OutputSet += (s, args) =>
+            {
+            };
         }
 
         public T GetInput<T>(string name)
@@ -42,16 +46,26 @@ namespace Glimr.Plugins.Sdk.Context
 
         public T GetOutput<T>(string name)
         {
+            return (T)GetOutput(name);
+        }
+
+        public object GetOutput(string name)
+        {
             var key = outputValues.Keys.SingleOrDefault(k => k.Name == name);
             if (key == null)
             {
                 throw new PluginParameterException(name);
             }
 
-            return (T)outputValues[key];
+            return outputValues[key];
         }
 
         public void SetInput<T>(string name, T value)
+        {
+            SetInput(name, value);
+        }
+
+        public void SetInput(string name, object value)
         {
             var key = inputValues.Keys.SingleOrDefault(k => k.Name == name);
             if (key == null)
@@ -78,9 +92,29 @@ namespace Glimr.Plugins.Sdk.Context
             OutputSet(null, EventArgs.Empty);
         }
 
-        public IEnumerable<object> GetAllOutputs()
+        public Dictionary<string, Type> GetPluginInputs()
         {
-            return outputValues.Values;
+            var pluginInputs = new Dictionary<string, Type>();
+
+            foreach (var inputKey in inputValues.Keys)
+            {
+                pluginInputs.Add(inputKey.Name, inputKey.Type);
+            }
+
+            return pluginInputs;
+        }
+
+
+        public Dictionary<string, Type> GetPluginOutputs()
+        {
+            var pluginOutputs = new Dictionary<string, Type>();
+
+            foreach (var outputKey in outputValues.Keys)
+            {
+                pluginOutputs.Add(outputKey.Name, outputKey.Type);
+            }
+
+            return pluginOutputs;
         }
     }
 }
