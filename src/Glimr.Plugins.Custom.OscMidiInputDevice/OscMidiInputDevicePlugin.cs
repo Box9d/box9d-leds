@@ -28,7 +28,7 @@ namespace Glimr.Plugins.TestConsole
             return configuration;
         }
 
-        public void Run(IPluginContext pluginContext)
+        public void Run(IInputDevicePluginContext pluginContext)
         {
             var port = pluginContext.GetInput<int>("Listening port");
             var millisecondThrottle = pluginContext.GetInput<int>("Incoming Midi Throttle (milliseconds)");

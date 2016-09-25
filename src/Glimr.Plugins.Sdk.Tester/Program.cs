@@ -20,7 +20,7 @@ namespace Glimr.Plugins.Sdk.Tester
             IPluginReader reader = new PluginReader();
             var availablePlugins = new Dictionary<int, IPlugin>();
             var pluginOptions = new List<string>();
-            var plugins = reader.GetAvailablePlugins();
+            var plugins = reader.GetAvailableInputDevicePlugins();
 
             foreach (var plugin in plugins)
             {
@@ -32,7 +32,7 @@ namespace Glimr.Plugins.Sdk.Tester
             Console.Clear();
 
             IPluginRunner runner = new PluginRunner();
-            var context = runner.CreateContext(availablePlugins[pluginSelection - 1]);
+            var context = runner.CreateInputDivicePluginContext(availablePlugins[pluginSelection - 1]);
             
             foreach (var input in context.GetPluginInputs())
             {
@@ -68,9 +68,10 @@ namespace Glimr.Plugins.Sdk.Tester
 
             while (Console.ReadKey().Key != ConsoleKey.Escape)
             {
-                cts.Cancel();
                 continue;
             }
+
+            cts.Cancel();
         }
 
         public static object RequestForValidInput(string instruction, Type input)

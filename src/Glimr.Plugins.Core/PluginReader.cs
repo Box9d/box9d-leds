@@ -10,7 +10,7 @@ namespace Glimr.Plugins.Core
 {
     public class PluginReader : IPluginReader
     {
-        public IEnumerable<IPlugin> GetAvailablePlugins()
+        public IEnumerable<IInputDevicePlugin> GetAvailableInputDevicePlugins()
         {
             foreach (var pluginFolder in Directory.EnumerateDirectories(PluginFolder.GetRootFolder()))
             {
@@ -25,7 +25,7 @@ namespace Glimr.Plugins.Core
 
                         foreach (var pluginType in pluginTypes)
                         {
-                            var plugin = (IPlugin)Activator.CreateInstance(pluginType);
+                            var plugin = (IInputDevicePlugin)Activator.CreateInstance(pluginType);
                             yield return plugin;
                         }
                     }

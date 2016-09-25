@@ -24,14 +24,14 @@ namespace Glimr.Plugins.Sdk.Runner
             }
         }
 
-        public IPluginContext CreateContext(IPlugin plugin)
+        public IInputDevicePluginContext CreateInputDivicePluginContext(IPlugin plugin)
         {
-            return new PluginContext(plugin.Configure());
+            return new InputDevicePluginContext(plugin.Configure());
         }
 
-        public async Task RunInputDevicePlugin(IInputDevicePlugin plugin, IPluginContext context, Action<IPluginContext> contextChangeHandler, Action<Exception> exceptionHandler, CancellationToken cancellationToken)
+        public async Task RunInputDevicePlugin(IInputDevicePlugin plugin, IInputDevicePluginContext context, Action<IInputDevicePluginContext> contextChangeHandler, Action<Exception> exceptionHandler, CancellationToken cancellationToken)
         {
-            ((PluginContext)context).OutputSet += (sender, args) =>
+            ((InputDevicePluginContext)context).OutputSet += (sender, args) =>
             {
                 contextChangeHandler(context);
             };

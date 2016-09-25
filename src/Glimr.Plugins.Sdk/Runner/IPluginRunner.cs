@@ -8,8 +8,8 @@ namespace Glimr.Plugins.Sdk.Runner
 {
     public interface IPluginRunner : IDisposable
     {
-        IPluginContext CreateContext(IPlugin plugin);
+        IInputDevicePluginContext CreateInputDivicePluginContext(IPlugin plugin);
 
-        Task RunInputDevicePlugin(IInputDevicePlugin plugin, IPluginContext context, Action<IPluginContext> contextChangeHandler, Action<Exception> exceptionHandler, CancellationToken cancellationToken);
+        Task RunInputDevicePlugin(IInputDevicePlugin plugin, IInputDevicePluginContext context, Action<IInputDevicePluginContext> contextChangeHandler, Action<Exception> exceptionHandler, CancellationToken cancellationToken);
     }
 }

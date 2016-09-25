@@ -17,7 +17,7 @@ namespace Glimr.Plugins.Custom.MidiInputDevice
                 .AddStringOutput("Note");
         }
 
-        public void Run(IPluginContext pluginContext)
+        public void Run(IInputDevicePluginContext pluginContext)
         {
             foreach (var inputDevice in InputDevice.InstalledDevices)
             {

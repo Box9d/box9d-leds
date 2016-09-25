@@ -20,7 +20,5 @@ namespace Glimr.Plugins.Sdk.Context
         Dictionary<string, Type> GetPluginOutputs();
 
         void SetOutput<T>(string name, T value);
-
-        void SignalOutputChange();
     }
 }

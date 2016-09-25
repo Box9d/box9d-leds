@@ -5,6 +5,6 @@ namespace Glimr.Plugins.Sdk.InputDevice
 {
     public interface IInputDevicePlugin : IPlugin
     {
-        void Run(IPluginContext pluginContext);
+        void Run(IInputDevicePluginContext pluginContext);
     }
 }

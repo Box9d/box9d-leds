@@ -56,7 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Glimr.Plugins.Core\Glimr.Plugins.Core.csproj">
-      <Project>{A2EA7072-6D32-472D-B54B-9FEC2A89A7D4}</Project>
+      <Project>{a2ea7072-6d32-472d-b54b-9fec2a89a7d4}</Project>
       <Name>Glimr.Plugins.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Glimr.Plugins.Sdk\Glimr.Plugins.Sdk.csproj">

@@ -44,6 +44,8 @@
     <Compile Include="Configuration\PluginConfiguration.cs" />
     <Compile Include="Configuration\PluginConfigurationFactory.cs" />
     <Compile Include="Configuration\PluginParameter.cs" />
+    <Compile Include="Context\IInputDevicePluginContext.cs" />
+    <Compile Include="Context\InputDevicePluginContext.cs" />
     <Compile Include="Context\IPluginContext.cs" />
     <Compile Include="Context\PluginContext.cs" />
     <Compile Include="Exceptions\PluginParameterException.cs" />

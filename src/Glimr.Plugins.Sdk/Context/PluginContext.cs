@@ -11,8 +11,6 @@ namespace Glimr.Plugins.Sdk.Context
         protected readonly Dictionary<PluginParameter, object> inputValues;
         protected readonly Dictionary<PluginParameter, object> outputValues;
 
-        public event EventHandler<EventArgs> OutputSet;
-
         internal PluginContext(IPluginConfiguration pluginConfiguration)
         {
             inputValues = new Dictionary<PluginParameter, object>();
@@ -27,10 +25,6 @@ namespace Glimr.Plugins.Sdk.Context
             {
                 outputValues.Add(paramter, null);
             }
-
-            OutputSet += (s, args) =>
-            {
-            };
         }
 
         public T GetInput<T>(string name)
@@ -85,11 +79,6 @@ namespace Glimr.Plugins.Sdk.Context
             }
 
             outputValues[key] = value;
-        }
-
-        public void SignalOutputChange()
-        {
-            OutputSet(null, EventArgs.Empty);
         }
 
         public Dictionary<string, Type> GetPluginInputs()
