@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\PluginActivationException.cs" />
     <Compile Include="IPluginReader.cs" />
     <Compile Include="PluginFolder.cs" />
     <Compile Include="PluginReader.cs" />

@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Glimr.Plugins.Sdk;
-using Glimr.Plugins.Sdk.InputDevice;
+using Glimr.Plugins.Core.Exceptions;
+using Glimr.Plugins.Plugins;
 
 namespace Glimr.Plugins.Core
 {
     public class PluginReader : IPluginReader
     {
-        public IEnumerable<IInputDevicePlugin> GetAvailableInputDevicePlugins()
+        public IEnumerable<T> GetAvailablePlugins<T>() where T : IPlugin
         {
+            var plugins = new List<T>();
+
             foreach (var pluginFolder in Directory.EnumerateDirectories(PluginFolder.GetRootFolder()))
             {
                 foreach (var file in Directory.EnumerateFiles(pluginFolder))
@@ -21,16 +23,25 @@ namespace Glimr.Plugins.Core
                         var assemblyName = AssemblyName.GetAssemblyName(file);
                         var assembly = Assembly.Load(assemblyName);
                         var pluginTypes = assembly.GetTypes()
-                            .Where(t => typeof(IInputDevicePlugin).IsAssignableFrom(t) && t.IsClass);
+                            .Where(t => typeof(T).IsAssignableFrom(t) && t.IsClass && !t.IsInterface);
 
                         foreach (var pluginType in pluginTypes)
                         {
-                            var plugin = (IInputDevicePlugin)Activator.CreateInstance(pluginType);
-                            yield return plugin;
+                            try
+                            {
+                                var plugin = (T)Activator.CreateInstance(pluginType);
+                                plugins.Add(plugin);
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new PluginActivationException(pluginType, ex);
+                            } 
                         }
                     }
                 }
             }
+
+            return plugins;
         }
     }
 }

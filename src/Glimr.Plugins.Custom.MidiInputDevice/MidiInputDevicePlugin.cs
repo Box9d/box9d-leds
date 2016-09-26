@@ -1,7 +1,8 @@
-﻿using System.Threading;
-using Glimr.Plugins.Sdk.Configuration;
-using Glimr.Plugins.Sdk.Context;
-using Glimr.Plugins.Sdk.InputDevice;
+﻿using System;
+using System.Threading;
+using Glimr.Plugins.Plugins.Configuration;
+using Glimr.Plugins.Plugins.Context;
+using Glimr.Plugins.Plugins.InputDevice;
 using Midi;
 
 namespace Glimr.Plugins.Custom.MidiInputDevice
@@ -33,6 +34,11 @@ namespace Glimr.Plugins.Custom.MidiInputDevice
                     pluginContext.SignalOutputChange();
                 };
             }
+        }
+
+        public void Dispose()
+        {
+            return;
         }
     }
 }

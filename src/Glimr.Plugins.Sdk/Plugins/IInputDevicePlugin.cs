@@ -1,7 +1,6 @@
-﻿using System.Threading;
-using Glimr.Plugins.Sdk.Context;
+﻿using Glimr.Plugins.Plugins.Context;
 
-namespace Glimr.Plugins.Sdk.InputDevice
+namespace Glimr.Plugins.Plugins.InputDevice
 {
     public interface IInputDevicePlugin : IPlugin
     {

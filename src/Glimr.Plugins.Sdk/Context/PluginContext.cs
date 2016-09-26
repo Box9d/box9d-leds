@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Glimr.Plugins.Sdk.Configuration;
-using Glimr.Plugins.Sdk.Exceptions;
+using Glimr.Plugins.Plugins.Configuration;
+using Glimr.Plugins.Plugins.Exceptions;
 
-namespace Glimr.Plugins.Sdk.Context
+namespace Glimr.Plugins.Plugins.Context
 {
     internal class PluginContext : IPluginContext
     {

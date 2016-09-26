@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Glimr.Plugins.Core;
-using Glimr.Plugins.Sdk.InputDevice;
-using Glimr.Plugins.Sdk.Runner;
+using Glimr.Plugins.Plugins.InputDevice;
+using Glimr.Plugins.Plugins.Runner;
 using Newtonsoft.Json;
 
-namespace Glimr.Plugins.Sdk.Tester
+namespace Glimr.Plugins.Plugins.Tester
 {
     class Program
     {
@@ -20,7 +20,7 @@ namespace Glimr.Plugins.Sdk.Tester
             IPluginReader reader = new PluginReader();
             var availablePlugins = new Dictionary<int, IPlugin>();
             var pluginOptions = new List<string>();
-            var plugins = reader.GetAvailableInputDevicePlugins();
+            var plugins = reader.GetAvailablePlugins<IInputDevicePlugin>();
 
             foreach (var plugin in plugins)
             {
@@ -72,6 +72,8 @@ namespace Glimr.Plugins.Sdk.Tester
             }
 
             cts.Cancel();
+
+            availablePlugins[pluginSelection - 1].Dispose();
         }
 
         public static object RequestForValidInput(string instruction, Type input)

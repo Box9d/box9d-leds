@@ -7,8 +7,8 @@
     <ProjectGuid>{34D944C9-AC6F-4E11-8169-A778B8092D80}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Glimr.Plugins.Sdk.Tester</RootNamespace>
-    <AssemblyName>Glimr.Plugins.Sdk.Tester</AssemblyName>
+    <RootNamespace>Glimr.Plugins.Sdk.InputPluginTester</RootNamespace>
+    <AssemblyName>Glimr.Plugins.Sdk.InputPluginTester</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

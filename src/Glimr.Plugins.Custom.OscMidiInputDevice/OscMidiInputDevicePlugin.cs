@@ -1,16 +1,16 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using Glimr.Plugins.Custom.OscMidiInputDevice;
-using Glimr.Plugins.Sdk.Configuration;
-using Glimr.Plugins.Sdk.Context;
-using Glimr.Plugins.Sdk.InputDevice;
+using Glimr.Plugins.Plugins.Configuration;
+using Glimr.Plugins.Plugins.Context;
+using Glimr.Plugins.Plugins.InputDevice;
 using Rug.Osc;
 
 namespace Glimr.Plugins.TestConsole
 {
     public class OscMidiInputDevicePlugin : IInputDevicePlugin
     {
-
         public OscMidiInputDevicePlugin()
         {
         }
@@ -58,6 +58,11 @@ namespace Glimr.Plugins.TestConsole
                     }
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            return;
         }
     }
 }

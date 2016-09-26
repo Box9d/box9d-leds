@@ -1,7 +1,7 @@
 ﻿using System;
-using Glimr.Plugins.Sdk.Configuration;
+using Glimr.Plugins.Plugins.Configuration;
 
-namespace Glimr.Plugins.Sdk.Context
+namespace Glimr.Plugins.Plugins.Context
 {
     internal class InputDevicePluginContext : PluginContext, IInputDevicePluginContext
     {

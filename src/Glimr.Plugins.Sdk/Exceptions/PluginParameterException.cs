@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Glimr.Plugins.Sdk.Exceptions
+namespace Glimr.Plugins.Plugins.Exceptions
 {
     public sealed class PluginParameterException : ArgumentException
     {

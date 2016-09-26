@@ -1,4 +1,4 @@
-﻿namespace Glimr.Plugins.Sdk.Context
+﻿namespace Glimr.Plugins.Plugins.Context
 {
     public interface IInputDevicePluginContext : IPluginContext
     {

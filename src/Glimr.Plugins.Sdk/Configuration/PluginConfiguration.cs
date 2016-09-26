@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Glimr.Plugins.Sdk.Configuration
+namespace Glimr.Plugins.Plugins.Configuration
 {
     internal class PluginConfiguration : IPluginConfiguration
     {

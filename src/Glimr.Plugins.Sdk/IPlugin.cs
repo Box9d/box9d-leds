@@ -1,8 +1,9 @@
-﻿using Glimr.Plugins.Sdk.Configuration;
+﻿using System;
+using Glimr.Plugins.Plugins.Configuration;
 
-namespace Glimr.Plugins.Sdk
+namespace Glimr.Plugins.Plugins
 {
-    public interface IPlugin
+    public interface IPlugin : IDisposable
     {
         IPluginConfiguration Configure();
     }

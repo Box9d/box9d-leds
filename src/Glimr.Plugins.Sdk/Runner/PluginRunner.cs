@@ -2,25 +2,25 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Glimr.Plugins.Sdk.Context;
-using Glimr.Plugins.Sdk.InputDevice;
+using Glimr.Plugins.Plugins.Context;
+using Glimr.Plugins.Plugins.InputDevice;
 
-namespace Glimr.Plugins.Sdk.Runner
+namespace Glimr.Plugins.Plugins.Runner
 {
     public class PluginRunner : IPluginRunner
     {
-        private readonly List<Task> runningTasks;
+        private readonly List<IPlugin> plugins;
 
         public PluginRunner()
         {
-            runningTasks = new List<Task>();
+            plugins = new List<IPlugin>();
         }
 
         public void Dispose()
         {
-            foreach (var task in runningTasks)
+            foreach (var plugin in plugins)
             {
-                task.Dispose();
+                plugin.Dispose();
             }
         }
 
@@ -29,33 +29,23 @@ namespace Glimr.Plugins.Sdk.Runner
             return new InputDevicePluginContext(plugin.Configure());
         }
 
-        public async Task RunInputDevicePlugin(IInputDevicePlugin plugin, IInputDevicePluginContext context, Action<IInputDevicePluginContext> contextChangeHandler, Action<Exception> exceptionHandler, CancellationToken cancellationToken)
+        public void RunInputDevicePlugin(IInputDevicePlugin plugin, IInputDevicePluginContext context, Action<IInputDevicePluginContext> contextChangeHandler, Action<Exception> exceptionHandler, CancellationToken cancellationToken)
         {
             ((InputDevicePluginContext)context).OutputSet += (sender, args) =>
             {
                 contextChangeHandler(context);
             };
 
-            var runTask = Task.Run(() =>
+            plugins.Add(plugin);
+
+            try
             {
-                try
-                {
-                    plugin.Run(context);
-
-                    while (cancellationToken.IsCancellationRequested)
-                    {
-                        continue;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    exceptionHandler(ex);
-                }
-            });
-
-            runningTasks.Add(runTask);
-
-            await runTask;
+                plugin.Run(context);
+            }
+            catch (Exception ex)
+            {
+                exceptionHandler(ex);
+            }
         }
     }
 }
