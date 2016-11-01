@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Box9.ExplicitMapping;
+using System.Threading;
+using System.Threading.Tasks;
 using Box9.Leds.Business.Configuration;
 using Box9.Leds.Business.Services;
 using Box9.Leds.Core.EventsArguments;
+using Box9.Leds.Core.Multitasking;
+using Box9.Leds.FcClient;
 using Box9.Leds.Manager.Forms;
 using Box9.Leds.Manager.Maps;
+using Box9.Leds.Manager.Validation;
 using Box9.Leds.Manager.Views;
+using Box9.Leds.Video;
+using RickPowell.ExplicitMapping;
 
 namespace Box9.Leds.Manager.Presenters
 {
@@ -17,6 +23,10 @@ namespace Box9.Leds.Manager.Presenters
         private readonly IConfigurationStorageService configurationStorageService;
         private readonly IBrightnessService brightnessService;
         private readonly IVideoMetadataService videoMetadataService;
+
+        private VideoPlayer videoPlayer;
+        private VideoForm videoForm;
+        private CancellationTokenSource playbackCancellationTokenSource;
 
         public LedManagerPresenter(ILedManagerView view, 
             IConfigurationStorageService configurationStorageService, 
@@ -41,11 +51,12 @@ namespace Box9.Leds.Manager.Presenters
 
             this.view.ImportVideo += ImportVideo;
             this.view.StartTimeChanged += StartTimeChanged;
-            this.view.DisplayVideoToggle += DisplayVideoToggle;
 
             this.view.InitializePlayback += InitializePlayback;
             this.view.Play += Play;
             this.view.Stop += Stop;
+
+            this.view.PlaybackStatus = PlaybackStatus.NotReady;
 
             NewConfiguration(null, EventArgs.Empty);
         }
@@ -169,24 +180,81 @@ namespace Box9.Leds.Manager.Presenters
             MarkAsDirty();
         }
 
-        private void DisplayVideoToggle(object sender, BooleanEventArgs e)
-        {
-            view.DisplayVideo = e.Value;
-        }
-
         private void InitializePlayback(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            view.PlaybackStatus = PlaybackStatus.NotReady;
+            MarkAsDirty();
+
+            // Validate configuration before playback
+            var configuration = ExplicitlyMap
+                .TheseTypes<ILedManagerView, LedConfiguration>()
+                .Using<LedManagerViewToConfigurationMap>()
+                .Map(view);
+
+            IConfigurationValidator configValidator = new ConfigurationValidator();
+            var validationResult = configValidator.Validate(configuration).Result;
+
+            if (validationResult.OK)
+            {
+                videoPlayer = new VideoPlayer(configuration, new PatternCreationService());
+
+                var clientConfigPairs = new List<ClientConfigPair>();
+                foreach (var server in configuration.Servers)
+                {
+                    clientConfigPairs.Add(new ClientConfigPair(new WsClientWrapper(server.IPAddress, server.Port), server));
+                }
+
+                if (view.DisplayVideo)
+                {
+                    videoForm = new VideoForm();
+                    videoForm.Show();
+
+                    clientConfigPairs.Add(new ClientConfigPair(new DisplayClientWrapper(videoForm), null));
+                }
+
+                Task.Run(async () =>
+                {
+                    await videoPlayer.Load(clientConfigPairs, view.VideoMetadata.StartTime.Minutes, view.VideoMetadata.StartTime.Seconds);
+                    view.PlaybackStatus = PlaybackStatus.ReadyToPlay;
+
+                    MarkAsDirty();
+                }).Forget();
+
+                playbackCancellationTokenSource = new CancellationTokenSource();
+            }
+            else
+            {
+                view.PlaybackStatus = PlaybackStatus.NotReady;
+
+                // TODO: Show errors
+            }
+
+            MarkAsDirty();
         }
 
         private void Play(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Task.Run(async () =>
+            {
+                await videoPlayer.Play(playbackCancellationTokenSource.Token);
+                view.PlaybackStatus = PlaybackStatus.NotReady;
+                
+                MarkAsDirty();
+            }).Forget();
+
+            view.PlaybackStatus = PlaybackStatus.Playing;
+
+            MarkAsDirty();
         }
 
         private void Stop(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            playbackCancellationTokenSource.Cancel();
+            view.PlaybackStatus = PlaybackStatus.NotReady;
+
+            videoForm.CloseThreadSafe();
+
+            MarkAsDirty();
         }
 
         private void NewView()

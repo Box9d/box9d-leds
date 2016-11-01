@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Box9.Leds.FcClient", "Box9.Leds.FcClient\Box9.Leds.FcClient.csproj", "{7CE537D5-6007-4E49-A2C9-A1EF48BEAF12}"
 EndProject
@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{D4BC411F-432A-40EB-8B49-2E8E60E421A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Box9.ExplicitMapping", "RickPowell.ExplicitMapping\Box9.ExplicitMapping.csproj", "{D744381C-1080-475F-A827-290C7D4E55EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RickPowell.ExplicitMapping", "RickPowell.ExplicitMapping\RickPowell.ExplicitMapping.csproj", "{D744381C-1080-475F-A827-290C7D4E55EF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Business", "Business", "{FB4EE7BF-3C7F-419D-BCC5-E83E3C5E419A}"
 EndProject
@@ -50,6 +50,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glimr.Plugins.Sdk.InputPluginTester", "Glimr.Plugins.Sdk.InputPluginTester\Glimr.Plugins.Sdk.InputPluginTester.csproj", "{34D944C9-AC6F-4E11-8169-A778B8092D80}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glimr.Plugins.Custom.KeyboardInputDevice", "Glimr.Plugins.Custom.KeyboardInputDevice\Glimr.Plugins.Custom.KeyboardInputDevice.csproj", "{215035AC-2EFC-42AE-A191-1DB00EA07F50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Box9.Leds.UI", "Box9.Leds.UI\Box9.Leds.UI.csproj", "{EC3FF5ED-A696-465E-9774-6ED1C93BC9FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -203,6 +205,14 @@ Global
 		{215035AC-2EFC-42AE-A191-1DB00EA07F50}.Release|Any CPU.Build.0 = Release|Any CPU
 		{215035AC-2EFC-42AE-A191-1DB00EA07F50}.Release|x86.ActiveCfg = Release|Any CPU
 		{215035AC-2EFC-42AE-A191-1DB00EA07F50}.Release|x86.Build.0 = Release|Any CPU
+		{EC3FF5ED-A696-465E-9774-6ED1C93BC9FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC3FF5ED-A696-465E-9774-6ED1C93BC9FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC3FF5ED-A696-465E-9774-6ED1C93BC9FF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EC3FF5ED-A696-465E-9774-6ED1C93BC9FF}.Debug|x86.Build.0 = Debug|Any CPU
+		{EC3FF5ED-A696-465E-9774-6ED1C93BC9FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC3FF5ED-A696-465E-9774-6ED1C93BC9FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC3FF5ED-A696-465E-9774-6ED1C93BC9FF}.Release|x86.ActiveCfg = Release|Any CPU
+		{EC3FF5ED-A696-465E-9774-6ED1C93BC9FF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -223,5 +233,6 @@ Global
 		{A2EA7072-6D32-472D-B54B-9FEC2A89A7D4} = {07A9DE73-D834-4F5B-9E74-69851BA7CFD7}
 		{34D944C9-AC6F-4E11-8169-A778B8092D80} = {07A9DE73-D834-4F5B-9E74-69851BA7CFD7}
 		{215035AC-2EFC-42AE-A191-1DB00EA07F50} = {2D74E83B-8CD7-424B-9B74-DFEC0F60BE7E}
+		{EC3FF5ED-A696-465E-9774-6ED1C93BC9FF} = {99A23E72-5E56-44D5-9D2B-0563803A9D0F}
 	EndGlobalSection
 EndGlobal

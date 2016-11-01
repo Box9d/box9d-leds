@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Box9.ExplicitMapping
+namespace RickPowell.ExplicitMapping
 {
     public class SingleSourceMapBuilder<TSource, TTarget> : ISingleSourceMapBuilder<TSource, TTarget>
     {

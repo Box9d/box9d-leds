@@ -1,4 +1,4 @@
-﻿namespace Box9.ExplicitMapping
+﻿namespace RickPowell.ExplicitMapping
 {
     public interface IDoubleSourceMap<in TSource1, in TSource2, out TTarget>
     {

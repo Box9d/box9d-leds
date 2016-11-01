@@ -174,9 +174,9 @@
       <Project>{F7F691B5-4ECE-4B68-9DF1-1DB144819387}</Project>
       <Name>Box9.Leds.Video</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RickPowell.ExplicitMapping\Box9.ExplicitMapping.csproj">
-      <Project>{D744381C-1080-475F-A827-290C7D4E55EF}</Project>
-      <Name>Box9.ExplicitMapping</Name>
+    <ProjectReference Include="..\RickPowell.ExplicitMapping\RickPowell.ExplicitMapping.csproj">
+      <Project>{d744381c-1080-475f-a827-290c7d4e55ef}</Project>
+      <Name>RickPowell.ExplicitMapping</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

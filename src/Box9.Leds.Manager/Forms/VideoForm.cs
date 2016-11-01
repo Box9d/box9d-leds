@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Box9.Leds.Manager.Forms
@@ -6,6 +8,8 @@ namespace Box9.Leds.Manager.Forms
     public partial class VideoForm : Form
     {
         public Panel DisplayPanel { get { return displayPanel; } }
+
+        private bool lockForClosure;
 
         public VideoForm()
         {
@@ -26,6 +30,14 @@ namespace Box9.Leds.Manager.Forms
             this.displayPanel.Left = this.ClientRectangle.Left;
             this.displayPanel.Top = this.ClientRectangle.Top;
             this.displayPanel.Anchor = AnchorStyles.Top;
+        }
+
+        public void CloseThreadSafe()
+        {
+            Invoke(new Action(() =>
+            {
+                this.Close();
+            }));
         }
     }
 }

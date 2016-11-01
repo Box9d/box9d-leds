@@ -39,8 +39,6 @@ namespace Box9.Leds.Manager
         public async Task SendPixelUpdates(UpdatePixelsRequest request, CancellationToken cancelToken = default(CancellationToken))
         {
             await Task.Yield();
-
-            throw new InvalidOperationException("Cannot send pixel updates to display client");
         }
 
         public void SendBitmap(Bitmap bitmap)

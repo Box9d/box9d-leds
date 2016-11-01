@@ -77,6 +77,7 @@
     <Compile Include="LedLayouts\LedLayout.cs" />
     <Compile Include="LedLayouts\SnareDrumLedLayout.cs" />
     <Compile Include="Multitasking\ChunkedConcurrentQueue.cs" />
+    <Compile Include="Multitasking\TaskExtensions.cs" />
     <Compile Include="PixelDimensions.cs" />
     <Compile Include="PixelInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

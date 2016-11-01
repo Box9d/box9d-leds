@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Box9.ExplicitMapping;
 using Box9.Leds.Business.Configuration;
 using Box9.Leds.FcClient;
 using Box9.Leds.FcClient.Search;
@@ -10,6 +9,7 @@ using Box9.Leds.Manager.Extensions;
 using Box9.Leds.Manager.Forms;
 using Box9.Leds.Manager.Maps;
 using Box9.Leds.Manager.Views;
+using RickPowell.ExplicitMapping;
 
 namespace Box9.Leds.Manager.Presenters
 {

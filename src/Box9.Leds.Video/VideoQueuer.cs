@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using AForge.Video.FFMPEG;
 using Box9.Leds.Business.Configuration;
 
@@ -17,41 +18,44 @@ namespace Box9.Leds.Video
             Frames = new Dictionary<int, Bitmap>();
         }
 
-        public void QueueFrames(int minutes, int seconds)
+        public async Task QueueFrames(int minutes, int seconds)
         {
-            using (var videoFileReader = new VideoFileReader())
+            await Task.Run(() =>
             {
-                videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
-                var framerate = videoFileReader.FrameRate;
-                var frameCount = videoFileReader.FrameCount;
-
-                var currentFrame = 1 + (minutes * 60 + seconds) * framerate;
-
-                while (currentFrame < frameCount)
+                using (var videoFileReader = new VideoFileReader())
                 {
-                    var frame = videoFileReader.ReadVideoFrame();
+                    videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
+                    var framerate = videoFileReader.FrameRate;
+                    var frameCount = videoFileReader.FrameCount;
 
-                    try
+                    var currentFrame = 1 + (minutes * 60 + seconds) * framerate;
+
+                    while (currentFrame < frameCount)
                     {
-                        if (frame == null)
+                        var frame = videoFileReader.ReadVideoFrame();
+
+                        try
                         {
-                            break;
+                            if (frame == null)
+                            {
+                                break;
+                            }
+
+                            if (currentFrame / framerate + 1 > minutes * 60 + seconds)
+                            {
+                                Frames.Add(currentFrame, (Bitmap)frame.GetThumbnailImage(0, 0, null, IntPtr.Zero));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(string.Format("Couldn't queue one of more frames. Width & Height of frame was {0} & {1}", frame.Width, frame.Height), ex);
                         }
 
-                        if (currentFrame / framerate + 1 > minutes * 60 + seconds)
-                        {
-                            Frames.Add(currentFrame, (Bitmap)frame.GetThumbnailImage(0,0,null, IntPtr.Zero));
-                        }
+                        frame.Dispose();
+                        currentFrame++;
                     }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(string.Format("Couldn't queue one of more frames. Width & Height of frame was {0} & {1}", frame.Width, frame.Height), ex);
-                    }
-
-                    frame.Dispose();
-                    currentFrame++;
                 }
-            }
+            });
         }
 
         public void Dispose()

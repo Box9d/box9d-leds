@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Box9.ExplicitMapping
+namespace RickPowell.ExplicitMapping
 {
     public class DoubleSourceMapBuilder<TSource1, TSource2, TTarget> : IDoubleSourceMapBuilder<TSource1, TSource2, TTarget>
     {

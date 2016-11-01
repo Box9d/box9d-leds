@@ -97,7 +97,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientServer.cs" />
+    <Compile Include="ClientConfigPair.cs" />
     <Compile Include="EncodedAudio.cs" />
     <Compile Include="FrameVideoData.cs" />
     <Compile Include="IVideoAudioTransformer.cs" />
@@ -116,7 +116,7 @@
     <Compile Include="VideoData.cs" />
     <Compile Include="VideoTransformer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VideoStatus.cs" />
+    <Compile Include="PlaybackStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

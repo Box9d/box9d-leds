@@ -14,8 +14,17 @@ namespace Box9.Leds.Video
     {
         private readonly LedConfiguration configuration;
         private readonly IPatternCreationService patternCreationService;
+
+        private IEnumerable<ClientConfigPair> clientConfigPairs;
         private VideoQueuer videoQueuer;
         private AudioData audioData;
+
+        long totalFrames;
+        int frameRate;
+        int width;
+        int height;
+        int minutes;
+        int seconds;
 
         public VideoPlayer(LedConfiguration configuration, IPatternCreationService patternCreationService)
         {
@@ -24,30 +33,19 @@ namespace Box9.Leds.Video
             videoQueuer = new VideoQueuer(configuration);
         }
 
-        public int GetDurationInSeconds()
+        public async Task Load(IEnumerable<ClientConfigPair> clientConfigPairs, int minutes, int seconds)
         {
-            using (var videoFileReader = new VideoFileReader())
-            {
-                videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
-
-                return (int)videoFileReader.FrameCount / videoFileReader.FrameRate;
-            }  
-        }
-
-        public void Load(int minutes, int seconds)
-        {
-            videoQueuer.QueueFrames(minutes, seconds);
+            await videoQueuer.QueueFrames(minutes, seconds);
 
             var audioTransformer = new VideoAudioTransformer(configuration.VideoConfig.SourceFilePath);
-            this.audioData = audioTransformer.ExtractAndSaveAudio();
-        }
+            audioData = audioTransformer.ExtractAndSaveAudio();
 
-        public async Task Play(IEnumerable<ClientServer> clientServers, int minutes, int seconds, CancellationToken cancellationToken)
-        {
-            long totalFrames;
-            int frameRate;
-            int width;
-            int height;
+            foreach (var clientConfigPair in clientConfigPairs)
+            {
+                await clientConfigPair.Client.ConnectAsync();
+            }
+
+            this.clientConfigPairs = clientConfigPairs;
 
             using (var videoFileReader = new VideoFileReader())
             {
@@ -57,13 +55,14 @@ namespace Box9.Leds.Video
                 frameRate = videoFileReader.FrameRate;
                 width = videoFileReader.Width;
                 height = videoFileReader.Height;
-            }  
-
-            foreach (var clientServer in clientServers)
-            {
-                await clientServer.Client.ConnectAsync();
             }
 
+            this.minutes = minutes;
+            this.seconds = seconds;
+        }
+
+        public async Task Play(CancellationToken cancellationToken)
+        {
             int totalPlayTimeMillseconds = (int)Math.Round((double)((double)totalFrames / (double)frameRate) * 1000, 0) - (minutes * 60 + seconds) * 1000;
 
             var playStopwatch = new Stopwatch();
@@ -83,13 +82,14 @@ namespace Box9.Leds.Video
                 {
                     var frame = videoQueuer.Frames[currentFrame];
 
-                    foreach (var clientServer in clientServers)
+                    foreach (var clientServer in clientConfigPairs)
                     {
                         cancellationSource.Cancel();
                         cancellationSource = new CancellationTokenSource();
 
                         var pixelUpdates = patternCreationService.FromBitmap(frame, clientServer.ServerConfiguration);
                         await clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest(pixelUpdates), cancellationSource.Token);
+                        clientServer.Client.SendBitmap(frame);
                     }
                 }
             }
@@ -97,15 +97,16 @@ namespace Box9.Leds.Video
             audioPlayer.Stop();
             audioPlayer.Dispose();
 
-            foreach (var clientServer in clientServers)
+            foreach (var clientConfigPair in clientConfigPairs)
             {
-                var allPixelsBlack = patternCreationService.AllPixelsOff(clientServer.ServerConfiguration);
+                var allPixelsOff = patternCreationService.AllPixelsOff(clientConfigPair.ServerConfiguration);
 
-                var request = new UpdatePixelsRequest(allPixelsBlack);
+                var request = new UpdatePixelsRequest(allPixelsOff);
 
-                await clientServer.Client.SendPixelUpdates(request);
-                await clientServer.Client.SendPixelUpdates(request);
-                await clientServer.Client.CloseAsync();
+                await clientConfigPair.Client.SendPixelUpdates(request);
+                await clientConfigPair.Client.SendPixelUpdates(request);
+                await clientConfigPair.Client.CloseAsync();
+                clientConfigPair.Client.Dispose();
             }
 
             this.videoQueuer.Dispose();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -32,6 +33,11 @@ namespace Box9.Leds.FcClient
             State = WebSocketState.None;
 
             currentSend = Task.CompletedTask;
+        }
+
+        public WsClientWrapper(string ipAddress, int port)
+            : this(new Uri(string.Format("ws://{0}:{1}", ipAddress, port)))
+        {
         }
 
         public async Task ConnectAsync()
@@ -105,7 +111,7 @@ namespace Box9.Leds.FcClient
 
         public void SendBitmap(Bitmap bitmap)
         {
-            throw new InvalidOperationException("Cannot send a bitmap to a FadeCandy server");
+            // Surpress - it's just too slow and should never be done :)
         }
     }
 }

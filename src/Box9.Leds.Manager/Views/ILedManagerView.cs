@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Box9.Leds.Business.Configuration;
 using Box9.Leds.Business.Dtos;
 using Box9.Leds.Core.EventsArguments;
+using Box9.Leds.Video;
 
 namespace Box9.Leds.Manager.Views
 {
@@ -21,8 +22,6 @@ namespace Box9.Leds.Manager.Views
         event EventHandler<StringEventArgs> RemoveServer;
 
         event EventHandler<StringEventArgs> ImportVideo;
-
-        event EventHandler<BooleanEventArgs> DisplayVideoToggle;
 
         event EventHandler<IntegerEventArgs> PreviewBrightnessChanged;
 
@@ -45,6 +44,8 @@ namespace Box9.Leds.Manager.Views
         TimeSpan? TotalVideoLength { get; set; }
 
         bool DisplayVideo { get; set; }
+
+        PlaybackStatus PlaybackStatus { get; set; }
 
         int BrightnessPercentage { get; set; }
     }

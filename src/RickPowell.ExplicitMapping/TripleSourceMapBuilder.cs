@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Box9.ExplicitMapping
+namespace RickPowell.ExplicitMapping
 {
     public class TripleSourceMapBuilder<TSource1, TSource2, TSource3, TTarget> : ITripleSourceMapBuilder<TSource1, TSource2, TSource3, TTarget>
     {

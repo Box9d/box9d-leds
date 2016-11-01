@@ -1,4 +1,4 @@
-﻿namespace Box9.ExplicitMapping
+﻿namespace RickPowell.ExplicitMapping
 {
     public interface ITripleSourceMap<in TSource1, in TSource2, in TSource3, out TTarget>
     {

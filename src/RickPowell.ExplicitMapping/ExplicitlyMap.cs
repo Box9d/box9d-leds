@@ -1,4 +1,4 @@
-﻿namespace Box9.ExplicitMapping
+﻿namespace RickPowell.ExplicitMapping
 {
     public static class ExplicitlyMap
     {

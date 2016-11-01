@@ -12,24 +12,10 @@ namespace Box9.Leds.Manager.Validation
         public async Task<ValidationResult> Validate(LedConfiguration configuration)
         {
             var errors = new List<string>();
-            errors.AddRange(ValidateAtLeastOneServer(configuration));
             errors.AddRange(ValidateVideoSelected(configuration));
             errors.AddRange(await ValidateServerConnections(configuration));
 
             return new ValidationResult(errors); 
-        }
-
-        private List<string> ValidateAtLeastOneServer(LedConfiguration configuration)
-        {
-            if (configuration.Servers == null || !configuration.Servers.Any())
-            {
-                return new List<string>
-                {
-                    "Must have at least one server selected in order to playback video"
-                };
-            }
-
-            return new List<string>();
         }
 
         private List<string> ValidateVideoSelected(LedConfiguration configuration)
