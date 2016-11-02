@@ -49,7 +49,10 @@ namespace Box9.Leds.FcClient
 
                 try
                 {
-                    await socket.ConnectAsync(serverAddress, CancellationToken.None);
+                    lock(socket)
+                    {
+                        socket.ConnectAsync(serverAddress, CancellationToken.None).Wait();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -71,12 +74,19 @@ namespace Box9.Leds.FcClient
                 throw new ArgumentException(string.Format("Request exceeds the max buffer length of {0}", sendMaxBufferLength));
             }
 
-            await socket.SendAsync(new ArraySegment<byte>(requestData, 0, requestData.Length), WebSocketMessageType.Text, true, new CancellationToken(false));
+            lock(socket)
+            {
+                socket.SendAsync(new ArraySegment<byte>(requestData, 0, requestData.Length), WebSocketMessageType.Text, true, new CancellationToken(false)).Wait();
+            }
 
             var resultArray = new ArraySegment<byte>(new byte[receiveMaxBufferLength]);
             WebSocketReceiveResult result = null;
 
-            result = await socket.ReceiveAsync(resultArray, CancellationToken.None);
+            lock(socket)
+            {
+                result = socket.ReceiveAsync(resultArray, CancellationToken.None).Result;
+            }
+
             var message = Encoding.UTF8.GetString(resultArray.Array.Take(result.Count).ToArray());
 
             return JsonConvert.DeserializeObject<TResponse>(message);

@@ -28,7 +28,7 @@ namespace Box9.Leds.Video
                     var framerate = videoFileReader.FrameRate;
                     var frameCount = videoFileReader.FrameCount;
 
-                    var currentFrame = 1 + (minutes * 60 + seconds) * framerate;
+                    var currentFrame = 0;
 
                     while (currentFrame < frameCount)
                     {

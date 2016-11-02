@@ -196,24 +196,27 @@ namespace Box9.Leds.Manager.Presenters
 
             if (validationResult.OK)
             {
-                videoPlayer = new VideoPlayer(configuration, new PatternCreationService());
-
-                var clientConfigPairs = new List<ClientConfigPair>();
-                foreach (var server in configuration.Servers)
-                {
-                    clientConfigPairs.Add(new ClientConfigPair(new WsClientWrapper(server.IPAddress, server.Port), server));
-                }
-
                 if (view.DisplayVideo)
                 {
                     videoForm = new VideoForm();
                     videoForm.Show();
-
-                    clientConfigPairs.Add(new ClientConfigPair(new DisplayClientWrapper(videoForm), null));
                 }
 
                 Task.Run(async () =>
                 {
+                    videoPlayer = new VideoPlayer(configuration, new PatternCreationService());
+
+                    var clientConfigPairs = new List<ClientConfigPair>();
+                    foreach (var server in configuration.Servers)
+                    {
+                        clientConfigPairs.Add(new ClientConfigPair(new WsClientWrapper(server.IPAddress, server.Port), server));
+                    }
+
+                    if (view.DisplayVideo)
+                    {
+                        clientConfigPairs.Add(new ClientConfigPair(new DisplayClientWrapper(videoForm), null));
+                    }
+
                     await videoPlayer.Load(clientConfigPairs, view.VideoMetadata.StartTime.Minutes, view.VideoMetadata.StartTime.Seconds);
                     view.PlaybackStatus = PlaybackStatus.ReadyToPlay;
 
@@ -226,7 +229,10 @@ namespace Box9.Leds.Manager.Presenters
             {
                 view.PlaybackStatus = PlaybackStatus.NotReady;
 
-                // TODO: Show errors
+                foreach (var error in validationResult.Errors)
+                {
+                    NotifyError(new Exception(error));
+                }
             }
 
             MarkAsDirty();

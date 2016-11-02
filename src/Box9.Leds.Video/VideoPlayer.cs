@@ -40,11 +40,6 @@ namespace Box9.Leds.Video
             var audioTransformer = new VideoAudioTransformer(configuration.VideoConfig.SourceFilePath);
             audioData = audioTransformer.ExtractAndSaveAudio();
 
-            foreach (var clientConfigPair in clientConfigPairs)
-            {
-                await clientConfigPair.Client.ConnectAsync();
-            }
-
             this.clientConfigPairs = clientConfigPairs;
 
             using (var videoFileReader = new VideoFileReader())
@@ -55,6 +50,11 @@ namespace Box9.Leds.Video
                 frameRate = videoFileReader.FrameRate;
                 width = videoFileReader.Width;
                 height = videoFileReader.Height;
+            }
+
+            foreach (var clientConfigPair in clientConfigPairs)
+            {
+                await clientConfigPair.Client.ConnectAsync();
             }
 
             this.minutes = minutes;
