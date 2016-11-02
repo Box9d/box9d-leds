@@ -31,10 +31,13 @@ namespace Box9.Leds.Manager.Forms
 
         public void CloseThreadSafe()
         {
-            Invoke(new Action(() =>
+            if (!IsDisposed)
             {
-                Close();
-            }));
+                Invoke(new Action(() =>
+                {
+                    Close();
+                }));
+            }
         }
     }
 }

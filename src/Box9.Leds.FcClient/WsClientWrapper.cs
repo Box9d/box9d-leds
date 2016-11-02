@@ -94,12 +94,20 @@ namespace Box9.Leds.FcClient
 
         public async Task CloseAsync()
         {
-            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+            lock(socket)
+            {
+                socket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
+            }
+
+            await Task.Yield();
         }
 
         public void Dispose()
         {
-            socket.Dispose();
+            lock(socket)
+            {
+                socket.Dispose();
+            }
         }
 
         public async Task SendPixelUpdates(UpdatePixelsRequest request, CancellationToken token)
@@ -116,7 +124,12 @@ namespace Box9.Leds.FcClient
                 data.Add(pixel.Color.B);
             }
 
-            await socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, token);
+            lock (socket)
+            {
+                socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, token).Wait();
+            }
+
+            await Task.Yield();
         }
 
         public void SendBitmap(Bitmap bitmap)
