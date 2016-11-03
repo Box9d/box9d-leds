@@ -6,7 +6,7 @@ namespace Box9.Leds.Business.Dtos
     {
         public string FilePath { get; }
 
-        public int FrameRate { get; }
+        public double FrameRate { get; }
 
         public long TotalFrames { get; }
 
@@ -26,7 +26,7 @@ namespace Box9.Leds.Business.Dtos
             }
         }
 
-        internal VideoMetadata(string filePath, int frameRate, long totalFrames, int height, int width)
+        internal VideoMetadata(string filePath, double frameRate, long totalFrames, int height, int width)
         {
             FilePath = filePath;
             FrameRate = frameRate;

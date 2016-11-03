@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AForge.Video.FFMPEG;
 using Box9.Leds.Business.Configuration;
 using Box9.Leds.Business.Service;
+using Box9.Leds.Business.Services;
 using Box9.Leds.FcClient.Messages.UpdatePixels;
 
 namespace Box9.Leds.Video
@@ -14,23 +15,25 @@ namespace Box9.Leds.Video
     {
         private readonly LedConfiguration configuration;
         private readonly IPatternCreationService patternCreationService;
+        private readonly IVideoMetadataService videoMetadataService;
 
         private IEnumerable<ClientConfigPair> clientConfigPairs;
         private VideoQueuer videoQueuer;
         private AudioData audioData;
 
         long totalFrames;
-        int frameRate;
+        double frameRate;
         int width;
         int height;
         int minutes;
         int seconds;
 
-        public VideoPlayer(LedConfiguration configuration, IPatternCreationService patternCreationService)
+        public VideoPlayer(LedConfiguration configuration, IPatternCreationService patternCreationService, IVideoMetadataService videoMetadataService)
         {
             this.configuration = configuration;
             this.patternCreationService = patternCreationService;
-            videoQueuer = new VideoQueuer(configuration);
+            this.videoMetadataService = videoMetadataService;
+            videoQueuer = new VideoQueuer(configuration, videoMetadataService);
         }
 
         public async Task Load(IEnumerable<ClientConfigPair> clientConfigPairs, int minutes, int seconds)
@@ -42,15 +45,11 @@ namespace Box9.Leds.Video
 
             this.clientConfigPairs = clientConfigPairs;
 
-            using (var videoFileReader = new VideoFileReader())
-            {
-                videoFileReader.Open(configuration.VideoConfig.SourceFilePath);
-
-                totalFrames = videoFileReader.FrameCount;
-                frameRate = videoFileReader.FrameRate;
-                width = videoFileReader.Width;
-                height = videoFileReader.Height;
-            }
+            var videoMetadata = videoMetadataService.GetMetadata(configuration.VideoConfig.SourceFilePath);
+            totalFrames = videoMetadata.TotalFrames;
+            frameRate = videoMetadata.FrameRate;
+            width = videoMetadata.Width;
+            height = videoMetadata.Height;
 
             foreach (var clientConfigPair in clientConfigPairs)
             {
@@ -63,7 +62,7 @@ namespace Box9.Leds.Video
 
         public async Task Play(CancellationToken cancellationToken)
         {
-            int totalPlayTimeMillseconds = (int)Math.Round((double)((double)totalFrames / (double)frameRate) * 1000, 0) - (minutes * 60 + seconds) * 1000;
+            int totalPlayTimeMillseconds = (int)Math.Round((double)((double)totalFrames / frameRate) * 1000, 0) - (minutes * 60 + seconds) * 1000;
 
             var playStopwatch = new Stopwatch();
             playStopwatch.Start();
@@ -75,8 +74,8 @@ namespace Box9.Leds.Video
 
             while (playStopwatch.ElapsedMilliseconds < totalPlayTimeMillseconds && !cancellationToken.IsCancellationRequested)
             {
-                double secondsPassed = (double)playStopwatch.ElapsedMilliseconds / 1000 + minutes * 60 + seconds;
-                var currentFrame = (int)Math.Round(secondsPassed * frameRate, 0) + 1;
+                double millisecondsPassed = playStopwatch.ElapsedMilliseconds + (((minutes * 60) + seconds) * 1000);
+                var currentFrame = (int)((double)(millisecondsPassed * frameRate) / (double)1000);
 
                 if (currentFrame <= totalFrames && videoQueuer.Frames.ContainsKey(currentFrame))
                 {
@@ -110,7 +109,7 @@ namespace Box9.Leds.Video
             }
 
             this.videoQueuer.Dispose();
-            this.videoQueuer = new VideoQueuer(configuration);
+            this.videoQueuer = new VideoQueuer(configuration, videoMetadataService);
         }
     }
 }
