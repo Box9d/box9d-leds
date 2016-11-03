@@ -189,3 +189,5 @@ $RECYCLE.BIN/
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+/src/Box9.Leds.Business/MediaInfoDotNet.dll.config
+/src/Box9.Leds.Business/x86/MediaInfo.dll
