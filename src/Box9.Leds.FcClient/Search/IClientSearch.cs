@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using Box9.Leds.Core.EventsArguments;
 
 namespace Box9.Leds.FcClient.Search
@@ -11,6 +11,8 @@ namespace Box9.Leds.FcClient.Search
 
         event EventHandler<IntegerEventArgs> PercentageSearched;
 
-        void SearchForFadecandyServers(Uri[] uris, int pingTimeoutInMilliseconds, CancellationToken cancellationToken);
+        void SearchForFadecandyServers(IEnumerable<string> ipAddresses, int pingTimeoutInMilliseconds, CancellationToken cancellationToken);
+
+        DeviceDetails GetDeviceDetails(string ipAddress);
     }
 }

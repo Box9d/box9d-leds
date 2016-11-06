@@ -1,4 +1,6 @@
-﻿namespace Box9.Leds.TestHarness
+﻿using System;
+
+namespace Box9.Leds.TestHarness
 {
     class Program
     {

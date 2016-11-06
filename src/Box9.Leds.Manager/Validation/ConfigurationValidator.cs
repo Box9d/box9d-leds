@@ -1,9 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Box9.Leds.Business.Configuration;
-using Box9.Leds.FcClient;
 
 namespace Box9.Leds.Manager.Validation
 {
@@ -13,7 +9,6 @@ namespace Box9.Leds.Manager.Validation
         {
             var errors = new List<string>();
             errors.AddRange(ValidateVideoSelected(configuration));
-            errors.AddRange(ValidateServerConnections(configuration));
 
             return new ValidationResult(errors); 
         }
@@ -29,24 +24,6 @@ namespace Box9.Leds.Manager.Validation
             }
 
             return new List<string>();
-        }
-
-        private IEnumerable<string> ValidateServerConnections(LedConfiguration configuration)
-        {
-            var errors = new List<string>();
-
-            var clientValidator = new WsClientValidator();
-            foreach (var server in configuration.Servers)
-            {
-                bool isConnected = clientValidator.IsServerConnected(IPAddress.Parse(server.IPAddress), server.Port);
-
-                if (!isConnected)
-                {
-                    errors.Add(string.Format("Could not find a Fadecandy server on IP Address {0}, port {1}", server.IPAddress, server.Port));
-                }
-            }
-
-            return errors;
         }
     }
 }

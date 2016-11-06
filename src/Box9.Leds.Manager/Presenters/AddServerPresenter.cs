@@ -118,7 +118,7 @@ namespace Box9.Leds.Manager.Presenters
                 ProgressChanged();
             };
 
-            clientSearch.SearchForFadecandyServers(FadecandyUris.DefaultHttp(), 50, cts.Token);
+            clientSearch.SearchForFadecandyServers(FadecandyAddresses.DefaultAddressRange(), 50, cts.Token);
         }
 
         public void ServerSelected(string address)
