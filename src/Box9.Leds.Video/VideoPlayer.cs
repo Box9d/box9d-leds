@@ -62,7 +62,7 @@ namespace Box9.Leds.Video
             this.seconds = seconds;
         }
 
-        public async Task Play(CancellationToken cancellationToken)
+        public void Play(CancellationToken cancellationToken)
         {
             int totalPlayTimeMillseconds = (int)Math.Round((double)((double)totalFrames / frameRate) * 1000, 0) - (minutes * 60 + seconds) * 1000;
 

@@ -11,6 +11,6 @@ namespace Box9.Leds.FcClient.Search
 
         event EventHandler<IntegerEventArgs> PercentageSearched;
 
-        Task SearchForFadecandyServers(Uri[] uris, int pingTimeoutInMilliseconds, CancellationToken cancellationToken);
+        void SearchForFadecandyServers(Uri[] uris, int pingTimeoutInMilliseconds, CancellationToken cancellationToken);
     }
 }

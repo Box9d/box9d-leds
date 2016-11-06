@@ -140,7 +140,7 @@ namespace Box9.Leds.Manager.Presenters
             MarkAsDirty();
         }
 
-        private async void BrightnessChanged(object sender, IntegerEventArgs e)
+        private void BrightnessChanged(object sender, IntegerEventArgs e)
         {
             var configuration = ExplicitlyMap
                 .TheseTypes<ILedManagerView, LedConfiguration>()
@@ -189,19 +189,19 @@ namespace Box9.Leds.Manager.Presenters
                 .Using<LedManagerViewToConfigurationMap>()
                 .Map(view);
 
-            Task.Run(async () =>
+            IConfigurationValidator configValidator = new ConfigurationValidator();
+            var validationResult = configValidator.Validate(configuration);
+
+            if (validationResult.OK)
             {
-                IConfigurationValidator configValidator = new ConfigurationValidator();
-                var validationResult = configValidator.Validate(configuration);
-
-                if (validationResult.OK)
+                if (view.DisplayVideo)
                 {
-                    if (view.DisplayVideo)
-                    {
-                        videoForm = new VideoForm();
-                        videoForm.Show();
-                    }
+                    videoForm = new VideoForm();
+                    videoForm.Show();
+                }
 
+                Task.Run(async () =>
+                {
                     videoPlayer = new VideoPlayer(configuration, new PatternCreationService(), new VideoMetadataService());
 
                     var clientConfigPairs = new List<ClientConfigPair>();
@@ -219,28 +219,28 @@ namespace Box9.Leds.Manager.Presenters
                     view.PlaybackStatus = PlaybackStatus.ReadyToPlay;
 
                     MarkAsDirty();
+                }).Forget();
 
-                    playbackCancellationTokenSource = new CancellationTokenSource();
-                }
-                else
+                playbackCancellationTokenSource = new CancellationTokenSource();
+            }
+            else
+            {
+                view.PlaybackStatus = PlaybackStatus.NotReady;
+
+                foreach (var error in validationResult.Errors)
                 {
-                    view.PlaybackStatus = PlaybackStatus.NotReady;
-
-                    foreach (var error in validationResult.Errors)
-                    {
-                        NotifyError(new Exception(error));
-                    }
+                    NotifyError(new Exception(error));
                 }
-            }).Forget();
+            }
 
             MarkAsDirty();
         }
 
         private void Play(object sender, EventArgs e)
         {
-            Task.Run(async () =>
+            Task.Run(() =>
             {
-                await videoPlayer.Play(playbackCancellationTokenSource.Token);
+                videoPlayer.Play(playbackCancellationTokenSource.Token);
                 view.PlaybackStatus = PlaybackStatus.NotReady;
                 
                 MarkAsDirty();

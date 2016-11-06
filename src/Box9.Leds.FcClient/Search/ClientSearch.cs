@@ -23,7 +23,7 @@ namespace Box9.Leds.FcClient.Search
         {
         }
 
-        public async Task SearchForFadecandyServers(Uri[] uris, int pingTimeoutInMilliseconds, CancellationToken cancellationToken)
+        public void SearchForFadecandyServers(Uri[] uris, int pingTimeoutInMilliseconds, CancellationToken cancellationToken)
         {
             searched = 0;
             token = cancellationToken;
