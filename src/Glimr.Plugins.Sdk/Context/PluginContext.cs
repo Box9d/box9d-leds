@@ -11,10 +11,14 @@ namespace Glimr.Plugins.Plugins.Context
         protected readonly Dictionary<PluginParameter, object> inputValues;
         protected readonly Dictionary<PluginParameter, object> outputValues;
 
+        internal List<string> log;
+
         internal PluginContext(IPluginConfiguration pluginConfiguration)
         {
             inputValues = new Dictionary<PluginParameter, object>();
             outputValues = new Dictionary<PluginParameter, object>();
+
+            log = new List<string>();
 
             foreach (var paramter in ((PluginConfiguration)pluginConfiguration).GetInputParameters())
             {
@@ -32,7 +36,7 @@ namespace Glimr.Plugins.Plugins.Context
             var key = inputValues.Keys.SingleOrDefault(k => k.Name == name);
             if (key == null)
             {
-                throw new PluginParameterException(name);
+                throw new PluginParameterNotFoundException(name);
             }
 
             return (T)inputValues[key];
@@ -48,7 +52,7 @@ namespace Glimr.Plugins.Plugins.Context
             var key = outputValues.Keys.SingleOrDefault(k => k.Name == name);
             if (key == null)
             {
-                throw new PluginParameterException(name);
+                throw new PluginParameterNotFoundException(name);
             }
 
             return outputValues[key];
@@ -56,7 +60,7 @@ namespace Glimr.Plugins.Plugins.Context
 
         public void SetInput<T>(string name, T value)
         {
-            SetInput(name, value);
+            SetInput(name, (object)value);
         }
 
         public void SetInput(string name, object value)
@@ -64,7 +68,7 @@ namespace Glimr.Plugins.Plugins.Context
             var key = inputValues.Keys.SingleOrDefault(k => k.Name == name);
             if (key == null)
             {
-                throw new PluginParameterException(name);
+                throw new PluginParameterNotFoundException(name);
             }
 
             inputValues[key] = value;
@@ -75,7 +79,7 @@ namespace Glimr.Plugins.Plugins.Context
             var key = outputValues.Keys.SingleOrDefault(k => k.Name == name);
             if (key == null)
             {
-                throw new PluginParameterException(name);
+                throw new PluginParameterNotFoundException(name);
             }
 
             outputValues[key] = value;
@@ -104,6 +108,11 @@ namespace Glimr.Plugins.Plugins.Context
             }
 
             return pluginOutputs;
+        }
+
+        public void WriteToLog(string message)
+        {
+            log.Add(message);
         }
     }
 }

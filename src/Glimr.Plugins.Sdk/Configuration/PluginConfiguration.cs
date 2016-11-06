@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Glimr.Plugins.Plugins.Exceptions;
 
 namespace Glimr.Plugins.Plugins.Configuration
 {
@@ -19,6 +21,8 @@ namespace Glimr.Plugins.Plugins.Configuration
 
         public IPluginConfiguration AddStringInput(string name)
         {
+            ValidateParameterNameUniqueness(name);
+
             inputParameters.Add(new PluginParameter(name, typeof(string)));
 
             return this;
@@ -26,6 +30,8 @@ namespace Glimr.Plugins.Plugins.Configuration
 
         public IPluginConfiguration AddIntegerInput(string name)
         {
+            ValidateParameterNameUniqueness(name);
+
             inputParameters.Add(new PluginParameter(name, typeof(int)));
 
             return this;
@@ -33,6 +39,8 @@ namespace Glimr.Plugins.Plugins.Configuration
 
         public IPluginConfiguration AddStringOutput(string name)
         {
+            ValidateParameterNameUniqueness(name);
+
             outputParameters.Add(new PluginParameter(name, typeof(string)));
 
             return this;
@@ -40,7 +48,27 @@ namespace Glimr.Plugins.Plugins.Configuration
 
         public IPluginConfiguration AddIntegerOutput(string name)
         {
+            ValidateParameterNameUniqueness(name);
+
             outputParameters.Add(new PluginParameter(name, typeof(int)));
+
+            return this;
+        }
+
+        public IPluginConfiguration AddBooleanInput(string name)
+        {
+            ValidateParameterNameUniqueness(name);
+
+            inputParameters.Add(new PluginParameter(name, typeof(bool)));
+
+            return this;
+        }
+
+        public IPluginConfiguration AddBooleanOutput(string name)
+        {
+            ValidateParameterNameUniqueness(name);
+
+            outputParameters.Add(new PluginParameter(name, typeof(bool)));
 
             return this;
         }
@@ -53,6 +81,15 @@ namespace Glimr.Plugins.Plugins.Configuration
         internal IEnumerable<PluginParameter> GetOutputParameters()
         {
             return outputParameters;
+        }
+
+        private void ValidateParameterNameUniqueness(string name)
+        {
+            if (inputParameters.Any(ip => ip.Name == name)
+                || outputParameters.Any(ip => ip.Name == name))
+            {
+                throw new PluginParameterNotUniqueException(name); 
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading;
 using Glimr.Plugins.Core;
 using Glimr.Plugins.Plugins.InputDevice;
 using Glimr.Plugins.Plugins.Runner;
+using Glimr.Plugins.Sdk.Context;
 using Newtonsoft.Json;
 
 namespace Glimr.Plugins.Plugins.Tester
@@ -32,7 +33,7 @@ namespace Glimr.Plugins.Plugins.Tester
             Console.Clear();
 
             IPluginRunner runner = new PluginRunner();
-            var context = runner.CreateInputDivicePluginContext(availablePlugins[pluginSelection - 1]);
+            var context = PluginContextFactory.GenerateInitialInputDevicePluginContext((IInputDevicePlugin)availablePlugins[pluginSelection - 1]);
             
             foreach (var input in context.GetPluginInputs())
             {

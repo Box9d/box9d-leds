@@ -7,16 +7,28 @@ namespace Glimr.Plugins.Sdk.Context
 {
     internal class EffectPluginContext : PluginContext, IEffectPluginContext
     {
-        private PointsCollection pointsCollection;
+        private PointsCollection initialPointsCollection;
 
-        public int ElapsedMilliseconds { get; }
+        public long ElapsedMilliseconds { get; internal set; }
 
         public PointsCollection PointsCollection { get; set; }
 
-        internal EffectPluginContext(IPluginConfiguration configuration, int elapsedMilliseconds) 
+        internal EffectPluginContext(IPluginConfiguration configuration, int elapsedMilliseconds, int xCount = 10, int yHeight = 10) 
             : base(configuration)
         {
             ElapsedMilliseconds = elapsedMilliseconds;
+
+            PointsCollection = new PointsCollection(xCount, yHeight);
+        }
+
+        internal void FixInitialPointsCollection()
+        {
+            initialPointsCollection = PointsCollection;
+        }
+
+        internal void ResetToInitialPointsCollection()
+        {
+            PointsCollection = initialPointsCollection;
         }
     }
 }

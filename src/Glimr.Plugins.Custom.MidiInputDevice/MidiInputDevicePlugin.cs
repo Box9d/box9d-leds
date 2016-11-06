@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using Glimr.Plugins.Plugins.Configuration;
+﻿using Glimr.Plugins.Plugins.Configuration;
 using Glimr.Plugins.Plugins.Context;
 using Glimr.Plugins.Plugins.InputDevice;
 using Midi;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
+﻿using System.Diagnostics;
 using Glimr.Plugins.Custom.OscMidiInputDevice;
 using Glimr.Plugins.Plugins.Configuration;
 using Glimr.Plugins.Plugins.Context;

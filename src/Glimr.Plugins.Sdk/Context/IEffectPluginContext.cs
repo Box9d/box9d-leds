@@ -5,7 +5,7 @@ namespace Glimr.Plugins.Sdk.Context
 {
     public interface IEffectPluginContext : IPluginContext
     {
-        int ElapsedMilliseconds { get; }
+        long ElapsedMilliseconds { get; }
 
         PointsCollection PointsCollection { get; set; }
     }

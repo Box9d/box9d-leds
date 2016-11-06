@@ -20,5 +20,7 @@ namespace Glimr.Plugins.Plugins.Context
         Dictionary<string, Type> GetPluginOutputs();
 
         void SetOutput<T>(string name, T value);
+
+        void WriteToLog(string message);
     }
 }

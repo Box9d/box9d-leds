@@ -84,6 +84,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="websocket-sharp.clone, Version=1.0.2.39869, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\websocket-sharp.clone.3.0.0\lib\net45\websocket-sharp.clone.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutofacBootstrapper.cs" />
@@ -110,6 +114,10 @@
     <ProjectReference Include="..\Box9.Leds.Video\Box9.Leds.Video.csproj">
       <Project>{F7F691B5-4ECE-4B68-9DF1-1DB144819387}</Project>
       <Name>Box9.Leds.Video</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Glimr.Plugins.Sdk\Glimr.Plugins.Sdk.csproj">
+      <Project>{CA864247-F351-47B5-A3F3-D1BF8BE70B93}</Project>
+      <Name>Glimr.Plugins.Sdk</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

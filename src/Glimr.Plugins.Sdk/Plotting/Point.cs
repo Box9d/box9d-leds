@@ -20,7 +20,7 @@ namespace Glimr.Plugins.Sdk
         {
             X = x;
             Y = y;
-            Color = color.HasValue ? color.Value : Color.Black;
+            Color = color.HasValue ? color.Value : Color.Transparent;
 
             cummulativeXOperations = 0;
             cummulativeYOperations = 0;
@@ -46,6 +46,9 @@ namespace Glimr.Plugins.Sdk
             X += cummulativeXOperations;
             Y += cummulativeYOperations;
             Color = colorOperation;
+
+            cummulativeXOperations = 0;
+            cummulativeYOperations = 0;
         }
     }
 }

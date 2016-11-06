@@ -30,6 +30,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -41,25 +46,50 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Chaining\Effect.cs" />
+    <Compile Include="Chaining\EffectPluginChain.cs" />
+    <Compile Include="Chaining\IEffect.cs" />
+    <Compile Include="Chaining\IEffectPluginChain.cs" />
+    <Compile Include="Chaining\IInputDevice.cs" />
+    <Compile Include="Chaining\InputDevice.cs" />
+    <Compile Include="Chaining\IOutputDevice.cs" />
+    <Compile Include="Chaining\IProcessingPluginChain.cs" />
+    <Compile Include="Chaining\IPluginChain.cs" />
+    <Compile Include="Chaining\IPluginDependency.cs" />
+    <Compile Include="Chaining\IPluginDependencyBuilder.cs" />
+    <Compile Include="Chaining\OutputDevice.cs" />
+    <Compile Include="Chaining\ProcessingPluginChain.cs" />
+    <Compile Include="Chaining\PluginChain.cs" />
+    <Compile Include="Chaining\PluginChainBuilder.cs" />
+    <Compile Include="Chaining\PluginDependency.cs" />
+    <Compile Include="Chaining\PluginDependencyBuilder.cs" />
     <Compile Include="Configuration\IPluginConfiguration.cs" />
     <Compile Include="Configuration\PluginConfiguration.cs" />
     <Compile Include="Configuration\PluginConfigurationFactory.cs" />
     <Compile Include="Configuration\PluginParameter.cs" />
+    <Compile Include="Context\IOutputDevicePluginContext.cs" />
+    <Compile Include="Context\OutputDevicePluginContext.cs" />
+    <Compile Include="Context\PluginContextFactory.cs" />
     <Compile Include="Context\EffectPluginContext.cs" />
     <Compile Include="Context\IEffectPluginContext.cs" />
     <Compile Include="Context\IInputDevicePluginContext.cs" />
     <Compile Include="Context\InputDevicePluginContext.cs" />
     <Compile Include="Context\IPluginContext.cs" />
     <Compile Include="Context\PluginContext.cs" />
-    <Compile Include="Exceptions\PluginParameterException.cs" />
-    <Compile Include="Plotting\Points.cs" />
+    <Compile Include="Exceptions\PluginParameterNotUniqueException.cs" />
+    <Compile Include="Exceptions\PluginParameterNotFoundException.cs" />
+    <Compile Include="Plotting\PointsCollection.cs" />
     <Compile Include="Plugins\IEffectPlugin.cs" />
     <Compile Include="Plugins\IInputDevicePlugin.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="Plotting\Point.cs" />
+    <Compile Include="Plugins\IOutputDevicePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runner\IPluginRunner.cs" />
     <Compile Include="Runner\PluginRunner.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

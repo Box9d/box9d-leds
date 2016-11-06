@@ -11,5 +11,9 @@
         IPluginConfiguration AddStringOutput(string name);
 
         IPluginConfiguration AddIntegerOutput(string name);
+
+        IPluginConfiguration AddBooleanInput(string name);
+
+        IPluginConfiguration AddBooleanOutput(string name);
     }
 }
