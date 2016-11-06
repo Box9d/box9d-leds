@@ -98,23 +98,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientConfigPair.cs" />
-    <Compile Include="EncodedAudio.cs" />
     <Compile Include="FrameVideoData.cs" />
     <Compile Include="IVideoAudioTransformer.cs" />
     <Compile Include="Mp3AudioPlayer.cs" />
     <Compile Include="IMp3AudioPlayer.cs" />
-    <Compile Include="Storage\AudioStorageFactory.cs" />
-    <Compile Include="Storage\VideoStorageFactory.cs" />
     <Compile Include="VideoAudioData.cs" />
-    <Compile Include="VideoAudioEncodingType.cs" />
     <Compile Include="VideoAudioTransformer.cs" />
-    <Compile Include="VideoAutofacModule.cs" />
     <Compile Include="VideoQueuer.cs" />
     <Compile Include="VideoSettings.cs" />
     <Compile Include="VideoPlayer.cs" />
-    <Compile Include="IVideoTransformer.cs" />
-    <Compile Include="VideoData.cs" />
-    <Compile Include="VideoTransformer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PlaybackStatus.cs" />
   </ItemGroup>
@@ -130,10 +122,6 @@
     <ProjectReference Include="..\Box9.Leds.Core\Box9.Leds.Core.csproj">
       <Project>{329e36f9-1120-4dc0-9dee-104b03783a48}</Project>
       <Name>Box9.Leds.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Box9.Leds.DataStorage\Box9.Leds.DataStorage.csproj">
-      <Project>{8D188A60-264F-49C1-BC88-C242E01E82F2}</Project>
-      <Name>Box9.Leds.DataStorage</Name>
     </ProjectReference>
     <ProjectReference Include="..\Box9.Leds.FcClient\Box9.Leds.FcClient.csproj">
       <Project>{7CE537D5-6007-4E49-A2C9-A1EF48BEAF12}</Project>

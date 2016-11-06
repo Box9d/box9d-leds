@@ -6,6 +6,6 @@ namespace Box9.Leds.Business.Services
 {
     public interface IBrightnessService
     {
-        Task AdjustBrightness(int brightnessPercentage, IEnumerable<ServerConfiguration> serverConfigurations);
+        void AdjustBrightness(int brightnessPercentage, IEnumerable<ServerConfiguration> serverConfigurations);
     }
 }

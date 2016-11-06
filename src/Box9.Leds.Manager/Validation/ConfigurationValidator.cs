@@ -9,11 +9,11 @@ namespace Box9.Leds.Manager.Validation
 {
     public class ConfigurationValidator : IConfigurationValidator
     {
-        public async Task<ValidationResult> Validate(LedConfiguration configuration)
+        public ValidationResult Validate(LedConfiguration configuration)
         {
             var errors = new List<string>();
             errors.AddRange(ValidateVideoSelected(configuration));
-            errors.AddRange(await ValidateServerConnections(configuration));
+            errors.AddRange(ValidateServerConnections(configuration));
 
             return new ValidationResult(errors); 
         }
@@ -31,14 +31,14 @@ namespace Box9.Leds.Manager.Validation
             return new List<string>();
         }
 
-        private async Task<IEnumerable<string>> ValidateServerConnections(LedConfiguration configuration)
+        private IEnumerable<string> ValidateServerConnections(LedConfiguration configuration)
         {
             var errors = new List<string>();
 
             var clientValidator = new WsClientValidator();
             foreach (var server in configuration.Servers)
             {
-                bool isConnected = await clientValidator.IsServerConnected(IPAddress.Parse(server.IPAddress), server.Port);
+                bool isConnected = clientValidator.IsServerConnected(IPAddress.Parse(server.IPAddress), server.Port);
 
                 if (!isConnected)
                 {

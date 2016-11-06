@@ -5,6 +5,6 @@ namespace Box9.Leds.Manager.Validation
 {
     public interface IConfigurationValidator
     {
-        Task<ValidationResult> Validate(LedConfiguration configuration);
+        ValidationResult Validate(LedConfiguration configuration);
     }
 }

@@ -11,23 +11,23 @@ namespace Box9.Leds.Business.Services
 {
     public class BrightnessService : IBrightnessService
     {
-        public async Task AdjustBrightness(int brightnessPercentage, IEnumerable<ServerConfiguration> serverConfigurations)
+        public void AdjustBrightness(int brightnessPercentage, IEnumerable<ServerConfiguration> serverConfigurations)
         {
             foreach (var server in serverConfigurations)
             {
                 using (var client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", server.IPAddress, server.Port))))
                 {
-                    await client.ConnectAsync();
+                    client.Connect();
 
-                    var serverInfo = await client.SendMessage(new ConnectedDevicesRequest());
+                    var serverInfo = client.SendMessage(new ConnectedDevicesRequest());
                     var fadecandySerials = serverInfo.Devices.Select(d => d.Serial);
 
                     foreach (var serial in fadecandySerials)
                     {
-                        await client.SendMessage(new ColorCorrectionRequest(brightnessPercentage, serial));
+                        client.SendMessage(new ColorCorrectionRequest(brightnessPercentage, serial));
                     }
 
-                    await client.CloseAsync();
+                    client.CloseAsync();
                 }   
             }
         }

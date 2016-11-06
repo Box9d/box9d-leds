@@ -162,10 +162,6 @@
       <Project>{329E36F9-1120-4DC0-9DEE-104B03783A48}</Project>
       <Name>Box9.Leds.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Box9.Leds.DataStorage\Box9.Leds.DataStorage.csproj">
-      <Project>{8D188A60-264F-49C1-BC88-C242E01E82F2}</Project>
-      <Name>Box9.Leds.DataStorage</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Box9.Leds.FcClient\Box9.Leds.FcClient.csproj">
       <Project>{7CE537D5-6007-4E49-A2C9-A1EF48BEAF12}</Project>
       <Name>Box9.Leds.FcClient</Name>

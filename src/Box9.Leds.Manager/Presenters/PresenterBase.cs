@@ -59,4 +59,5 @@ namespace Box9.Leds.Manager.Presenters
             ExceptionRaised(null, new ExceptionArgs(ex));
         }
     }
+
 }

@@ -7,6 +7,8 @@ using AForge.Video.FFMPEG;
 using Box9.Leds.Business.Configuration;
 using Box9.Leds.Business.Service;
 using Box9.Leds.Business.Services;
+using Box9.Leds.Core.Multitasking;
+using Box9.Leds.FcClient;
 using Box9.Leds.FcClient.Messages.UpdatePixels;
 
 namespace Box9.Leds.Video
@@ -53,7 +55,7 @@ namespace Box9.Leds.Video
 
             foreach (var clientConfigPair in clientConfigPairs)
             {
-                await clientConfigPair.Client.ConnectAsync();
+                clientConfigPair.Client.Connect();
             }
 
             this.minutes = minutes;
@@ -63,6 +65,8 @@ namespace Box9.Leds.Video
         public async Task Play(CancellationToken cancellationToken)
         {
             int totalPlayTimeMillseconds = (int)Math.Round((double)((double)totalFrames / frameRate) * 1000, 0) - (minutes * 60 + seconds) * 1000;
+
+            var disconnectedClients = new List<IClientWrapper>();
 
             var playStopwatch = new Stopwatch();
             playStopwatch.Start();
@@ -86,9 +90,22 @@ namespace Box9.Leds.Video
                         cancellationSource.Cancel();
                         cancellationSource = new CancellationTokenSource();
 
-                        var pixelUpdates = patternCreationService.FromBitmap(frame, clientServer.ServerConfiguration);
-                        await clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest(pixelUpdates), cancellationSource.Token);
-                        clientServer.Client.SendBitmap(frame);
+                        if (clientServer.Client.State == System.Net.WebSockets.WebSocketState.Open)
+                        {
+                            var pixelUpdates = patternCreationService.FromBitmap(frame, clientServer.ServerConfiguration);
+                            clientServer.Client.SendPixelUpdates(new UpdatePixelsRequest(pixelUpdates), cancellationSource.Token);
+                            clientServer.Client.SendBitmap(frame);
+                        }
+                        else if (!disconnectedClients.Contains(clientServer.Client))
+                        {
+                            Task.Run(() =>
+                            {
+                                clientServer.Client.Connect(cancellationToken);
+                                disconnectedClients.Remove(clientServer.Client);
+                            }).Forget();
+
+                            disconnectedClients.Add(clientServer.Client);
+                        }
                     }
                 }
             }
@@ -102,9 +119,9 @@ namespace Box9.Leds.Video
 
                 var request = new UpdatePixelsRequest(allPixelsOff);
 
-                await clientConfigPair.Client.SendPixelUpdates(request);
-                await clientConfigPair.Client.SendPixelUpdates(request);
-                await clientConfigPair.Client.CloseAsync();
+                clientConfigPair.Client.SendPixelUpdates(request);
+                clientConfigPair.Client.SendPixelUpdates(request);
+                clientConfigPair.Client.CloseAsync();
                 clientConfigPair.Client.Dispose();
             }
 

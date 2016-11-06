@@ -147,16 +147,14 @@ namespace Box9.Leds.Manager.Presenters
                 .Using<LedManagerViewToConfigurationMap>()
                 .Map(view);
 
-            var adjustBrightnessTask = brightnessService.AdjustBrightness(e.Value, configuration.Servers);
-
             try
             {
-                await adjustBrightnessTask;
+                brightnessService.AdjustBrightness(e.Value, configuration.Servers);
             }
             catch (Exception ex)
             {
                 NotifyError(ex);
-            }
+            }            
         }
 
         private void ImportVideo(object sender, StringEventArgs e)
@@ -191,20 +189,20 @@ namespace Box9.Leds.Manager.Presenters
                 .Using<LedManagerViewToConfigurationMap>()
                 .Map(view);
 
-            IConfigurationValidator configValidator = new ConfigurationValidator();
-            var validationResult = configValidator.Validate(configuration).Result;
-
-            if (validationResult.OK)
+            Task.Run(async () =>
             {
-                if (view.DisplayVideo)
-                {
-                    videoForm = new VideoForm();
-                    videoForm.Show();
-                }
+                IConfigurationValidator configValidator = new ConfigurationValidator();
+                var validationResult = configValidator.Validate(configuration);
 
-                Task.Run(async () =>
+                if (validationResult.OK)
                 {
-                    videoPlayer = new VideoPlayer(configuration, new PatternCreationService());
+                    if (view.DisplayVideo)
+                    {
+                        videoForm = new VideoForm();
+                        videoForm.Show();
+                    }
+
+                    videoPlayer = new VideoPlayer(configuration, new PatternCreationService(), new VideoMetadataService());
 
                     var clientConfigPairs = new List<ClientConfigPair>();
                     foreach (var server in configuration.Servers)
@@ -221,19 +219,19 @@ namespace Box9.Leds.Manager.Presenters
                     view.PlaybackStatus = PlaybackStatus.ReadyToPlay;
 
                     MarkAsDirty();
-                }).Forget();
 
-                playbackCancellationTokenSource = new CancellationTokenSource();
-            }
-            else
-            {
-                view.PlaybackStatus = PlaybackStatus.NotReady;
-
-                foreach (var error in validationResult.Errors)
-                {
-                    NotifyError(new Exception(error));
+                    playbackCancellationTokenSource = new CancellationTokenSource();
                 }
-            }
+                else
+                {
+                    view.PlaybackStatus = PlaybackStatus.NotReady;
+
+                    foreach (var error in validationResult.Errors)
+                    {
+                        NotifyError(new Exception(error));
+                    }
+                }
+            }).Forget();
 
             MarkAsDirty();
         }

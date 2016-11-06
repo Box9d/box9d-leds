@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,14 +15,37 @@ namespace Box9.Leds.Manager
     {
         private readonly VideoForm form;
 
+        public WebSocketState State
+        {
+            get
+            {
+                return WebSocketState.Open;
+            }
+        }
+
+        public bool IsConnected
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public bool AttemptingToConnect
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public DisplayClientWrapper(VideoForm form)
         {
             this.form = form;
         }
 
-        public async Task ConnectAsync()
+        public void Connect(CancellationToken? cancellationToken = null)
         {
-            await Task.Yield();
         }
 
         public void Dispose()
@@ -29,16 +53,13 @@ namespace Box9.Leds.Manager
             return;
         }
 
-        public async Task<TResponse> SendMessage<TResponse>(IJsonRequest<TResponse> request) where TResponse : new()
+        public TResponse SendMessage<TResponse>(IJsonRequest<TResponse> request) where TResponse : new()
         {
-            await Task.Yield();
-
             throw new NotImplementedException("Unable to send message to a display client");
         }
 
-        public async Task SendPixelUpdates(UpdatePixelsRequest request, CancellationToken cancelToken = default(CancellationToken))
+        public void SendPixelUpdates(UpdatePixelsRequest request, CancellationToken cancelToken = default(CancellationToken))
         {
-            await Task.Yield();
         }
 
         public void SendBitmap(Bitmap bitmap)
@@ -58,9 +79,8 @@ namespace Box9.Leds.Manager
             } 
         }
 
-        public async Task CloseAsync()
+        public void CloseAsync()
         {
-            await Task.Yield();
         }
     }
 }

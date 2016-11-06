@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Box9.Leds.FcClient.Messages;
 using Box9.Leds.FcClient.Messages.UpdatePixels;
 using Newtonsoft.Json;
@@ -15,13 +13,19 @@ namespace Box9.Leds.FcClient
 {
     public class WsClientWrapper : IClientWrapper
     {
-        public WebSocketState State { get; private set; }
+        public WebSocketState State
+        {
+            get
+            {
+                return socket.State;
+            }
+        }
 
         private ClientWebSocket socket;
+        
         private readonly Uri serverAddress;
         private readonly int sendMaxBufferLength;
         private readonly int receiveMaxBufferLength;
-        private Task currentSend;
 
         public WsClientWrapper(Uri serverAddress)
         {
@@ -29,10 +33,6 @@ namespace Box9.Leds.FcClient
             this.serverAddress = serverAddress;
             this.sendMaxBufferLength = 4096;
             this.receiveMaxBufferLength = 4096;
-
-            State = WebSocketState.None;
-
-            currentSend = Task.CompletedTask;
         }
 
         public WsClientWrapper(string ipAddress, int port)
@@ -40,30 +40,25 @@ namespace Box9.Leds.FcClient
         {
         }
 
-        public async Task ConnectAsync()
+        public void Connect(CancellationToken? cancellationToken = null)
         {
-            if (socket.State != WebSocketState.Open)
+            while (!(cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested) && socket.State != WebSocketState.Open)
             {
-                socket.Dispose();
-                socket = new ClientWebSocket();
+                var newSocket = new ClientWebSocket();
 
                 try
                 {
-                    lock(socket)
-                    {
-                        socket.ConnectAsync(serverAddress, CancellationToken.None).Wait();
-                    }
+                    newSocket.ConnectAsync(serverAddress, !cancellationToken.HasValue ? CancellationToken.None : cancellationToken.Value).Wait();
+                    socket = newSocket;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw new Exception(string.Format("Could not connect to web socket at {0}", serverAddress), ex);
+                    newSocket.Dispose();
                 }
             }
-
-            State = socket.State;
         }
 
-        public async Task<TResponse> SendMessage<TResponse>(IJsonRequest<TResponse> request)
+        public TResponse SendMessage<TResponse>(IJsonRequest<TResponse> request)
             where TResponse : new()
         {
             var jsonString = JsonConvert.SerializeObject(request);
@@ -92,14 +87,12 @@ namespace Box9.Leds.FcClient
             return JsonConvert.DeserializeObject<TResponse>(message);
         }
 
-        public async Task CloseAsync()
+        public void CloseAsync()
         {
             lock(socket)
             {
                 socket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
             }
-
-            await Task.Yield();
         }
 
         public void Dispose()
@@ -110,7 +103,7 @@ namespace Box9.Leds.FcClient
             }
         }
 
-        public async Task SendPixelUpdates(UpdatePixelsRequest request, CancellationToken token)
+        public void SendPixelUpdates(UpdatePixelsRequest request, CancellationToken token)
         {
             var data = new List<byte>
             {
@@ -126,10 +119,15 @@ namespace Box9.Leds.FcClient
 
             lock (socket)
             {
-                socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, token).Wait();
+                try
+                {
+                    socket.SendAsync(new ArraySegment<byte>(data.ToArray()), WebSocketMessageType.Binary, true, token).Wait();
+                }
+                catch (Exception)
+                {
+                    // Swallow exceptions and handle re-connection elsewhere
+                }               
             }
-
-            await Task.Yield();
         }
 
         public void SendBitmap(Bitmap bitmap)
