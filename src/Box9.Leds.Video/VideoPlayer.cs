@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using AForge.Video.FFMPEG;
 using Box9.Leds.Business.Configuration;
 using Box9.Leds.Business.Service;
 using Box9.Leds.Business.Services;
@@ -98,13 +97,13 @@ namespace Box9.Leds.Video
                         }
                         else if (!disconnectedClients.Contains(clientServer.Client))
                         {
+                            disconnectedClients.Add(clientServer.Client);
+
                             Task.Run(() =>
                             {
                                 clientServer.Client.Connect(cancellationToken);
                                 disconnectedClients.Remove(clientServer.Client);
                             }).Forget();
-
-                            disconnectedClients.Add(clientServer.Client);
                         }
                     }
                 }
