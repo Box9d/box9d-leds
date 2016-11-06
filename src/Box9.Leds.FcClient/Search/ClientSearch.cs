@@ -44,11 +44,6 @@ namespace Box9.Leds.FcClient.Search
             }
         }
 
-        public DeviceDetails GetDeviceDetails(string ipAddress)
-        {
-            throw new NotImplementedException();
-        }
-
         private async void PingCompleted(object sender, PingCompletedEventArgs args)
         {
             if (token.IsCancellationRequested)

@@ -12,7 +12,5 @@ namespace Box9.Leds.FcClient.Search
         event EventHandler<IntegerEventArgs> PercentageSearched;
 
         void SearchForFadecandyServers(IEnumerable<string> ipAddresses, int pingTimeoutInMilliseconds, CancellationToken cancellationToken);
-
-        DeviceDetails GetDeviceDetails(string ipAddress);
     }
 }

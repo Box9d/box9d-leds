@@ -89,7 +89,6 @@
     <Compile Include="Messages\UpdatePixels\UpdatePixelsRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\ClientSearch.cs" />
-    <Compile Include="Search\DeviceDetails.cs" />
     <Compile Include="Search\IClientSearch.cs" />
     <Compile Include="WsClientWrapper.cs" />
   </ItemGroup>
