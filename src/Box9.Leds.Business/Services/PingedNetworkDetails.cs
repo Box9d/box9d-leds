@@ -9,6 +9,7 @@ namespace Box9.Leds.Business.Services
     public class PingedNetworkDetails : INetworkDetails
     {
         private List<PingedNetworkDevice> pingedNetworkDevices;
+        private int pingedDevices;
 
         public IEnumerable<INetworkDeviceDetails> Devices
         {
@@ -21,6 +22,7 @@ namespace Box9.Leds.Business.Services
         internal PingedNetworkDetails(IEnumerable<string> ipAddresses, CancellationToken token)
         {
             pingedNetworkDevices = new List<PingedNetworkDevice>();
+            pingedDevices = 0;
 
             var total = ipAddresses.Count();
             var pingTimeoutInMilliseconds = 50;
@@ -36,8 +38,15 @@ namespace Box9.Leds.Business.Services
                     {
                         pingedNetworkDevices.Add(new PingedNetworkDevice(args.Reply.Address.ToString()));
                     }
+
+                    pingedDevices++;
                 };
                 ping.SendAsync(IPAddress.Parse(ipAddress), pingTimeoutInMilliseconds, ipAddress);
+            }
+
+            while (pingedDevices != ipAddresses.Count())
+            {
+                Thread.Sleep(100);
             }
         }
     }
