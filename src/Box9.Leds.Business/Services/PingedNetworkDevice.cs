@@ -10,13 +10,13 @@
 
         public int? SignalStrengthPercentage { get; private set; }
 
-        internal PingedNetworkDevice(string ipAddress)
+        internal PingedNetworkDevice(string ipAddress, string deviceName = null)
         {
             IPAddress = ipAddress;
+            DeviceName = deviceName;
 
             SignalStrengthPercentage = null;
             MacAddress = null;
-            DeviceName = null;
         }
     }
 }

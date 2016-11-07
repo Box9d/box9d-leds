@@ -28,5 +28,12 @@ namespace Box9.Leds.Business.Dtos
         public NetworkDeviceDetails()
         {
         }
+
+        public override string ToString()
+        {
+            return !string.IsNullOrEmpty(DeviceName)
+                ? DeviceName
+                : IPAddress;
+        }
     }
 }

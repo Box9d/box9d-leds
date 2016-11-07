@@ -115,8 +115,7 @@ namespace Box9.Leds.Manager.Presenters
                 ProgressChanged();
 
                 var networkDetails = networkService.GetNetworkDetails("192.168.0.1", cts.Token);
-                view.Servers.AddRange(networkDetails.Devices
-                    .Where(d => networkService.IsFadecandyDevice(d)));
+                view.Servers.AddRange(networkDetails.Devices.Where(d => networkService.IsFadecandyDevice(d)));
 
                 view.ScanProgressPercentage = 100;
                 ProgressChanged();
@@ -124,9 +123,9 @@ namespace Box9.Leds.Manager.Presenters
             }).Forget();
         }
 
-        public void ServerSelected(string ipAddress)
+        public void ServerSelected(string server)
         {
-            view.SelectedServer = view.Servers.Single(s => s.IPAddress == ipAddress);
+            view.SelectedServer = view.Servers.Single(s => s.ToString() == server);
 
             MarkAsDirty();
         }
