@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -25,9 +27,12 @@ namespace Box9.Leds.Business.Services
             pingedDevices = 0;
 
             var total = ipAddresses.Count();
-            var pingTimeoutInMilliseconds = 50;
+            var pingTimeoutInMilliseconds = 250;
+            var searchTimeoutSeconds = 10;
             var queue = new Queue<string>(ipAddresses);
 
+            var searchTimeoutStopwatch = new Stopwatch();
+            searchTimeoutStopwatch.Start();
             while (!token.IsCancellationRequested && queue.Any())
             {
                 var ipAddress = queue.Dequeue();
@@ -36,7 +41,18 @@ namespace Box9.Leds.Business.Services
                 {
                     if (args.Reply.Status == IPStatus.Success)
                     {
-                        pingedNetworkDevices.Add(new PingedNetworkDevice(args.Reply.Address.ToString()));
+                        string host = null;
+
+                        try
+                        {
+                            IPHostEntry entry = Dns.GetHostEntry(args.Reply.Address);
+                            host = entry.HostName;
+                        }
+                        catch (Exception)
+                        {
+                        }
+
+                        pingedNetworkDevices.Add(new PingedNetworkDevice(args.Reply.Address.ToString(), host));
                     }
 
                     pingedDevices++;
@@ -44,7 +60,7 @@ namespace Box9.Leds.Business.Services
                 ping.SendAsync(IPAddress.Parse(ipAddress), pingTimeoutInMilliseconds, ipAddress);
             }
 
-            while (pingedDevices != ipAddresses.Count())
+            while (pingedDevices != ipAddresses.Count() && searchTimeoutStopwatch.ElapsedMilliseconds < searchTimeoutSeconds * 1000)
             {
                 Thread.Sleep(100);
             }
