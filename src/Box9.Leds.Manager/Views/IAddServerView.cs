@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Box9.Leds.Business.Dtos;
 using Box9.Leds.Business.EventsArguments;
+using Box9.Leds.Business.Services;
 using Box9.Leds.Core.EventsArguments;
 using Box9.Leds.Core.UpdatePixels;
 
@@ -32,11 +34,11 @@ namespace Box9.Leds.Manager.Views
 
         event EventHandler<ServerConfigurationEventArgs> ServerAddedOrUpdated;
 
-        string SelectedServer { get; set; }
+        NetworkDeviceDetails SelectedServer { get; set; }
 
         int? ScanProgressPercentage { get; set; }
 
-        List<string> Servers { get; set; }
+        List<NetworkDeviceDetails> Servers { get; set; }
 
         int? NumberOfHorizontalPixels { get; set; }
 

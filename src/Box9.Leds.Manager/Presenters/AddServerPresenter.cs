@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Box9.Leds.Business.Configuration;
+using Box9.Leds.Business.Dtos;
+using Box9.Leds.Business.Services;
+using Box9.Leds.Core.Multitasking;
 using Box9.Leds.FcClient;
-using Box9.Leds.FcClient.Search;
 using Box9.Leds.Manager.Extensions;
 using Box9.Leds.Manager.Forms;
 using Box9.Leds.Manager.Maps;
@@ -41,7 +44,7 @@ namespace Box9.Leds.Manager.Presenters
                 this.view.VerticalPercentage = serverConfiguration.VideoConfiguration.YPercent;
             }
 
-            this.view.Servers = new List<string>();
+            this.view.Servers = new List<NetworkDeviceDetails>();
 
             this.view.ScanForServers += (s, args) =>
             {
@@ -101,29 +104,29 @@ namespace Box9.Leds.Manager.Presenters
 
         public void ScanForServers()
         {
-            IClientSearch clientSearch = new ClientSearch();
+            INetworkService networkService = new NetworkService();
 
             cts = new CancellationTokenSource();
             view.Servers.Clear();
 
-            clientSearch.ServerFound += (sender, server) =>
+            Task.Run(() =>
             {
-                view.Servers.Add(server.Value.ToString());
-                MarkAsDirty();
-            };
-
-            clientSearch.PercentageSearched += (sender, percentage) =>
-            {
-                view.ScanProgressPercentage = percentage.Value;
+                view.ScanProgressPercentage = 1;
                 ProgressChanged();
-            };
 
-            clientSearch.SearchForFadecandyServers(FadecandyAddresses.DefaultAddressRange(), 50, cts.Token);
+                var networkDetails = networkService.GetNetworkDetails("192.168.0.1", cts.Token);
+                view.Servers.AddRange(networkDetails.Devices
+                    .Where(d => networkService.IsFadecandyDevice(d)));
+
+                view.ScanProgressPercentage = 100;
+                ProgressChanged();
+                MarkAsDirty();
+            }).Forget();
         }
 
-        public void ServerSelected(string address)
+        public void ServerSelected(string ipAddress)
         {
-            view.SelectedServer = address;
+            view.SelectedServer = view.Servers.Single(s => s.IPAddress == ipAddress);
 
             MarkAsDirty();
         }

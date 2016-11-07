@@ -15,7 +15,7 @@ namespace Box9.Leds.Business.Services
         {
             foreach (var server in serverConfigurations)
             {
-                using (var client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", server.IPAddress, server.Port))))
+                using (var client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", server.NetworkDeviceDetails.IPAddress, server.Port))))
                 {
                     client.Connect();
 

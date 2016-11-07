@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using Box9.Leds.Business.Dtos;
 using Box9.Leds.Core.UpdatePixels;
 
 namespace Box9.Leds.Business.Configuration
 {
     public class ServerConfiguration
     {
-        public string IPAddress { get; set; }
+        public NetworkDeviceDetails NetworkDeviceDetails { get; set; }
 
         public int XPixels { get; set; }
 
@@ -19,14 +20,16 @@ namespace Box9.Leds.Business.Configuration
 
         public ServerConfiguration()
         {
-            IPAddress = string.Empty;
+            NetworkDeviceDetails = new NetworkDeviceDetails();
             PixelMappings = new List<PixelInfo>();
             VideoConfiguration = new ServerVideoConfiguration();
         }
 
         public override string ToString()
         {
-            return IPAddress.ToString();
+            return string.IsNullOrEmpty(NetworkDeviceDetails.DeviceName)
+                ? NetworkDeviceDetails.DeviceName
+                : NetworkDeviceDetails.IPAddress;
         }
     }
 }

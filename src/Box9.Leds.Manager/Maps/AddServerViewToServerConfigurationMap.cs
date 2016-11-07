@@ -11,7 +11,7 @@ namespace Box9.Leds.Manager.Maps
         {
             return new ServerConfiguration
             {
-                IPAddress = source.SelectedServer,
+                NetworkDeviceDetails = source.SelectedServer,
                 PixelMappings = source.PixelMappings.ToList(),
                 Port = 7890,
                 VideoConfiguration = new ServerVideoConfiguration

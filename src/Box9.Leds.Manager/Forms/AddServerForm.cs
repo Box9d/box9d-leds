@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Box9.Leds.Business.Configuration;
+using Box9.Leds.Business.Dtos;
 using Box9.Leds.Business.EventsArguments;
+using Box9.Leds.Business.Services;
 using Box9.Leds.Core.EventsArguments;
 using Box9.Leds.Core.UpdatePixels;
 using Box9.Leds.Manager.Extensions;
@@ -16,11 +18,11 @@ namespace Box9.Leds.Manager.Forms
     {
         private readonly AddServerPresenter presenter;
 
-        public string SelectedServer { get; set; }
+        public NetworkDeviceDetails SelectedServer { get; set; }
 
         public int? ScanProgressPercentage { get; set; }
 
-        public List<string> Servers { get; set; }
+        public List<NetworkDeviceDetails> Servers { get; set; }
 
         public int? NumberOfHorizontalPixels { get; set; }
 
@@ -72,8 +74,12 @@ namespace Box9.Leds.Manager.Forms
             widthPercentage.DropDownStyle = ComboBoxStyle.DropDownList;
             heightPercentage.DropDownStyle = ComboBoxStyle.DropDownList;
 
+            searchProgress.Style = ProgressBarStyle.Continuous;
+            searchProgress.MarqueeAnimationSpeed = 0;
+
             scanForServersButton.Click += (s, args) =>
             {
+                searchProgress.Enabled = true;
                 ScanForServers(s, args);
             };
 
@@ -195,9 +201,17 @@ namespace Box9.Leds.Manager.Forms
         {
             Invoke(new Action(() =>
             {
-                searchProgress.Value = ScanProgressPercentage.HasValue
-                    ? ScanProgressPercentage.Value
+                var marqueeAnimationEnabled = ScanProgressPercentage.HasValue
+                    && ScanProgressPercentage.Value != 100
+                    && ScanProgressPercentage.Value != 0;
+
+                searchProgress.MarqueeAnimationSpeed = marqueeAnimationEnabled
+                    ? 30
                     : 0;
+
+                searchProgress.Style = marqueeAnimationEnabled
+                    ? ProgressBarStyle.Marquee
+                    : ProgressBarStyle.Continuous;
             }));            
         }
 

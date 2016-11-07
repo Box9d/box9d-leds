@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Addressing\IPAddressing.cs" />
     <Compile Include="EventArgs\BooleanEventArgs.cs" />
     <Compile Include="EventArgs\CustomTypeEventArgs.cs" />
     <Compile Include="EventArgs\ExceptionArgs.cs" />

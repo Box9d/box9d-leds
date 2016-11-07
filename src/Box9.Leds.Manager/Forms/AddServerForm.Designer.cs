@@ -83,6 +83,7 @@
             this.searchProgress.Location = new System.Drawing.Point(129, 13);
             this.searchProgress.Name = "searchProgress";
             this.searchProgress.Size = new System.Drawing.Size(134, 23);
+            this.searchProgress.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.searchProgress.TabIndex = 3;
             // 
             // cancel
@@ -213,7 +214,7 @@
             this.textBoxYPixels.Name = "textBoxYPixels";
             this.textBoxYPixels.Size = new System.Drawing.Size(35, 20);
             this.textBoxYPixels.TabIndex = 18;
-            //
+            // 
             // labelLedMapping
             // 
             this.labelLedMapping.AutoSize = true;

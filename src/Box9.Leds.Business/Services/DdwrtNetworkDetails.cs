@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using Box9.Leds.Business.Services.DdwrtRawDataParsing;
 
 namespace Box9.Leds.Business.Services
@@ -19,45 +16,26 @@ namespace Box9.Leds.Business.Services
             }
         }
 
-        internal DdwrtNetworkDetails(string routerIpAddress)
+        internal DdwrtNetworkDetails(string rawData)
         {
-            devices = new List<DdwrtNetworkDeviceDetails>();
+            devices = new List<DdwrtNetworkDeviceDetails>();           
 
-            var request = WebRequest.CreateHttp(string.Format("http://{0}/{1}", routerIpAddress, "Info.live.htm"));
-            request.Method = "GET";
+            var activeWirelessDevices = new ActiveWirelessDevicesParse(rawData);
+            var dhcpLeases = new DhcpLeasesParse(rawData);
 
-            string rawData = string.Empty;
-
-            try
+            foreach (var activeWirlessDevice in activeWirelessDevices.ActiveDevices)
             {
-                using (var response = request.GetResponse())
-                using (var stream = response.GetResponseStream())
-                using (var streamReader = new StreamReader(stream))
+                var dhcpLease = dhcpLeases.DhcpLeases.Single(l => l.MacAddress == activeWirlessDevice.MacAddress);
+
+                var deviceDetails = new DdwrtNetworkDeviceDetails
                 {
-                    rawData = streamReader.ReadToEnd();
-                }
+                    DeviceName = dhcpLease.DeviceName,
+                    IPAddress = dhcpLease.IpAddress,
+                    MacAddress = activeWirlessDevice.MacAddress,
+                    SignalStrengthPercentage = activeWirlessDevice.SignalStrengthPercentage
+                };
 
-                var activeWirelessDevices = new ActiveWirelessDevicesParse(rawData);
-                var dhcpLeases = new DhcpLeasesParse(rawData);
-
-                foreach (var activeWirlessDevice in activeWirelessDevices.ActiveDevices)
-                {
-                    var dhcpLease = dhcpLeases.DhcpLeases.Single(l => l.MacAddress == activeWirlessDevice.MacAddress);
-
-                    var deviceDetails = new DdwrtNetworkDeviceDetails
-                    {
-                        DeviceName = dhcpLease.DeviceName,
-                        IPAddress = dhcpLease.IpAddress,
-                        MacAddress = activeWirlessDevice.MacAddress,
-                        SignalStrengthPercentage = activeWirlessDevice.SignalStrengthPercentage
-                    };
-
-                    devices.Add(deviceDetails);
-                }
-            }
-            catch (Exception)
-            {
-                // TODO: Get default network details          
+                devices.Add(deviceDetails);
             }
         }
     }

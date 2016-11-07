@@ -1,7 +1,12 @@
-﻿namespace Box9.Leds.Business.Services
+﻿using System.Threading;
+using Box9.Leds.Business.Dtos;
+
+namespace Box9.Leds.Business.Services
 {
     public interface INetworkService
     {
-        INetworkDetails GetNetworkDetails();
+        NetworkDetails GetNetworkDetails(string routerIpAddress, CancellationToken token);
+
+        bool IsFadecandyDevice(NetworkDeviceDetails networkDevice);
     }
 }

@@ -124,8 +124,8 @@ namespace Box9.Leds.Video
                 clientConfigPair.Client.Dispose();
             }
 
-            this.videoQueuer.Dispose();
-            this.videoQueuer = new VideoQueuer(configuration, videoMetadataService);
+            videoQueuer.Dispose();
+            videoQueuer = new VideoQueuer(configuration, videoMetadataService);
         }
     }
 }

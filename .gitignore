@@ -10,7 +10,6 @@
 
 [Dd]ebug/
 [Rr]elease/
-x64/
 build/
 [Bb]in/
 [Oo]bj/
@@ -189,5 +188,3 @@ $RECYCLE.BIN/
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
-/src/Box9.Leds.Business/MediaInfoDotNet.dll.config
-/src/Box9.Leds.Business/x86/MediaInfo.dll
