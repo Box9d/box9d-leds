@@ -114,7 +114,7 @@ namespace Box9.Leds.Manager.Presenters
                 view.ScanProgressPercentage = 1;
                 ProgressChanged();
 
-                var networkDetails = networkService.GetNetworkDetails("192.168.0.1", cts.Token);
+                var networkDetails = networkService.GetNetworkDetails("192.168.1.1", cts.Token);
                 view.Servers.AddRange(networkDetails.Devices.Where(d => networkService.IsFadecandyDevice(d)));
 
                 view.ScanProgressPercentage = 100;

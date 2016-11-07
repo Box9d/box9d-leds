@@ -30,6 +30,7 @@ namespace Box9.Leds.FcClient
         public WsClientWrapper(Uri serverAddress)
         {
             socket = new ClientWebSocket();
+            socket.Options.KeepAliveInterval = TimeSpan.FromMilliseconds(100);
             this.serverAddress = serverAddress;
             this.sendMaxBufferLength = 4096;
             this.receiveMaxBufferLength = 4096;

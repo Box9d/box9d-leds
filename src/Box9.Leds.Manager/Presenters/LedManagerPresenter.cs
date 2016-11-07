@@ -255,8 +255,11 @@ namespace Box9.Leds.Manager.Presenters
         {
             playbackCancellationTokenSource.Cancel();
             view.PlaybackStatus = PlaybackStatus.NotReady;
-
-            videoForm.CloseThreadSafe();
+            
+            if (videoForm != null)
+            {
+                videoForm.CloseThreadSafe();
+            }
 
             MarkAsDirty();
         }

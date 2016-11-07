@@ -120,6 +120,13 @@ namespace Box9.Leds.Video
 
                 clientConfigPair.Client.SendPixelUpdates(request);
                 clientConfigPair.Client.SendPixelUpdates(request);
+                clientConfigPair.Client.SendPixelUpdates(request);
+                clientConfigPair.Client.SendPixelUpdates(request);
+                clientConfigPair.Client.SendPixelUpdates(request);
+            }
+
+            foreach (var clientConfigPair in clientConfigPairs)
+            {
                 clientConfigPair.Client.CloseAsync();
                 clientConfigPair.Client.Dispose();
             }
