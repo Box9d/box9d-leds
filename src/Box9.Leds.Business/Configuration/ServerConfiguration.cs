@@ -27,9 +27,7 @@ namespace Box9.Leds.Business.Configuration
 
         public override string ToString()
         {
-            return string.IsNullOrEmpty(NetworkDeviceDetails.DeviceName)
-                ? NetworkDeviceDetails.DeviceName
-                : NetworkDeviceDetails.IPAddress;
+            return NetworkDeviceDetails.ToString();
         }
     }
 }
