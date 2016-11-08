@@ -56,6 +56,8 @@ namespace Box9.Leds.Manager.Presenters
             this.view.Play += Play;
             this.view.Stop += Stop;
 
+            this.view.ShowServerStatus += ShowServerStatus;
+
             this.view.PlaybackStatus = PlaybackStatus.NotReady;
 
             NewConfiguration(null, EventArgs.Empty);
@@ -262,6 +264,17 @@ namespace Box9.Leds.Manager.Presenters
             }
 
             MarkAsDirty();
+        }
+
+        private void ShowServerStatus(object sender, EventArgs e)
+        {
+            var configuration = ExplicitlyMap
+                .TheseTypes<ILedManagerView, LedConfiguration>()
+                .Using<LedManagerViewToConfigurationMap>()
+                .Map(view);
+
+            var serverStatusForm = new ServerStatusForm(configuration);
+            serverStatusForm.Show();
         }
 
         private void NewView()

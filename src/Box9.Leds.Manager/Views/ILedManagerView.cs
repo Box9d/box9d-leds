@@ -35,6 +35,8 @@ namespace Box9.Leds.Manager.Views
 
         event EventHandler<EventArgs> Stop;
 
+        event EventHandler<EventArgs> ShowServerStatus;
+
         List<ServerConfiguration> Servers { get; set; }
 
         string ConfigurationFilePath { get; set; }

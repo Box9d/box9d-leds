@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Box9.Leds.Business.Configuration;
 using Box9.Leds.Business.Services;
 using Box9.Leds.Manager.Views;
@@ -27,10 +28,10 @@ namespace Box9.Leds.Manager.Presenters
             {
                 try
                 {
-                    view.NetworkDetails = networkService.GetNetworkDetails(routerIpAddress, cts.Token);
+                    view.NetworkDetails = networkService.GetDdwrtNetworkDetails(routerIpAddress);
                     MarkAsDirty();
                 }
-                catch
+                catch (Exception)
                 {
                     // Surpress errors in updating network details
                 }

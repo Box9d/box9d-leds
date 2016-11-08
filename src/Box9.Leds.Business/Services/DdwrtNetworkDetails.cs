@@ -6,7 +6,7 @@ namespace Box9.Leds.Business.Services
 {
     public class DdwrtNetworkDetails : INetworkDetails
     {
-        private List<DdwrtNetworkDeviceDetails> devices;
+        protected List<DdwrtNetworkDeviceDetails> devices;
 
         public IEnumerable<INetworkDeviceDetails> Devices
         {
@@ -14,6 +14,11 @@ namespace Box9.Leds.Business.Services
             {
                 return devices;
             }
+        }
+
+        internal DdwrtNetworkDetails()
+        {
+            devices = new List<DdwrtNetworkDeviceDetails>();
         }
 
         internal DdwrtNetworkDetails(string rawData)

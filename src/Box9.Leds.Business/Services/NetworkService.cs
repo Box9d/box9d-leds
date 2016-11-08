@@ -9,27 +9,27 @@ namespace Box9.Leds.Business.Services
 {
     public class NetworkService : INetworkService
     {
-        public NetworkDetails GetNetworkDetails(string routerIpAddress, CancellationToken token)
+        public NetworkDetails GetDdwrtNetworkDetails(string routerIpAddress)
         {
-            try
-            {
-                var request = WebRequest.CreateHttp(string.Format("http://{0}/{1}", routerIpAddress, "Info.live.htm"));
-                request.Method = "GET";
+            var request = WebRequest.CreateHttp(string.Format("http://{0}/{1}", routerIpAddress, "Info.live.htm"));
+            request.Method = "GET";
 
-                using (var response = request.GetResponse())
-                using (var stream = response.GetResponseStream())
-                using (var streamReader = new StreamReader(stream))
-                {
-                    return new NetworkDetails(new DdwrtNetworkDetails(streamReader.ReadToEnd()));
-                }     
-            }
-            catch (Exception)
+            using (var response = request.GetResponse())
+            using (var stream = response.GetResponseStream())
+            using (var streamReader = new StreamReader(stream))
             {
-                throw;
+                return new NetworkDetails(new DdwrtNetworkDetails(streamReader.ReadToEnd()));
+            }     
+        }
 
-                // Change to default to using ping to find network devices if required
-                // return new NetworkDetails(new PingedNetworkDetails(IPAddressing.DefaultIPAddressRange, token));
-            }
+        public NetworkDetails GetDdwrtTestNetworkDetails()
+        {
+            return new NetworkDetails(new TestDdwrtNetworkDetails());
+        }
+
+        public NetworkDetails GetPingedNetworkDetails(CancellationToken token)
+        {
+            return new NetworkDetails(new PingedNetworkDetails(IPAddressing.DefaultIPAddressRange, token));
         }
 
         public bool IsFadecandyDevice(NetworkDeviceDetails networkDevice)

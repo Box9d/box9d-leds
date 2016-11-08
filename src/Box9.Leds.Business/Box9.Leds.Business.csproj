@@ -98,6 +98,7 @@
     <Compile Include="Services\PatternCreationService.cs" />
     <Compile Include="Services\PingedNetworkDevice.cs" />
     <Compile Include="Services\PingedNetworkDetails.cs" />
+    <Compile Include="Services\TestDdwrtNetworkDetails.cs" />
     <Compile Include="Services\VideoMetadataService.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -56,6 +56,8 @@
             this.checkBoxDisplayOutputOnScreen = new System.Windows.Forms.CheckBox();
             this.buttonInitializePlayback = new System.Windows.Forms.Button();
             this.buttonEditServer = new System.Windows.Forms.Button();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.serverStatusToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarStartTime)).BeginInit();
@@ -65,7 +67,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(742, 24);
@@ -292,6 +295,20 @@
             this.buttonEditServer.Text = "Edit";
             this.buttonEditServer.UseVisualStyleBackColor = true;
             // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.serverStatusToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // serverStatusToolStripMenuItem
+            // 
+            this.serverStatusToolStripMenuItem.Name = "serverStatusToolStripMenuItem";
+            this.serverStatusToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.serverStatusToolStripMenuItem.Text = "Server status";
+            // 
             // LedManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -360,6 +377,8 @@
         private System.Windows.Forms.CheckBox checkBoxDisplayOutputOnScreen;
         private System.Windows.Forms.Button buttonInitializePlayback;
         private System.Windows.Forms.Button buttonEditServer;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem serverStatusToolStripMenuItem;
     }
 }
 

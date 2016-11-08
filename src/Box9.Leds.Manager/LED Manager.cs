@@ -5,6 +5,7 @@ using Box9.Leds.Business.Configuration;
 using Box9.Leds.Business.Dtos;
 using Box9.Leds.Business.Services;
 using Box9.Leds.Core.EventsArguments;
+using Box9.Leds.Manager.Forms;
 using Box9.Leds.Manager.Presenters;
 using Box9.Leds.Manager.Views;
 using Box9.Leds.Video;
@@ -42,6 +43,7 @@ namespace Box9.Leds.Manager
         public event EventHandler<EventArgs> InitializePlayback;
         public event EventHandler<EventArgs> Play;
         public event EventHandler<EventArgs> Stop;
+        public event EventHandler<EventArgs> ShowServerStatus;
 
         public LedManager()
         {
@@ -149,6 +151,11 @@ namespace Box9.Leds.Manager
             buttonStop.Click += (s, args) =>
             {
                 Stop(s, args);
+            };
+
+            serverStatusToolStripMenuItem.Click += (s, args) =>
+            {
+                ShowServerStatus(s, args);
             };
         }
 
