@@ -25,8 +25,10 @@ namespace Box9.Leds.Business.Services
             }
             catch (Exception)
             {
-                // Default to using ping to find network devices
-                return new NetworkDetails(new PingedNetworkDetails(IPAddressing.DefaultIPAddressRange, token));
+                throw;
+
+                // Change to default to using ping to find network devices if required
+                // return new NetworkDetails(new PingedNetworkDetails(IPAddressing.DefaultIPAddressRange, token));
             }
         }
 

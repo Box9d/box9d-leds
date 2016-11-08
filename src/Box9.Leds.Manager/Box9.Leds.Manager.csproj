@@ -59,6 +59,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -91,6 +92,12 @@
     <Compile Include="Forms\ConfigureLedMappingForm.Designer.cs">
       <DependentUpon>ConfigureLedMappingForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ServerStatusForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ServerStatusForm.Designer.cs">
+      <DependentUpon>ServerStatusForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\VideoForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,6 +116,7 @@
     <Compile Include="Presenters\ConfigureLedMappingPresenter.cs" />
     <Compile Include="Presenters\PresenterBase.cs" />
     <Compile Include="Presenters\LedManagerPresenter.cs" />
+    <Compile Include="Presenters\ServerStatusPresenter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validation\ConfigurationValidator.cs" />
@@ -117,11 +125,15 @@
     <Compile Include="Views\IAddServerView.cs" />
     <Compile Include="Views\IConfigureLedMappingView.cs" />
     <Compile Include="Views\ILedManagerView.cs" />
+    <Compile Include="Views\IServerStatusView.cs" />
     <EmbeddedResource Include="Forms\AddServerForm.resx">
       <DependentUpon>AddServerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConfigureLedMappingForm.resx">
       <DependentUpon>ConfigureLedMappingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ServerStatusForm.resx">
+      <DependentUpon>ServerStatusForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\VideoForm.resx">
       <DependentUpon>VideoForm.cs</DependentUpon>
