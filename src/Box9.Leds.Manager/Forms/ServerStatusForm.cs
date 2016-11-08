@@ -48,27 +48,24 @@ namespace Box9.Leds.Manager.Forms
 
             Invoke(new Action(() =>
             {
-                labelNumberOfServersOnline.Text = string.Format("{0} server(s) online", LedConfiguration.Servers.Count());
-                tableLayoutPanel.RowCount = LedConfiguration.Servers.Count();
-                tableLayoutPanel.ColumnCount = 1;
+                labelNumberOfServersOnline.Text = string.Format("Monitoring {0} server(s)", LedConfiguration.Servers.Count());
 
                 var servers = LedConfiguration.Servers.ToArray();
                 var textTemplate = "Server: '{0}' - Signal strength {1}%";
+
+                var output = string.Empty;
 
                 for (int i = 0; i < servers.Length; i++)
                 {
                     var deviceDetails = NetworkDetails.Devices.SingleOrDefault(d => d.IPAddress == servers[i].NetworkDeviceDetails.IPAddress);
 
-                    tableLayoutPanel.Controls.Add(new Label
-                    {
-                        Height = tableLayoutPanel.Height / tableLayoutPanel.RowCount,
-                        Width = tableLayoutPanel.Width * 4 / 5,
-                        Dock = DockStyle.Left,
-                        Text = deviceDetails.SignalStrengthPercentage.HasValue
-                            ? string.Format(textTemplate, deviceDetails.DeviceName, deviceDetails.SignalStrengthPercentage.Value)
-                            : string.Format(textTemplate, deviceDetails.DeviceName, 0)
-                    }, 0, i);
+                    output += deviceDetails != null && deviceDetails.SignalStrengthPercentage.HasValue
+                        ? string.Format(textTemplate, servers[i].NetworkDeviceDetails.DeviceName, deviceDetails.SignalStrengthPercentage.Value)
+                        : string.Format(textTemplate, servers[i].NetworkDeviceDetails.DeviceName, 0);
+                    output += Environment.NewLine;
                 }
+
+                labelStatus.Text = output;
             }));
         }
     }

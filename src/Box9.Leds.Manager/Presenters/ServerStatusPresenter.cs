@@ -19,10 +19,9 @@ namespace Box9.Leds.Manager.Presenters
             this.view.LedConfiguration = ledConfiguration;
         }
 
-        public void StartMonitoring(string routerIpAddress, int refreshPeriodInMilliseconds = 500)
+        public void StartMonitoring(string routerIpAddress, int refreshPeriodInMilliseconds = 2000)
         {
             INetworkService networkService = new NetworkService();
-            var cts = new CancellationTokenSource();
 
             var callback = new TimerCallback((obj) =>
             {

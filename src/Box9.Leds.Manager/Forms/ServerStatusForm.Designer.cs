@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.labelNumberOfServersOnline = new System.Windows.Forms.Label();
-            this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.labelStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // labelNumberOfServersOnline
@@ -42,27 +42,21 @@
             this.labelNumberOfServersOnline.TabIndex = 0;
             this.labelNumberOfServersOnline.Text = "0 servers online";
             // 
-            // tableLayoutPanel
+            // labelStatus
             // 
-            this.tableLayoutPanel.AutoScroll = true;
-            this.tableLayoutPanel.AutoSize = true;
-            this.tableLayoutPanel.ColumnCount = 1;
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel.Location = new System.Drawing.Point(16, 39);
-            this.tableLayoutPanel.Name = "tableLayoutPanel";
-            this.tableLayoutPanel.RowCount = 1;
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.Size = new System.Drawing.Size(352, 267);
-            this.tableLayoutPanel.TabIndex = 1;
+            this.labelStatus.AutoSize = true;
+            this.labelStatus.Location = new System.Drawing.Point(13, 43);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(35, 13);
+            this.labelStatus.TabIndex = 1;
+            this.labelStatus.Text = "label1";
             // 
             // ServerStatusForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(391, 318);
-            this.Controls.Add(this.tableLayoutPanel);
+            this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.labelNumberOfServersOnline);
             this.Name = "ServerStatusForm";
             this.Text = "Server Status";
@@ -75,6 +69,6 @@
         #endregion
 
         private System.Windows.Forms.Label labelNumberOfServersOnline;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
+        private System.Windows.Forms.Label labelStatus;
     }
 }
