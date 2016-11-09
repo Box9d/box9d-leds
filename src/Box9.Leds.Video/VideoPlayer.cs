@@ -52,11 +52,6 @@ namespace Box9.Leds.Video
             width = videoMetadata.Width;
             height = videoMetadata.Height;
 
-            foreach (var clientConfigPair in clientConfigPairs)
-            {
-                clientConfigPair.Client.Connect();
-            }
-
             this.minutes = minutes;
             this.seconds = seconds;
         }

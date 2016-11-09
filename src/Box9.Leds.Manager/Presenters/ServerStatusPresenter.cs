@@ -47,7 +47,7 @@ namespace Box9.Leds.Manager.Presenters
             }
         }
 
-        private void FinishMonitoring()
+        public void FinishMonitoring()
         {
             networkDetailsTimer.Dispose();
         }

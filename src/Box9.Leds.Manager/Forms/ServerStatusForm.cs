@@ -37,6 +37,11 @@ namespace Box9.Leds.Manager.Forms
             presenter.IsDirty += ReloadForm;
 
             presenter.StartMonitoring("192.168.1.1");
+
+            FormClosed += (s, args) =>
+            {
+                presenter.FinishMonitoring();
+            };
         }
 
         private void ReloadForm(object sender, EventArgs args)

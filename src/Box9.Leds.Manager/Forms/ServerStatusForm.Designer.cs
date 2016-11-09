@@ -47,9 +47,8 @@
             this.labelStatus.AutoSize = true;
             this.labelStatus.Location = new System.Drawing.Point(13, 43);
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(35, 13);
+            this.labelStatus.Size = new System.Drawing.Size(0, 13);
             this.labelStatus.TabIndex = 1;
-            this.labelStatus.Text = "label1";
             // 
             // ServerStatusForm
             // 

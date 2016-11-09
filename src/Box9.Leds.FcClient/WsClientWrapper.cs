@@ -92,7 +92,10 @@ namespace Box9.Leds.FcClient
         {
             lock(socket)
             {
-                socket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
+                if (socket.State == WebSocketState.Open)
+                {
+                    socket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
+                }
             }
         }
 
