@@ -37,6 +37,8 @@ namespace Box9.Leds.Manager.Views
 
         event EventHandler<EventArgs> ShowServerStatus;
 
+        string PlaybackInfo { get; set; }
+
         List<ServerConfiguration> Servers { get; set; }
 
         string ConfigurationFilePath { get; set; }

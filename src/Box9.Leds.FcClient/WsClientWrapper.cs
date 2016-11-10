@@ -21,6 +21,8 @@ namespace Box9.Leds.FcClient
             }
         }
 
+        public string Host { get { return serverAddress.Host; } }
+
         private ClientWebSocket socket;
         
         private readonly Uri serverAddress;

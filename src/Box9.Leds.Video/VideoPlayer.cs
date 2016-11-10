@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Box9.Leds.Business.Configuration;
 using Box9.Leds.Business.Service;
 using Box9.Leds.Business.Services;
+using Box9.Leds.Core.EventsArguments;
 using Box9.Leds.Core.Multitasking;
 using Box9.Leds.FcClient;
 using Box9.Leds.FcClient.Messages.UpdatePixels;
@@ -22,6 +23,9 @@ namespace Box9.Leds.Video
         private VideoQueuer videoQueuer;
         private AudioData audioData;
 
+        public event EventHandler<StringEventArgs> DisconnectedHost;
+        public event EventHandler<StringEventArgs> ConnectedHost;
+
         long totalFrames;
         double frameRate;
         int width;
@@ -35,6 +39,14 @@ namespace Box9.Leds.Video
             this.patternCreationService = patternCreationService;
             this.videoMetadataService = videoMetadataService;
             videoQueuer = new VideoQueuer(configuration, videoMetadataService);
+
+            DisconnectedHost += (s, args) =>
+            {
+            };
+
+            ConnectedHost += (s, args) =>
+            {
+            };
         }
 
         public async Task Load(IEnumerable<ClientConfigPair> clientConfigPairs, int minutes, int seconds)
@@ -92,12 +104,15 @@ namespace Box9.Leds.Video
                         }
                         else if (!disconnectedClients.Contains(clientServer.Client))
                         {
+                            DisconnectedHost(null, new StringEventArgs(clientServer.Client.Host));
+
                             disconnectedClients.Add(clientServer.Client);
 
                             Task.Run(() =>
                             {
                                 clientServer.Client.Connect(cancellationToken);
                                 disconnectedClients.Remove(clientServer.Client);
+                                ConnectedHost(null, new StringEventArgs(clientServer.Client.Host));
                             }).Forget();
                         }
                     }

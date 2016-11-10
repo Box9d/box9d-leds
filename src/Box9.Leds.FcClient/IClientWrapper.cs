@@ -12,6 +12,8 @@ namespace Box9.Leds.FcClient
     {
         WebSocketState State { get; }
 
+        string Host { get; }
+
         void Connect(CancellationToken? cancellationToken = null);
 
         void CloseAsync();

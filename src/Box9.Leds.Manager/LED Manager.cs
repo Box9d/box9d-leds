@@ -30,6 +30,8 @@ namespace Box9.Leds.Manager
 
         public PlaybackStatus PlaybackStatus { get; set; }
 
+        public string PlaybackInfo { get; set; }
+
         public event EventHandler<StringEventArgs> SaveConfiguration;
         public event EventHandler<StringEventArgs> OpenConfiguration;
         public event EventHandler<EventArgs> NewConfiguration;
@@ -197,6 +199,8 @@ namespace Box9.Leds.Manager
                 buttonPlay.Enabled = PlaybackStatus == PlaybackStatus.ReadyToPlay;
                 buttonStop.Enabled = PlaybackStatus == PlaybackStatus.Playing;
                 buttonInitializePlayback.Enabled = PlaybackStatus != PlaybackStatus.Playing;
+
+                stripStatusLabel.Text = PlaybackInfo;
             }));
         }
 

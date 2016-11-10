@@ -39,6 +39,14 @@ namespace Box9.Leds.Manager
             }
         }
 
+        public string Host
+        {
+            get
+            {
+                return "Display Client";
+            }
+        }
+
         public DisplayClientWrapper(VideoForm form)
         {
             this.form = form;

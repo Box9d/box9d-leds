@@ -218,6 +218,17 @@ namespace Box9.Leds.Manager.Presenters
                     }
 
                     await videoPlayer.Load(clientConfigPairs, view.VideoMetadata.StartTime.Minutes, view.VideoMetadata.StartTime.Seconds);
+                    videoPlayer.ConnectedHost += (s, args) =>
+                    {
+                        view.PlaybackInfo = string.Format("Host '{0}' connected", args.Value);
+                        MarkAsDirty();
+                    };
+                    videoPlayer.DisconnectedHost += (s, args) =>
+                    {
+                        view.PlaybackInfo = string.Format("Host '{0}' disconnected", args.Value);
+                        MarkAsDirty();
+                    };
+
                     view.PlaybackStatus = PlaybackStatus.ReadyToPlay;
 
                     MarkAsDirty();
