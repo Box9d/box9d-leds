@@ -6,11 +6,11 @@ namespace Box9.Leds.Video
 {
     public class ClientConfigPair
     {
-        public IClientWrapper Client { get; }
+        public IFadecandyClientWrapper Client { get; }
 
         public ServerConfiguration ServerConfiguration { get; }
 
-        public ClientConfigPair(IClientWrapper clientWrapper, ServerConfiguration serverConfiguration)
+        public ClientConfigPair(IFadecandyClientWrapper clientWrapper, ServerConfiguration serverConfiguration)
         {
             Client = clientWrapper;
             ServerConfiguration = serverConfiguration;

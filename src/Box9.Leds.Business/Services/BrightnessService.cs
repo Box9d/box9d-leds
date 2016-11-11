@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Box9.Leds.Business.Configuration;
 using Box9.Leds.FcClient;
-using Box9.Leds.FcClient.Messages.ColorCorrection;
-using Box9.Leds.FcClient.Messages.ConnectedDevices;
+using Box9.Leds.FcClient.FadecandyMessages.ColorCorrection;
+using Box9.Leds.FcClient.FadecandyMessages.ConnectedDevices;
 
 namespace Box9.Leds.Business.Services
 {
@@ -15,7 +15,7 @@ namespace Box9.Leds.Business.Services
         {
             foreach (var server in serverConfigurations)
             {
-                using (var client = new WsClientWrapper(new Uri(string.Format("ws://{0}:{1}", server.NetworkDeviceDetails.IPAddress, server.Port))))
+                using (var client = new FadecandyClientWrapper(new Uri(string.Format("ws://{0}:{1}", server.NetworkDeviceDetails.IPAddress, server.Port))))
                 {
                     client.Connect();
 

@@ -9,7 +9,7 @@ using Box9.Leds.Business.Services;
 using Box9.Leds.Core.EventsArguments;
 using Box9.Leds.Core.Multitasking;
 using Box9.Leds.FcClient;
-using Box9.Leds.FcClient.Messages.UpdatePixels;
+using Box9.Leds.FcClient.FadecandyMessages.UpdatePixels;
 
 namespace Box9.Leds.Video
 {
@@ -72,7 +72,7 @@ namespace Box9.Leds.Video
         {
             int totalPlayTimeMillseconds = (int)Math.Round((double)((double)totalFrames / frameRate) * 1000, 0) - (minutes * 60 + seconds) * 1000;
 
-            var disconnectedClients = new List<IClientWrapper>();
+            var disconnectedClients = new List<IFadecandyClientWrapper>();
 
             var playStopwatch = new Stopwatch();
             playStopwatch.Start();

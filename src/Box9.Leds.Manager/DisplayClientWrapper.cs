@@ -5,13 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Box9.Leds.FcClient;
-using Box9.Leds.FcClient.Messages;
-using Box9.Leds.FcClient.Messages.UpdatePixels;
+using Box9.Leds.FcClient.FadecandyMessages;
+using Box9.Leds.FcClient.FadecandyMessages.UpdatePixels;
 using Box9.Leds.Manager.Forms;
 
 namespace Box9.Leds.Manager
 {
-    public class DisplayClientWrapper : IClientWrapper
+    public class DisplayClientWrapper : IFadecandyClientWrapper
     {
         private readonly VideoForm form;
 

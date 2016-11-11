@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Box9.Leds.Core.UpdatePixels;
 
-namespace Box9.Leds.FcClient.Messages.UpdatePixels
+namespace Box9.Leds.FcClient.FadecandyMessages.UpdatePixels
 {
     public class UpdatePixelsRequest
     {

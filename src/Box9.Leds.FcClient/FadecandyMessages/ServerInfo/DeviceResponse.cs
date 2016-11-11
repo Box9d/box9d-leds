@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Box9.Leds.FcClient.Messages.ServerInfo
+namespace Box9.Leds.FcClient.FadecandyMessages.ServerInfo
 {
     public class DeviceResponse
     {

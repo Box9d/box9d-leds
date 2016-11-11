@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Box9.Leds.FcClient.Messages.ColorCorrection
+namespace Box9.Leds.FcClient.FadecandyMessages.ColorCorrection
 {
     public class ColorCorrectionColor
     {

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Box9.Leds.FcClient.Messages.ConnectedDevices
+namespace Box9.Leds.FcClient.FadecandyMessages.ConnectedDevices
 {
     public class ConnectedDeviceResponse
     {

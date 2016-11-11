@@ -209,7 +209,7 @@ namespace Box9.Leds.Manager.Presenters
                     var clientConfigPairs = new List<ClientConfigPair>();
                     foreach (var server in configuration.Servers)
                     {
-                        clientConfigPairs.Add(new ClientConfigPair(new WsClientWrapper(server.NetworkDeviceDetails.IPAddress, server.Port), server));
+                        clientConfigPairs.Add(new ClientConfigPair(new FadecandyClientWrapper(server.NetworkDeviceDetails.IPAddress, server.Port), server));
                     }
 
                     if (view.DisplayVideo)
