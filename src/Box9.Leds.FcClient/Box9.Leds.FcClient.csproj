@@ -94,6 +94,8 @@
     <Compile Include="PiSocketMessages\Frames\Pixel.cs" />
     <Compile Include="PiSocketMessages\IPiSocketRequest.cs" />
     <Compile Include="PiSocketMessages\PiSocketRequestType.cs" />
+    <Compile Include="PiSocketMessages\Playback\PlayRequest.cs" />
+    <Compile Include="PiSocketMessages\Playback\StopRequest.cs" />
     <Compile Include="PiSocketMessages\Video\NewVideoRequest.cs" />
     <Compile Include="PiSocketMessages\Video\VideoResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -5,5 +5,9 @@
         public const string NewVideo = "newvideo";
 
         public const string AddFrame = "addframe";
+
+        public const string Play = "playvideo";
+
+        public const string Stop = "stopvideo";
     }
 }
