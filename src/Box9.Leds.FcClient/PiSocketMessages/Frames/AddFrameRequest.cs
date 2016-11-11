@@ -13,7 +13,7 @@ namespace Box9.Leds.FcClient.PiSocketMessages.Frames
         public List<Pixel> Pixels { get; internal set; }
 
         [JsonProperty(PropertyName = "video")]
-        public NewVideoResponse Video { get; internal set; }
+        public VideoResponse Video { get; internal set; }
 
         [JsonProperty("type")]
         public string Type
@@ -24,7 +24,7 @@ namespace Box9.Leds.FcClient.PiSocketMessages.Frames
             }
         }
 
-        public AddFrameRequest(NewVideoResponse video, int milliseconds, List<Pixel> pixels)
+        public AddFrameRequest(VideoResponse video, int milliseconds, List<Pixel> pixels)
         {
             Video = video;
             Milliseconds = milliseconds;

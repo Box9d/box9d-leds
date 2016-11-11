@@ -95,7 +95,7 @@
     <Compile Include="PiSocketMessages\IPiSocketRequest.cs" />
     <Compile Include="PiSocketMessages\PiSocketRequestType.cs" />
     <Compile Include="PiSocketMessages\Video\NewVideoRequest.cs" />
-    <Compile Include="PiSocketMessages\Video\NewVideoResponse.cs" />
+    <Compile Include="PiSocketMessages\Video\VideoResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FadecandyClientWrapper.cs" />
   </ItemGroup>

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Box9.Leds.FcClient.PiSocketMessages.Video
 {
-    public class NewVideoRequest : IPiSocketRequest<NewVideoResponse>
+    public class NewVideoRequest : IPiSocketRequest<VideoResponse>
     {
         [JsonProperty(PropertyName = "type")]
         public string Type
