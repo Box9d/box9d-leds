@@ -87,7 +87,7 @@ namespace Box9.Leds.Manager
             } 
         }
 
-        public void CloseAsync()
+        public void Close()
         {
         }
     }

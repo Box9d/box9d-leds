@@ -70,6 +70,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientWrapper.cs" />
+    <Compile Include="IClientWrapper.cs" />
     <Compile Include="IFadecandyClientWrapper.cs" />
     <Compile Include="FadecandyMessages\ColorCorrection\ColorCorrectionColor.cs" />
     <Compile Include="FadecandyMessages\ColorCorrection\ColorCorrectionDevice.cs" />
@@ -86,6 +88,14 @@
     <Compile Include="FadecandyMessages\ServerInfo\ServerInfoResponse.cs" />
     <Compile Include="FadecandyMessages\UpdateBitmap\UpdateBitmapRequest.cs" />
     <Compile Include="FadecandyMessages\UpdatePixels\UpdatePixelsRequest.cs" />
+    <Compile Include="IPiSocketClientWrapper.cs" />
+    <Compile Include="PiSocketClientWrapper.cs" />
+    <Compile Include="PiSocketMessages\Frames\AddFrameRequest.cs" />
+    <Compile Include="PiSocketMessages\Frames\Pixel.cs" />
+    <Compile Include="PiSocketMessages\IPiSocketRequest.cs" />
+    <Compile Include="PiSocketMessages\PiSocketRequestType.cs" />
+    <Compile Include="PiSocketMessages\Video\NewVideoRequest.cs" />
+    <Compile Include="PiSocketMessages\Video\NewVideoResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FadecandyClientWrapper.cs" />
   </ItemGroup>

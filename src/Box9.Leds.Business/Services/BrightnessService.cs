@@ -27,7 +27,7 @@ namespace Box9.Leds.Business.Services
                         client.SendMessage(new ColorCorrectionRequest(brightnessPercentage, serial));
                     }
 
-                    client.CloseAsync();
+                    client.Close();
                 }   
             }
         }

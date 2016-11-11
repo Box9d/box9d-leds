@@ -137,7 +137,7 @@ namespace Box9.Leds.Video
 
             foreach (var clientConfigPair in clientConfigPairs)
             {
-                clientConfigPair.Client.CloseAsync();
+                clientConfigPair.Client.Close();
                 clientConfigPair.Client.Dispose();
             }
 

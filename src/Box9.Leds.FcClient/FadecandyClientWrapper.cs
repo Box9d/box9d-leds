@@ -11,54 +11,16 @@ using Newtonsoft.Json;
 
 namespace Box9.Leds.FcClient
 {
-    public class FadecandyClientWrapper : IFadecandyClientWrapper
-    {
-        public WebSocketState State
-        {
-            get
-            {
-                return socket.State;
-            }
-        }
-
-        public string Host { get { return serverAddress.Host; } }
-
-        private ClientWebSocket socket;
-        
-        private readonly Uri serverAddress;
-        private readonly int sendMaxBufferLength;
-        private readonly int receiveMaxBufferLength;
-
+    public class FadecandyClientWrapper : ClientWrapper, IFadecandyClientWrapper
+    {       
         public FadecandyClientWrapper(Uri serverAddress)
+            : base(serverAddress)
         {
-            socket = new ClientWebSocket();
-            socket.Options.KeepAliveInterval = TimeSpan.FromMilliseconds(100);
-            this.serverAddress = serverAddress;
-            this.sendMaxBufferLength = 4096;
-            this.receiveMaxBufferLength = 4096;
         }
 
         public FadecandyClientWrapper(string ipAddress, int port)
             : this(new Uri(string.Format("ws://{0}:{1}", ipAddress, port)))
         {
-        }
-
-        public void Connect(CancellationToken? cancellationToken = null)
-        {
-            while (!(cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested) && socket.State != WebSocketState.Open)
-            {
-                var newSocket = new ClientWebSocket();
-
-                try
-                {
-                    newSocket.ConnectAsync(serverAddress, !cancellationToken.HasValue ? CancellationToken.None : cancellationToken.Value).Wait();
-                    socket = newSocket;
-                }
-                catch (Exception)
-                {
-                    newSocket.Dispose();
-                }
-            }
         }
 
         public TResponse SendMessage<TResponse>(IJsonRequest<TResponse> request)
@@ -88,25 +50,6 @@ namespace Box9.Leds.FcClient
             var message = Encoding.UTF8.GetString(resultArray.Array.Take(result.Count).ToArray());
 
             return JsonConvert.DeserializeObject<TResponse>(message);
-        }
-
-        public void CloseAsync()
-        {
-            lock(socket)
-            {
-                if (socket.State == WebSocketState.Open)
-                {
-                    socket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            lock(socket)
-            {
-                socket.Dispose();
-            }
         }
 
         public void SendPixelUpdates(UpdatePixelsRequest request, CancellationToken token)
