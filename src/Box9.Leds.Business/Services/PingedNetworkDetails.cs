@@ -28,7 +28,7 @@ namespace Box9.Leds.Business.Services
 
             var total = ipAddresses.Count();
             var pingTimeoutInMilliseconds = 250;
-            var searchTimeoutSeconds = 5;
+            var searchTimeoutSeconds = 30;
             var queue = new Queue<string>(ipAddresses);
 
             var searchTimeoutStopwatch = new Stopwatch();
