@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Box9.Leds.Core.Addressing
 {
@@ -17,7 +13,7 @@ namespace Box9.Leds.Core.Addressing
 
                 for (int i = 1; i < 256; i++)
                 {
-                    ipAddresses.Add(string.Format("192.168.0.{0}", i));
+                    ipAddresses.Add(string.Format("192.168.1.{0}", i));
                 }
 
                 return ipAddresses;
