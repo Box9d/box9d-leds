@@ -60,7 +60,7 @@ namespace Box9.Leds.Business.Services
                 ping.SendAsync(IPAddress.Parse(ipAddress), pingTimeoutInMilliseconds, ipAddress);
             }
 
-            while (pingedDevices != ipAddresses.Count() && searchTimeoutStopwatch.ElapsedMilliseconds < searchTimeoutSeconds * 1000)
+            while (pingedDevices < ipAddresses.Count() && searchTimeoutStopwatch.ElapsedMilliseconds < searchTimeoutSeconds * 1000)
             {
                 Thread.Sleep(100);
             }
