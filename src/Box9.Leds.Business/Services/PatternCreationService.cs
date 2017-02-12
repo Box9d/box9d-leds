@@ -46,8 +46,8 @@ namespace Box9.Leds.Business.Services
 
         public Bitmap CreateFromPixelInfo(IEnumerable<PixelInfo> pixelInfo)
         {
-            var xPixels = pixelInfo.Max(pi => pi.X);
-            var yPixels = pixelInfo.Max(pi => pi.Y);
+            var xPixels = pixelInfo.Max(pi => pi.X) + 1; // max X value is an index so +1 for total
+            var yPixels = pixelInfo.Max(pi => pi.Y) + 1; // max Y value is an index so +1 for total
             var width = (PixelDimensions.Width + PixelDimensions.Gap) * xPixels;
             var height = (PixelDimensions.Height + PixelDimensions.Gap) * yPixels;
 

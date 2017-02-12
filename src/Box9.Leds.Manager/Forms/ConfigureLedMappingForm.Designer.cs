@@ -78,9 +78,9 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 317);
+            this.statusStrip.Location = new System.Drawing.Point(0, 539);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(365, 22);
+            this.statusStrip.Size = new System.Drawing.Size(584, 22);
             this.statusStrip.TabIndex = 5;
             // 
             // toolStripStatusLabel
@@ -95,7 +95,7 @@
             this.displayPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.displayPanel.Location = new System.Drawing.Point(0, 0);
             this.displayPanel.Name = "displayPanel";
-            this.displayPanel.Size = new System.Drawing.Size(365, 280);
+            this.displayPanel.Size = new System.Drawing.Size(584, 280);
             this.displayPanel.TabIndex = 8;
             // 
             // panel1
@@ -104,7 +104,7 @@
             this.panel1.Controls.Add(this.buttonClear);
             this.panel1.Controls.Add(this.buttonUndo);
             this.panel1.Controls.Add(this.buttonConfirm);
-            this.panel1.Location = new System.Drawing.Point(0, 279);
+            this.panel1.Location = new System.Drawing.Point(0, 501);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(357, 35);
             this.panel1.TabIndex = 0;
@@ -114,11 +114,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(365, 339);
+            this.ClientSize = new System.Drawing.Size(584, 561);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.displayPanel);
             this.Controls.Add(this.statusStrip);
-            this.MaximumSize = new System.Drawing.Size(2500, 1600);
             this.Name = "ConfigureLedMappingForm";
             this.Text = "Server";
             this.Load += new System.EventHandler(this.ServerForm_Load);

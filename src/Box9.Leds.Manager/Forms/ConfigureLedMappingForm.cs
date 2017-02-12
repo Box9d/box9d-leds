@@ -71,6 +71,9 @@ namespace Box9.Leds.Manager.Forms
             Invoke(new Action(() =>
             {
                 displayPanel.BackgroundImage = Image;
+                displayPanel.Height = Image.Height;
+                displayPanel.Width = Image.Width;
+                this.Height = displayPanel.Height + 160;
                 displayPanel.Focus();
             }));
         }
